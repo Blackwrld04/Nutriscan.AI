@@ -13,9 +13,10 @@ class Settings(BaseSettings):
     PORT: int = 8000
     ENVIRONMENT: str = "development"
 
-    # Google Gemma
+    # Google Gemma & Gemini Multimodal Vision
     GEMMA_ENDPOINT: str = "http://localhost:11434/api/generate"
     GEMMA_MODEL: str = "gemma2:9b"
+    GEMINI_API_KEY: str = ""
 
     # Prior Labs TabPFN
     TABPFN_DEVICE: str = "cpu"

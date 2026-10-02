@@ -42,6 +42,43 @@ class GemmaVisionService:
         self.endpoint = settings.GEMMA_ENDPOINT
         self.model = settings.GEMMA_MODEL
 
+    def _call_google_vision(self, image_b64: str) -> Optional[Dict]:
+        """Attempt to call Google AI Vision API (Gemini/Gemma multimodal) if key is provided."""
+        api_key = settings.GEMINI_API_KEY.strip() if settings.GEMINI_API_KEY else ""
+        if not api_key:
+            return None
+        try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+            payload = {
+                "contents": [
+                    {
+                        "parts": [
+                            {"text": GEMMA_VISION_PROMPT},
+                            {
+                                "inline_data": {
+                                    "mime_type": "image/jpeg",
+                                    "data": image_b64
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "generationConfig": {
+                    "response_mime_type": "application/json"
+                }
+            }
+            resp = requests.post(url, json=payload, timeout=15)
+            if resp.status_code == 200:
+                raw_text = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+                data = json.loads(raw_text)
+                logger.info("Successfully received live vision inference from Google Multimodal Vision API.")
+                return data
+            else:
+                logger.warning(f"Google Vision API returned {resp.status_code}: {resp.text}")
+        except Exception as e:
+            logger.error(f"Error calling Google Vision API: {e}")
+        return None
+
     def _call_ollama_gemma(self, image_b64: str) -> Optional[Dict]:
         """Attempt to call local Ollama running Gemma 2 / PaliGemma."""
         try:
@@ -124,11 +161,16 @@ class GemmaVisionService:
         start_time = time.time()
         image_b64 = base64.b64encode(image_bytes).decode("utf-8")
 
-        # 1. Try local/remote Gemma Vision
-        detected = self._call_ollama_gemma(image_b64)
-        source = f"Google Gemma ({self.model}) + USDA Grounding"
+        # 1. Try Google Multimodal Vision (Gemini / Gemma API) if key configured
+        detected = self._call_google_vision(image_b64)
+        source = "Google Multimodal Vision (Gemini / Gemma API) + USDA Grounding"
 
-        # 2. Fallback to visual feature engine if Ollama is offline
+        # 2. Try local/remote Ollama Gemma Vision
+        if not detected or not detected.get("items"):
+            detected = self._call_ollama_gemma(image_b64)
+            source = f"Google Gemma ({self.model}) + USDA Grounding"
+
+        # 3. Fallback to visual feature engine if Ollama & Cloud are offline
         if not detected or not detected.get("items"):
             detected = self._analyze_image_features(image_bytes)
             source = "Gemma Vision Pipeline (Visual Feature Engine) + USDA Grounding"
