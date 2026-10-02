@@ -26,11 +26,23 @@ class TabPFNEngineService:
         self._init_tabpfn()
 
     def _init_tabpfn(self):
-        """Attempt to load official TabPFNRegressor from Prior Labs."""
+        """Attempt to load official TabPFNRegressor from Prior Labs (Cloud or Local)."""
+        token = settings.TABPFN_TOKEN.strip() if settings.TABPFN_TOKEN else ""
+        if token and len(token) > 10:
+            try:
+                import tabpfn_client
+                tabpfn_client.init(token=token)
+                from tabpfn_client import TabPFNRegressor
+                self.tabpfn_model = TabPFNRegressor()
+                logger.info("Successfully connected to Prior Labs TabPFN Cloud foundation API.")
+                return
+            except Exception as e:
+                logger.warning(f"Prior Labs Cloud client connection error: {e}. Falling back...")
+
         try:
             from tabpfn import TabPFNRegressor
             self.tabpfn_model = TabPFNRegressor(device=settings.TABPFN_DEVICE)
-            logger.info("Successfully initialized Prior Labs TabPFNRegressor foundation model.")
+            logger.info("Successfully initialized local Prior Labs TabPFNRegressor foundation model.")
         except Exception as e:
             logger.info(f"TabPFN native package deferred ({e}). Operating in fast in-context tabular mode.")
             self.tabpfn_model = None
