@@ -1,0 +1,200 @@
+{
+  "foods": [
+    {
+      "name": "Grilled Chicken Breast",
+      "aliases": ["chicken breast", "grilled chicken", "chicken", "poultry"],
+      "food_group": "Poultry & Meat",
+      "per_100g": {
+        "calories": 165.0,
+        "protein_g": 31.0,
+        "carbs_g": 0.0,
+        "fat_g": 3.6,
+        "fiber_g": 0.0,
+        "sodium_mg": 74.0
+      },
+      "density_g_per_cm3": 1.05
+    },
+    {
+      "name": "Pan-Seared Atlantic Salmon",
+      "aliases": ["salmon", "grilled salmon", "atlantic salmon", "salmon fillet", "fish"],
+      "food_group": "Seafood",
+      "per_100g": {
+        "calories": 208.0,
+        "protein_g": 20.4,
+        "carbs_g": 0.0,
+        "fat_g": 13.4,
+        "fiber_g": 0.0,
+        "sodium_mg": 59.0
+      },
+      "density_g_per_cm3": 1.02
+    },
+    {
+      "name": "Sirloin Steak",
+      "aliases": ["steak", "beef", "beef steak", "grilled steak", "sirloin"],
+      "food_group": "Poultry & Meat",
+      "per_100g": {
+        "calories": 217.0,
+        "protein_g": 26.1,
+        "carbs_g": 0.0,
+        "fat_g": 11.8,
+        "fiber_g": 0.0,
+        "sodium_mg": 60.0
+      },
+      "density_g_per_cm3": 1.10
+    },
+    {
+      "name": "Cooked White Rice",
+      "aliases": ["white rice", "rice", "jasmine rice", "basmati rice", "steamed rice"],
+      "food_group": "Grains & Starches",
+      "per_100g": {
+        "calories": 130.0,
+        "protein_g": 2.7,
+        "carbs_g": 28.2,
+        "fat_g": 0.3,
+        "fiber_g": 0.4,
+        "sodium_mg": 1.0
+      },
+      "density_g_per_cm3": 0.85
+    },
+    {
+      "name": "Cooked Brown Rice",
+      "aliases": ["brown rice", "wholegrain rice"],
+      "food_group": "Grains & Starches",
+      "per_100g": {
+        "calories": 112.0,
+        "protein_g": 2.6,
+        "carbs_g": 23.5,
+        "fat_g": 0.9,
+        "fiber_g": 1.8,
+        "sodium_mg": 5.0
+      },
+      "density_g_per_cm3": 0.88
+    },
+    {
+      "name": "Cooked Quinoa",
+      "aliases": ["quinoa", "steamed quinoa"],
+      "food_group": "Grains & Starches",
+      "per_100g": {
+        "calories": 120.0,
+        "protein_g": 4.4,
+        "carbs_g": 21.3,
+        "fat_g": 1.9,
+        "fiber_g": 2.8,
+        "sodium_mg": 7.0
+      },
+      "density_g_per_cm3": 0.82
+    },
+    {
+      "name": "Baked Sweet Potato",
+      "aliases": ["sweet potato", "baked potato", "yam"],
+      "food_group": "Vegetables & Roots",
+      "per_100g": {
+        "calories": 90.0,
+        "protein_g": 2.0,
+        "carbs_g": 20.7,
+        "fat_g": 0.2,
+        "fiber_g": 3.3,
+        "sodium_mg": 36.0
+      },
+      "density_g_per_cm3": 0.95
+    },
+    {
+      "name": "Steamed Broccoli",
+      "aliases": ["broccoli", "steamed broccoli florets", "broccoli florets"],
+      "food_group": "Vegetables & Greens",
+      "per_100g": {
+        "calories": 35.0,
+        "protein_g": 2.4,
+        "carbs_g": 7.2,
+        "fat_g": 0.4,
+        "fiber_g": 2.6,
+        "sodium_mg": 41.0
+      },
+      "density_g_per_cm3": 0.38
+    },
+    {
+      "name": "Sautéed Asparagus",
+      "aliases": ["asparagus", "grilled asparagus"],
+      "food_group": "Vegetables & Greens",
+      "per_100g": {
+        "calories": 22.0,
+        "protein_g": 2.4,
+        "carbs_g": 4.1,
+        "fat_g": 0.2,
+        "fiber_g": 2.0,
+        "sodium_mg": 14.0
+      },
+      "density_g_per_cm3": 0.45
+    },
+    {
+      "name": "Fresh Hass Avocado",
+      "aliases": ["avocado", "hass avocado", "guacamole"],
+      "food_group": "Healthy Fats",
+      "per_100g": {
+        "calories": 160.0,
+        "protein_g": 2.0,
+        "carbs_g": 8.5,
+        "fat_g": 14.7,
+        "fiber_g": 6.7,
+        "sodium_mg": 7.0
+      },
+      "density_g_per_cm3": 0.92
+    },
+    {
+      "name": "Large Whole Egg",
+      "aliases": ["egg", "boiled egg", "fried egg", "scrambled egg", "eggs"],
+      "food_group": "Dairy & Eggs",
+      "per_100g": {
+        "calories": 143.0,
+        "protein_g": 12.6,
+        "carbs_g": 0.7,
+        "fat_g": 9.5,
+        "fiber_g": 0.0,
+        "sodium_mg": 142.0
+      },
+      "density_g_per_cm3": 1.03
+    },
+    {
+      "name": "Extra Virgin Olive Oil",
+      "aliases": ["olive oil", "oil", "cooking oil"],
+      "food_group": "Healthy Fats",
+      "per_100g": {
+        "calories": 884.0,
+        "protein_g": 0.0,
+        "carbs_g": 0.0,
+        "fat_g": 100.0,
+        "fiber_g": 0.0,
+        "sodium_mg": 2.0
+      },
+      "density_g_per_cm3": 0.92
+    },
+    {
+      "name": "Greek Yogurt (Nonfat Plain)",
+      "aliases": ["greek yogurt", "yogurt", "plain yogurt"],
+      "food_group": "Dairy & Eggs",
+      "per_100g": {
+        "calories": 59.0,
+        "protein_g": 10.2,
+        "carbs_g": 3.6,
+        "fat_g": 0.4,
+        "fiber_g": 0.0,
+        "sodium_mg": 36.0
+      },
+      "density_g_per_cm3": 1.04
+    },
+    {
+      "name": "Rolled Oats (Dry)",
+      "aliases": ["oats", "oatmeal", "rolled oats"],
+      "food_group": "Grains & Starches",
+      "per_100g": {
+        "calories": 379.0,
+        "protein_g": 13.2,
+        "carbs_g": 67.7,
+        "fat_g": 6.5,
+        "fiber_g": 10.1,
+        "sodium_mg": 6.0
+      },
+      "density_g_per_cm3": 0.65
+    }
+  ]
+}

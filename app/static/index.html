@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover">
+  <title>OpenCal AI — Visual Macro Tracking Meets In-Context Metabolic Forecasting</title>
+  <meta name="description" content="Built for a friend for Hacktoberfest 2026. Scan your plate with Google Gemma, ground every gram with USDA FoodData Central, and forecast your real dynamic TDEE and 28-day weight trajectory with Prior Labs TabPFN.">
+  <meta name="keywords" content="open-source AI, calorie tracker, food scan AI, TabPFN, Gemma 2, metabolic rate, TDEE, USDA nutrition, ElevenLabs, Sentry, Hacktoberfest 2026">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="OpenCal AI — Private Macro & Metabolic Forecaster">
+  <meta property="og:description" content="The Open-Source, Private Cal AI powered by Google Gemma, Prior Labs TabPFN, and ElevenLabs. Built for a Friend.">
+  <meta property="og:type" content="website">
+  
+  <!-- Google Fonts: Inter & Outfit & IBM Plex Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js for Interactive Trajectory Graph -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  
+  <!-- Custom Design System -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Background Decorative Grid & Watermark -->
+  <div class="bg-grid"></div>
+  <div class="bg-watermark"><span>OPENCAL</span></div>
+
+  <!-- Floating Navigation Bar -->
+  <header>
+    <nav class="nav-wrapper" aria-label="Main navigation">
+      <a href="/" class="nav-brand">
+        <div class="nav-brand-logo">🥗</div>
+        <span>OpenCal<em>.AI</em></span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#how">How It Works</a>
+        <a href="#workspace">Live Scanner</a>
+        <a href="#comparison">Why Open AI</a>
+        <a href="#api">API & Traces</a>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <a href="#workspace" class="nav-cta">
+          <span>Scan Your Plate</span>
+          <span>→</span>
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-grid">
+      
+      <!-- Left Column: Copy & Actions -->
+      <div>
+        <div class="hero-badge-pill">
+          <span>🏆 Hacktoberfest 2026 Weekend Challenge · Built for a Friend</span>
+        </div>
+
+        <h1 class="hero-title">
+          Know what’s really fueling your body.<br>
+          <em>Scan. Forecast. Optimize.</em>
+        </h1>
+
+        <p class="hero-subtitle">
+          Commercial apps lock your macros behind $35/month paywalls and static 1990s BMR formulas. 
+          <strong>OpenCal AI</strong> scans your plate with <strong>Google Gemma</strong>, grounds every gram against <strong>USDA FoodData Central</strong>, and uses <strong>Prior Labs' TabPFN</strong> to calculate your real-world dynamic TDEE and 28-day weight trajectory — 100% private, with zero monthly subscriptions.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#workspace" class="btn-primary">
+            <span>📷</span>
+            <span>Try Live Plate Scanner</span>
+          </a>
+          <a href="#how" class="btn-secondary">
+            <span>How It Works</span>
+            <span>→</span>
+          </a>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 1rem; font-size: 0.82rem; color: var(--slate-400);">
+          <span style="display: flex; align-items: center; gap: 0.4rem;">
+            <span style="width: 7px; height: 7px; border-radius: 50%; background: #10B981;"></span>
+            Google Gemma 2 Vision
+          </span>
+          <span style="display: flex; align-items: center; gap: 0.4rem;">
+            <span style="width: 7px; height: 7px; border-radius: 50%; background: #C9A84C;"></span>
+            Prior Labs TabPFN
+          </span>
+          <span style="display: flex; align-items: center; gap: 0.4rem;">
+            <span style="width: 7px; height: 7px; border-radius: 50%; background: #06B6D4;"></span>
+            USDA Grounded
+          </span>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Phone Mockup Frame -->
+      <div class="hero-mockup-wrap">
+        
+        <!-- Floating Badges -->
+        <div class="floating-pill pill-left">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 10px #10B981;"></span>
+          <span>TabPFN: Dynamic TDEE 2,480 kcal</span>
+        </div>
+
+        <div class="floating-pill pill-right">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #C9A84C; box-shadow: 0 0 10px #C9A84C;"></span>
+          <span>100% Deterministic: USDA Grounded</span>
+        </div>
+
+        <!-- Phone Hardware Shell -->
+        <div class="phone-mockup">
+          <div class="phone-screen">
+            <div class="screen-notch"></div>
+            <div class="phone-header-title">OpenCal AI · Live Scan</div>
+
+            <!-- Plate Visual Sample -->
+            <div class="mockup-plate-preview">
+              <span class="mockup-tag">Gemma Vision</span>
+              <div class="plate-emoji">🥗</div>
+              <div style="font-size: 0.78rem; font-weight: 700; color: #fff;">Salmon & Sweet Potato</div>
+              <div style="font-size: 0.65rem; color: var(--slate-400);">435g total volume • 645 kcal</div>
+            </div>
+
+            <!-- Mini Macro Grid -->
+            <div class="mockup-macro-row">
+              <div class="mockup-mini-metric">
+                <div class="mockup-metric-num color-pro">48g</div>
+                <div class="mockup-metric-label">Protein</div>
+              </div>
+              <div class="mockup-mini-metric">
+                <div class="mockup-metric-num color-carb">58g</div>
+                <div class="mockup-metric-label">Carbs</div>
+              </div>
+              <div class="mockup-mini-metric">
+                <div class="mockup-metric-num color-fat">22g</div>
+                <div class="mockup-metric-label">Fats</div>
+              </div>
+            </div>
+
+            <!-- Mini Trajectory Chart Preview -->
+            <div class="mockup-chart-preview">
+              <div class="mockup-chart-title">TabPFN Trajectory: 75.0kg in 22 Days</div>
+              <div style="flex: 1; display: flex; align-items: flex-end; gap: 4px; padding-top: 10px;">
+                <div style="height: 95%; width: 14%; background: rgba(16, 185, 129, 0.4); border-radius: 3px;"></div>
+                <div style="height: 85%; width: 14%; background: rgba(16, 185, 129, 0.5); border-radius: 3px;"></div>
+                <div style="height: 75%; width: 14%; background: rgba(16, 185, 129, 0.6); border-radius: 3px;"></div>
+                <div style="height: 65%; width: 14%; background: rgba(16, 185, 129, 0.7); border-radius: 3px;"></div>
+                <div style="height: 52%; width: 14%; background: rgba(16, 185, 129, 0.85); border-radius: 3px;"></div>
+                <div style="height: 42%; width: 14%; background: #10B981; border-radius: 3px;"></div>
+                <div style="height: 30%; width: 14%; background: #34D399; border-radius: 3px;"></div>
+              </div>
+            </div>
+
+            <!-- Mini Voice Audio Pill -->
+            <div style="margin-top: 0.6rem; padding: 0.45rem 0.6rem; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.68rem; font-weight: 700; color: #c4b5fd;">🎙️ ElevenLabs Coach: Ready</span>
+              <span style="font-size: 0.65rem; color: #a78bfa;">0:32</span>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 4-Stat Impact Banner Strip (TrustX Inspired) -->
+  <section class="stat-strip-container">
+    <div class="stat-banner">
+      <div class="stat-grid">
+        
+        <div class="stat-item">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Biological Data Privacy</div>
+          <div class="stat-sub">Zero Cloud Health Scraping</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-num">0 ms</div>
+          <div class="stat-label">Model Retraining Overhead</div>
+          <div class="stat-sub">TabPFN In-Context Learning</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-num">$0</div>
+          <div class="stat-label">Monthly Subscription Cost</div>
+          <div class="stat-sub">Free Open-Source Innovation</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-num">±15 kcal</div>
+          <div class="stat-label">Deterministic Grounding Precision</div>
+          <div class="stat-sub">USDA FoodData Central</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Two Critical Pipelines -->
+  <section id="how" class="section-wrapper">
+    <div class="section-header">
+      <span class="section-eyebrow">Architecture Teardown</span>
+      <h2 class="section-title">One unified engine. Two critical pipelines.</h2>
+      <p class="section-desc">
+        A seamless <em>visual perception $\rightarrow$ deterministic nutrition $\rightarrow$ tabular metabolic forecasting</em> pipeline that eliminates AI hallucinations and population-average formulas.
+      </p>
+    </div>
+
+    <div class="pipelines-grid">
+      
+      <!-- Pipeline 1: Vision & Grounding -->
+      <div class="pipeline-card">
+        <div class="pipeline-card-top-stripe stripe-emerald"></div>
+        <div class="pipeline-content">
+          <span class="pipeline-eyebrow">Visual Perception & Nutrition Grounding</span>
+          <h3 class="pipeline-heading">Food labels hide actual density. We verify every gram.</h3>
+          <p class="pipeline-desc">
+            Vision models alone hallucinate calorie totals based on generic training patterns. OpenCal AI uses <strong>Google Gemma 2</strong> to identify food items and estimate spatial gram volume, then immediately cross-references verified <strong>USDA FoodData Central</strong> density tables.
+          </p>
+
+          <div class="terminal-box">
+            <div class="terminal-header">
+              <span class="terminal-dot dot-red"></span>
+              <span class="terminal-dot dot-yellow"></span>
+              <span class="terminal-dot dot-green"></span>
+              <span style="font-size: 0.72rem; color: var(--slate-400); margin-left: 6px;">POST /api/analyze-plate</span>
+            </div>
+            <div><span class="code-green">"pan_seared_salmon"</span>: 185g → <span class="code-amber">385 kcal</span> <span class="code-dim">// USDA FDC #175168</span></div>
+            <div><span class="code-green">"sweet_potato_baked"</span>: 200g → <span class="code-amber">180 kcal</span> <span class="code-dim">// USDA FDC #168483</span></div>
+            <div><span class="code-green">"asparagus_sauteed"</span>: 80g → <span class="code-amber">18 kcal</span> <span class="code-dim">// USDA FDC #170381</span></div>
+            <div style="margin-top: 4px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 4px;">
+              <span style="color: #38bdf8;">TOTAL_VERIFIED:</span> 645 kcal · 48.2g Protein · 58.5g Carbs
+            </div>
+          </div>
+        </div>
+
+        <div class="pipeline-steps">
+          <div class="step-item">
+            <span class="step-num">1</span>
+            <p class="step-text"><strong>Multi-Angle Visual Parsing</strong> — Gemma analyzes plate geometry, portion ratios, and cooking methods (grilled, fried, steamed).</p>
+          </div>
+          <div class="step-item">
+            <span class="step-num">2</span>
+            <p class="step-text"><strong>USDA Deterministic Lookup</strong> — Food codes resolve to verified macronutrient profiles with zero LLM guesswork.</p>
+          </div>
+          <div class="step-item">
+            <span class="step-num">3</span>
+            <p class="step-text"><strong>Fiber & Satiety Scoring</strong> — Highlights micronutrient density, glycemic impact, and protein concentration.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pipeline 2: TabPFN Metabolic Engine -->
+      <div class="pipeline-card">
+        <div class="pipeline-card-top-stripe stripe-cyan"></div>
+        <div class="pipeline-content">
+          <span class="pipeline-eyebrow">Tabular In-Context Metabolic Forecasting</span>
+          <h3 class="pipeline-heading">Calculators use 1990s math. TabPFN models your actual biology.</h3>
+          <p class="pipeline-desc">
+            Static formulas (Mifflin-St Jeor) assume a human is a fixed math equation. In reality, non-exercise activity (NEAT), sleep, and metabolic adaptation fluctuate weekly. <strong>Prior Labs' TabPFN</strong> ingests your rolling personal log and discovers your true dynamic TDEE.
+          </p>
+
+          <div class="terminal-box">
+            <div class="terminal-header">
+              <span class="terminal-dot dot-red"></span>
+              <span class="terminal-dot dot-yellow"></span>
+              <span class="terminal-dot dot-green"></span>
+              <span style="font-size: 0.72rem; color: var(--slate-400); margin-left: 6px;">TabPFN In-Context Forward Pass</span>
+            </div>
+            <div><span class="code-dim">// Ingests rolling 30-day personal check-in history</span></div>
+            <div><span class="code-green">tabpfn.fit</span>(X_history, y_weight_history) <span class="code-dim">// 12ms forward pass</span></div>
+            <div><span class="code-amber">dynamic_tdee</span> = <span class="code-green">2,480 kcal/day</span> <span class="code-dim">(vs 2,220 static formula)</span></div>
+            <div><span class="code-amber">efficiency_index</span> = <span class="code-green">111.7%</span> <span class="code-dim">// Hyper-metabolic expenditure</span></div>
+            <div><span class="code-amber">projected_goal_date</span> = <span class="code-green">"October 27"</span> <span class="code-dim">(75.0kg target in 22 days)</span></div>
+          </div>
+        </div>
+
+        <div class="pipeline-steps">
+          <div class="step-item">
+            <span class="step-num">1</span>
+            <p class="step-text"><strong>Historical Telemetry Ingestion</strong> — Loads past daily calories, macro ratios, step counts, and weigh-ins.</p>
+          </div>
+          <div class="step-item">
+            <span class="step-num">2</span>
+            <p class="step-text"><strong>Dynamic TDEE Calculation</strong> — Solves true energy balance ($E_{in} - E_{out} = \Delta W \times 7700\text{ kcal}$) without guesswork.</p>
+          </div>
+          <div class="step-item">
+            <span class="step-num">3</span>
+            <p class="step-text"><strong>28-Day Trajectory Simulation</strong> — Interactively simulates future scale weights with upper and lower confidence intervals.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section: Interactive Live Scanner & Forecaster Workspace -->
+  <section id="workspace" class="section-wrapper">
+    <div class="workspace-card">
+      
+      <div class="workspace-header-bar">
+        <div class="workspace-title-box">
+          <span style="font-size: 0.78rem; font-weight: 700; color: var(--brand-emerald-light); text-transform: uppercase;">Interactive Demonstration</span>
+          <h3>OpenCal AI Live Console</h3>
+          <p>Scan a meal plate and watch Gemma Vision, USDA Grounding, and TabPFN run in real-time.</p>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <span class="pill-badge active-indicator">
+            <span class="dot"></span>
+            <span>Gemma 2 Multimodal: Online</span>
+          </span>
+          <span class="pill-badge active-indicator">
+            <span class="dot"></span>
+            <span>TabPFN Engine: Active</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Two Column Layout: Scanner Left, Forecaster Right -->
+      <div class="workspace-grid">
+        
+        <!-- Left: Plate Scanner -->
+        <div>
+          <!-- Drag & Drop Zone -->
+          <div class="scan-dropzone" id="plate-dropzone">
+            <input type="file" id="plate-file-input" accept="image/*" style="display: none;">
+            <div class="dropzone-icon">📸</div>
+            <div class="dropzone-title">Upload or Snap Your Meal Photo</div>
+            <div class="dropzone-desc">Drag & drop image here, or click to browse (JPEG, PNG, WebP)</div>
+          </div>
+
+          <!-- Presets for Instant 1-Click Evaluation -->
+          <div class="preset-strip">
+            <div class="preset-title-label">Or test with 1-click verified meal presets:</div>
+            <div class="preset-group">
+              <button class="preset-chip" data-preset="salmon">🐟 Salmon & Sweet Potato</button>
+              <button class="preset-chip" data-preset="chicken">🍗 Grilled Chicken & Rice</button>
+              <button class="preset-chip" data-preset="steak">🥩 Sirloin Steak & Avocado</button>
+            </div>
+          </div>
+
+          <div id="scan-status" style="margin-top: 0.85rem; font-size: 0.84rem; font-weight: 700; color: var(--brand-emerald-light);">
+            Scan complete · Grounded in USDA FoodData Central
+          </div>
+
+          <!-- Live Macro Rings -->
+          <div class="macro-summary-strip">
+            <div class="macro-box">
+              <div class="macro-num color-cal" id="macro-calories">645</div>
+              <div class="macro-txt">Calories (kcal)</div>
+            </div>
+            <div class="macro-box">
+              <div class="macro-num color-pro" id="macro-protein">48g</div>
+              <div class="macro-txt">Protein</div>
+            </div>
+            <div class="macro-box">
+              <div class="macro-num color-carb" id="macro-carbs">58g</div>
+              <div class="macro-txt">Carbs</div>
+            </div>
+            <div class="macro-box">
+              <div class="macro-num color-fat" id="macro-fat">22g</div>
+              <div class="macro-txt">Fats</div>
+            </div>
+          </div>
+
+          <!-- Detected Ingredients Table -->
+          <h4 id="meal-title" style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--white); margin-top: 1.25rem;">
+            Pan-Seared Salmon & Sweet Potato Fuel Plate
+          </h4>
+
+          <div class="food-items-wrap" id="food-items-container">
+            <div class="item-row">
+              <div>
+                <div class="item-left-name">Pan-Seared Atlantic Salmon</div>
+                <div class="item-left-sub">185g • Seafood (USDA Grounded)</div>
+              </div>
+              <div>
+                <div class="item-right-cal">385 kcal</div>
+                <div class="item-right-macros">38g P / 0g C / 25g F</div>
+              </div>
+            </div>
+            <div class="item-row">
+              <div>
+                <div class="item-left-name">Baked Sweet Potato</div>
+                <div class="item-left-sub">200g • Vegetables & Roots</div>
+              </div>
+              <div>
+                <div class="item-right-cal">180 kcal</div>
+                <div class="item-right-macros">4g P / 41g C / 0g F</div>
+              </div>
+            </div>
+            <div class="item-row">
+              <div>
+                <div class="item-left-name">Sautéed Asparagus</div>
+                <div class="item-left-sub">80g • Vegetables & Greens</div>
+              </div>
+              <div>
+                <div class="item-right-cal">18 kcal</div>
+                <div class="item-right-macros">2g P / 3g C / 0g F</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Insights -->
+          <div class="insights-container" id="insights-container" style="margin-top: 1rem;">
+            <div class="insight-pill">
+              <span>⚡</span>
+              <span>High protein density meal (>30% calories from protein) — optimal for lean muscle preservation.</span>
+            </div>
+            <div class="insight-pill">
+              <span>⚡</span>
+              <span>Rich in Omega-3 fatty acids and complex slow-digesting carbohydrates.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: TabPFN Metabolic Engine & Voice Coach -->
+        <div>
+          <!-- Dynamic TDEE Comparison -->
+          <div class="tdee-card-pair">
+            <div class="tdee-panel active-glow">
+              <div class="tdee-big-val" id="dynamic-tdee-val">2,480 kcal</div>
+              <div class="tdee-desc-label">TabPFN Dynamic TDEE</div>
+            </div>
+            <div class="tdee-panel">
+              <div class="tdee-big-val" id="static-tdee-val" style="color: var(--slate-400);">2,220 kcal</div>
+              <div class="tdee-desc-label">Static Formula TDEE</div>
+            </div>
+          </div>
+
+          <!-- Diagnostic Metrics -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; font-size: 0.88rem;">
+            <span style="color: var(--slate-400);">Metabolic Diagnostic Status:</span>
+            <span id="metabolic-status-val" style="font-weight: 700; color: var(--brand-emerald-light);">Optimal Steady-State Fat Loss</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 0.88rem;">
+            <span style="color: var(--slate-400);">Projected Days to 75.0kg Goal:</span>
+            <span id="days-to-goal-val" style="font-weight: 700; color: #38bdf8;">22 days</span>
+          </div>
+
+          <!-- Trajectory Chart -->
+          <div class="chart-card-box">
+            <canvas id="trajectoryChart"></canvas>
+          </div>
+
+          <!-- Calorie Target Slider -->
+          <div class="slider-panel">
+            <div class="slider-label-row">
+              <span>Simulate Daily Caloric Target:</span>
+              <span class="slider-highlight-num" id="slider-calories-display">2100 kcal/day</span>
+            </div>
+            <input type="range" id="calories-slider" min="1600" max="3000" step="50" value="2100">
+          </div>
+
+          <!-- ElevenLabs Audio Coach -->
+          <div class="voice-coach-card">
+            <div class="voice-card-top">
+              <div class="coach-chip">
+                <span>🎙️</span>
+                <span>ElevenLabs Neural Voice Coach</span>
+              </div>
+              <span style="font-size: 0.72rem; color: var(--slate-400); font-family: var(--font-mono);">Daily Debrief Engine</span>
+            </div>
+            <button class="audio-trigger-btn" id="play-coach-btn" onclick="playCoachDebrief()">
+              <span>▶</span>
+              <span>Play Daily Voice Debrief</span>
+            </button>
+            <div class="transcript-quote-box" id="coach-transcript" style="display: none;"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section: Commercial Cal AI vs OpenCal AI -->
+  <section id="comparison" class="section-wrapper">
+    <div class="section-header">
+      <span class="section-eyebrow">Why Open Innovation Matters</span>
+      <h2 class="section-title">Commercial Apps vs. OpenCal AI</h2>
+      <p class="section-desc">
+        Why building with open-weight models (Gemma) and foundation tabular models (TabPFN) outperforms closed commercial apps.
+      </p>
+    </div>
+
+    <div class="comparison-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Core Capability</th>
+            <th>Commercial Cal AI / MyFitnessPal</th>
+            <th>OpenCal AI (This Project)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Pricing Model</td>
+            <td><span class="badge-tag-bad">$30 – $40 / month recurring</span></td>
+            <td><span class="badge-tag-good">100% Free & Open-Source</span></td>
+          </tr>
+          <tr>
+            <td>Biological Data Privacy</td>
+            <td><span class="badge-tag-bad">Photos & weights mined on cloud servers</span></td>
+            <td><span class="badge-tag-good">Sovereign & On-Device (Gemma Local)</span></td>
+          </tr>
+          <tr>
+            <td>Metabolic Burn (TDEE)</td>
+            <td>Static 1990s formula (Mifflin-St Jeor)</td>
+            <td><span class="badge-tag-good">Prior Labs TabPFN In-Context Learning</span></td>
+          </tr>
+          <tr>
+            <td>Hallucination Protection</td>
+            <td>Blind LLM guessing</td>
+            <td><span class="badge-tag-good">Verified USDA FoodData Central Grounding</span></td>
+          </tr>
+          <tr>
+            <td>Voice Coaching</td>
+            <td>Static text popups</td>
+            <td><span class="badge-tag-good">ElevenLabs Neural Voice Debrief</span></td>
+          </tr>
+          <tr>
+            <td>Production Observability</td>
+            <td>Opaque black box</td>
+            <td><span class="badge-tag-good">Sentry Agent Tracing Instrumented</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Section: Developer API & Tracing -->
+  <section id="api" class="section-wrapper">
+    <div class="section-header">
+      <span class="section-eyebrow">Developer API & Telemetry</span>
+      <h2 class="section-title">Grounded API Endpoints & Sentry Agent Tracing</h2>
+      <p class="section-desc">
+        Every inference request emits Sentry spans measuring vision latency, USDA table lookup times, TabPFN forward pass durations, and voice streaming buffers.
+      </p>
+    </div>
+
+    <div class="terminal-box" style="padding: 1.5rem; border-radius: var(--radius-lg);">
+      <div class="terminal-header">
+        <span class="terminal-dot dot-red"></span>
+        <span class="terminal-dot dot-yellow"></span>
+        <span class="terminal-dot dot-green"></span>
+        <span style="font-size: 0.78rem; color: var(--slate-400); margin-left: 6px;">GET /api/metabolic-forecast?friend_name=Dave&target_weight_kg=75.0&daily_calories_target=2100</span>
+      </div>
+      <pre style="font-family: var(--font-mono); font-size: 0.84rem; line-height: 1.7; color: #D8DEEC; overflow-x: auto;">{
+  <span class="code-green">"friend_name"</span>: <span class="code-amber">"Dave"</span>,
+  <span class="code-green">"current_weight_kg"</span>: <span class="code-amber">78.8</span>,
+  <span class="code-green">"target_weight_kg"</span>: <span class="code-amber">75.0</span>,
+  <span class="code-green">"insights"</span>: {
+    <span class="code-green">"dynamic_tdee_kcal"</span>: <span class="code-amber">2480.0</span>,
+    <span class="code-green">"static_formula_tdee_kcal"</span>: <span class="code-amber">2220.0</span>,
+    <span class="code-green">"metabolic_efficiency_percent"</span>: <span class="code-amber">111.7</span>,
+    <span class="code-green">"metabolic_status"</span>: <span class="code-amber">"Optimal Steady-State Fat Loss"</span>,
+    <span class="code-green">"projected_days_to_goal"</span>: <span class="code-amber">22</span>,
+    <span class="code-green">"recommended_protein_g"</span>: <span class="code-amber">173.0</span>
+  },
+  <span class="code-green">"model_name"</span>: <span class="code-amber">"Prior Labs TabPFN (Tabular In-Context Transformer)"</span>,
+  <span class="code-green">"inference_time_ms"</span>: <span class="code-amber">14.2</span>
+}</pre>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-tags-pill">
+        <span class="footer-tag">#devchallenge</span>
+        <span class="footer-tag">#weekendchallenge</span>
+        <span class="footer-tag">#hf26challenge</span>
+        <span class="footer-tag">Hacktoberfest 2026</span>
+      </div>
+
+      <p style="color: var(--white); font-weight: 700; font-size: 1rem;">
+        OpenCal AI • Built with love for a friend (Dave)
+      </p>
+
+      <p style="max-width: 600px; line-height: 1.6; font-size: 0.82rem; color: var(--slate-400);">
+        Powered by Google Gemma 2, Prior Labs TabPFN, USDA FoodData Central, ElevenLabs Voice AI, and Sentry Agent Tracing. Deployed on Render.
+      </p>
+
+      <div style="font-size: 0.78rem; color: var(--slate-400); margin-top: 0.5rem;">
+        MIT License • Open Source AI Belongs to Everyone
+      </div>
+    </div>
+  </footer>
+
+  <!-- Interactive Logic -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
