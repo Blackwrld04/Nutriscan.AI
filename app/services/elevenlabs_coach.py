@@ -32,35 +32,49 @@ class ElevenLabsCoachService:
 
     def generate_speech(self, text: str) -> Dict[str, Optional[str]]:
         """Generate audio using ElevenLabs or provide browser audio synthesis payload."""
-        if self.api_key and len(self.api_key.strip()) > 10:
-            try:
-                url = f"https://api.elevenlabs.io/v1/text-to-speech/{self.voice_id}"
-                headers = {
-                    "Accept": "audio/mpeg",
-                    "Content-Type": "application/json",
-                    "xi-api-key": self.api_key
+        api_key = settings.ELEVENLABS_API_KEY
+        if api_key and len(api_key.strip()) > 10:
+            # List of voice candidates: configured voice first, then verified standard defaults
+            configured_voice = settings.ELEVENLABS_VOICE_ID.strip()
+            voice_candidates = []
+            if configured_voice and len(configured_voice) == 20:
+                voice_candidates.append(configured_voice)
+            voice_candidates.extend(["21m00Tcm4TlvDq8ikWAM", "pNInz6obpgDQGcFmaJgB"])
+
+            headers = {
+                "Accept": "audio/mpeg",
+                "Content-Type": "application/json",
+                "xi-api-key": api_key
+            }
+            data = {
+                "text": text,
+                "model_id": "eleven_turbo_v2_5",
+                "voice_settings": {
+                    "stability": 0.5,
+                    "similarity_boost": 0.75
                 }
-                data = {
-                    "text": text,
-                    "model_id": "eleven_monolingual_v1",
-                    "voice_settings": {
-                        "stability": 0.5,
-                        "similarity_boost": 0.75
-                    }
-                }
-                response = requests.post(url, json=data, headers=headers, timeout=15)
-                if response.status_code == 200:
-                    b64_audio = base64.b64encode(response.content).decode("utf-8")
-                    return {
-                        "text": text,
-                        "audio_base64": b64_audio,
-                        "audio_format": "audio/mp3",
-                        "source": "ElevenLabs High-Definition Neural Voice"
-                    }
-                else:
-                    logger.warning(f"ElevenLabs API returned {response.status_code}: {response.text}")
-            except Exception as e:
-                logger.error(f"Error calling ElevenLabs API: {e}")
+            }
+
+            for voice_id in voice_candidates:
+                try:
+                    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+                    response = requests.post(url, json=data, headers=headers, timeout=15)
+                    if response.status_code == 200:
+                        b64_audio = base64.b64encode(response.content).decode("utf-8")
+                        logger.info(f"Successfully generated ElevenLabs neural speech using voice ID {voice_id}.")
+                        return {
+                            "text": text,
+                            "audio_base64": b64_audio,
+                            "audio_format": "audio/mp3",
+                            "source": "ElevenLabs High-Definition Neural Voice"
+                        }
+                    elif response.status_code == 404:
+                        logger.warning(f"Voice ID {voice_id} not found on ElevenLabs, trying fallback voice...")
+                        continue
+                    else:
+                        logger.warning(f"ElevenLabs API returned {response.status_code}: {response.text}")
+                except Exception as e:
+                    logger.error(f"Error calling ElevenLabs API with voice {voice_id}: {e}")
 
         # Fallback to browser SpeechSynthesis API compatible payload
         return {
