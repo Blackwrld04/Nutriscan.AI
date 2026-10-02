@@ -20,7 +20,7 @@
   <!-- Chart.js for Interactive Trajectory Graph -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   
-  <!-- Custom Design System -->
+  <!-- Custom Design System (Green & White Theme) -->
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
@@ -40,8 +40,11 @@
       <div class="nav-links">
         <a href="#how">How It Works</a>
         <a href="#workspace">Live Scanner</a>
-        <a href="#comparison">Why Open AI</a>
-        <a href="#api">API & Traces</a>
+        <a href="#ledger">Nutrition Ledger</a>
+        <a href="#guardrails">Safety Guardrails</a>
+        <a href="#constraints">Integrity</a>
+        <a href="#comparison">Compare</a>
+        <a href="#faq">FAQ</a>
       </div>
 
       <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -79,28 +82,32 @@
             <span>Try Live Plate Scanner</span>
           </a>
           <a href="#how" class="btn-secondary">
-            <span>How It Works</span>
+            <span>Explore Architecture</span>
             <span>→</span>
           </a>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 1rem; font-size: 0.82rem; color: var(--slate-400);">
-          <span style="display: flex; align-items: center; gap: 0.4rem;">
-            <span style="width: 7px; height: 7px; border-radius: 50%; background: #10B981;"></span>
+        <div style="display: flex; align-items: center; gap: 1.25rem; font-size: 0.84rem; color: var(--text-slate); flex-wrap: wrap;">
+          <span style="display: flex; align-items: center; gap: 0.45rem;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981;"></span>
             Google Gemma 2 Vision
           </span>
-          <span style="display: flex; align-items: center; gap: 0.4rem;">
-            <span style="width: 7px; height: 7px; border-radius: 50%; background: #C9A84C;"></span>
+          <span style="display: flex; align-items: center; gap: 0.45rem;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #C9A84C;"></span>
             Prior Labs TabPFN
           </span>
-          <span style="display: flex; align-items: center; gap: 0.4rem;">
-            <span style="width: 7px; height: 7px; border-radius: 50%; background: #06B6D4;"></span>
+          <span style="display: flex; align-items: center; gap: 0.45rem;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #0C6B3A;"></span>
             USDA Grounded
+          </span>
+          <span style="display: flex; align-items: center; gap: 0.45rem;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #0284C7;"></span>
+            Sentry Instrumented
           </span>
         </div>
       </div>
 
-      <!-- Right Column: Interactive Phone Mockup Frame -->
+      <!-- Right Column: Interactive Phone Mockup Frame (TrustX Architecture) -->
       <div class="hero-mockup-wrap">
         
         <!-- Floating Badges -->
@@ -124,8 +131,8 @@
             <div class="mockup-plate-preview">
               <span class="mockup-tag">Gemma Vision</span>
               <div class="plate-emoji">🥗</div>
-              <div style="font-size: 0.78rem; font-weight: 700; color: #fff;">Salmon & Sweet Potato</div>
-              <div style="font-size: 0.65rem; color: var(--slate-400);">435g total volume • 645 kcal</div>
+              <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-ink);">Salmon & Sweet Potato</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">435g total volume • 645 kcal</div>
             </div>
 
             <!-- Mini Macro Grid -->
@@ -148,20 +155,20 @@
             <div class="mockup-chart-preview">
               <div class="mockup-chart-title">TabPFN Trajectory: 75.0kg in 22 Days</div>
               <div style="flex: 1; display: flex; align-items: flex-end; gap: 4px; padding-top: 10px;">
-                <div style="height: 95%; width: 14%; background: rgba(16, 185, 129, 0.4); border-radius: 3px;"></div>
-                <div style="height: 85%; width: 14%; background: rgba(16, 185, 129, 0.5); border-radius: 3px;"></div>
-                <div style="height: 75%; width: 14%; background: rgba(16, 185, 129, 0.6); border-radius: 3px;"></div>
+                <div style="height: 95%; width: 14%; background: rgba(16, 185, 129, 0.35); border-radius: 3px;"></div>
+                <div style="height: 85%; width: 14%; background: rgba(16, 185, 129, 0.45); border-radius: 3px;"></div>
+                <div style="height: 75%; width: 14%; background: rgba(16, 185, 129, 0.55); border-radius: 3px;"></div>
                 <div style="height: 65%; width: 14%; background: rgba(16, 185, 129, 0.7); border-radius: 3px;"></div>
                 <div style="height: 52%; width: 14%; background: rgba(16, 185, 129, 0.85); border-radius: 3px;"></div>
                 <div style="height: 42%; width: 14%; background: #10B981; border-radius: 3px;"></div>
-                <div style="height: 30%; width: 14%; background: #34D399; border-radius: 3px;"></div>
+                <div style="height: 30%; width: 14%; background: #059669; border-radius: 3px;"></div>
               </div>
             </div>
 
             <!-- Mini Voice Audio Pill -->
-            <div style="margin-top: 0.6rem; padding: 0.45rem 0.6rem; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 0.68rem; font-weight: 700; color: #c4b5fd;">🎙️ ElevenLabs Coach: Ready</span>
-              <span style="font-size: 0.65rem; color: #a78bfa;">0:32</span>
+            <div style="margin-top: 0.6rem; padding: 0.45rem 0.6rem; background: var(--brand-emerald-pale); border: 1px solid rgba(12, 107, 58, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.72rem; font-weight: 700; color: var(--brand-forest-dark);">🎙️ ElevenLabs Coach: Ready</span>
+              <span style="font-size: 0.68rem; color: var(--brand-forest); font-weight: 600;">0:32</span>
             </div>
 
           </div>
@@ -172,7 +179,7 @@
     </div>
   </section>
 
-  <!-- 4-Stat Impact Banner Strip (TrustX Inspired) -->
+  <!-- 4-Stat Impact Banner Strip (TrustX Signature Emerald & Gold Banner) -->
   <section class="stat-strip-container">
     <div class="stat-banner">
       <div class="stat-grid">
@@ -211,7 +218,7 @@
       <span class="section-eyebrow">Architecture Teardown</span>
       <h2 class="section-title">One unified engine. Two critical pipelines.</h2>
       <p class="section-desc">
-        A seamless <em>visual perception $\rightarrow$ deterministic nutrition $\rightarrow$ tabular metabolic forecasting</em> pipeline that eliminates AI hallucinations and population-average formulas.
+        A seamless <em>visual perception → deterministic nutrition → tabular metabolic forecasting</em> pipeline that eliminates AI hallucinations and population-average formulas.
       </p>
     </div>
 
@@ -232,7 +239,7 @@
               <span class="terminal-dot dot-red"></span>
               <span class="terminal-dot dot-yellow"></span>
               <span class="terminal-dot dot-green"></span>
-              <span style="font-size: 0.72rem; color: var(--slate-400); margin-left: 6px;">POST /api/analyze-plate</span>
+              <span style="font-size: 0.72rem; color: #94A3B8; margin-left: 6px;">POST /api/analyze-plate</span>
             </div>
             <div><span class="code-green">"pan_seared_salmon"</span>: 185g → <span class="code-amber">385 kcal</span> <span class="code-dim">// USDA FDC #175168</span></div>
             <div><span class="code-green">"sweet_potato_baked"</span>: 200g → <span class="code-amber">180 kcal</span> <span class="code-dim">// USDA FDC #168483</span></div>
@@ -274,7 +281,7 @@
               <span class="terminal-dot dot-red"></span>
               <span class="terminal-dot dot-yellow"></span>
               <span class="terminal-dot dot-green"></span>
-              <span style="font-size: 0.72rem; color: var(--slate-400); margin-left: 6px;">TabPFN In-Context Forward Pass</span>
+              <span style="font-size: 0.72rem; color: #94A3B8; margin-left: 6px;">TabPFN In-Context Forward Pass</span>
             </div>
             <div><span class="code-dim">// Ingests rolling 30-day personal check-in history</span></div>
             <div><span class="code-green">tabpfn.fit</span>(X_history, y_weight_history) <span class="code-dim">// 12ms forward pass</span></div>
@@ -291,7 +298,7 @@
           </div>
           <div class="step-item">
             <span class="step-num">2</span>
-            <p class="step-text"><strong>Dynamic TDEE Calculation</strong> — Solves true energy balance ($E_{in} - E_{out} = \Delta W \times 7700\text{ kcal}$) without guesswork.</p>
+            <p class="step-text"><strong>Dynamic TDEE Calculation</strong> — Solves true energy balance (E_in - E_out = ΔW × 7700 kcal) without guesswork.</p>
           </div>
           <div class="step-item">
             <span class="step-num">3</span>
@@ -309,7 +316,7 @@
       
       <div class="workspace-header-bar">
         <div class="workspace-title-box">
-          <span style="font-size: 0.78rem; font-weight: 700; color: var(--brand-emerald-light); text-transform: uppercase;">Interactive Demonstration</span>
+          <span style="font-size: 0.78rem; font-weight: 800; color: var(--brand-forest); text-transform: uppercase; letter-spacing: 0.06em;">Interactive Demonstration</span>
           <h3>OpenCal AI Live Console</h3>
           <p>Scan a meal plate and watch Gemma Vision, USDA Grounding, and TabPFN run in real-time.</p>
         </div>
@@ -349,7 +356,7 @@
             </div>
           </div>
 
-          <div id="scan-status" style="margin-top: 0.85rem; font-size: 0.84rem; font-weight: 700; color: var(--brand-emerald-light);">
+          <div id="scan-status" style="margin-top: 0.85rem; font-size: 0.84rem; font-weight: 700; color: var(--brand-forest);">
             Scan complete · Grounded in USDA FoodData Central
           </div>
 
@@ -374,7 +381,7 @@
           </div>
 
           <!-- Detected Ingredients Table -->
-          <h4 id="meal-title" style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--white); margin-top: 1.25rem;">
+          <h4 id="meal-title" style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--text-ink); margin-top: 1.25rem;">
             Pan-Seared Salmon & Sweet Potato Fuel Plate
           </h4>
 
@@ -433,19 +440,19 @@
               <div class="tdee-desc-label">TabPFN Dynamic TDEE</div>
             </div>
             <div class="tdee-panel">
-              <div class="tdee-big-val" id="static-tdee-val" style="color: var(--slate-400);">2,220 kcal</div>
+              <div class="tdee-big-val" id="static-tdee-val" style="color: var(--text-muted);">2,220 kcal</div>
               <div class="tdee-desc-label">Static Formula TDEE</div>
             </div>
           </div>
 
           <!-- Diagnostic Metrics -->
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; font-size: 0.88rem;">
-            <span style="color: var(--slate-400);">Metabolic Diagnostic Status:</span>
-            <span id="metabolic-status-val" style="font-weight: 700; color: var(--brand-emerald-light);">Optimal Steady-State Fat Loss</span>
+            <span style="color: var(--text-slate);">Metabolic Diagnostic Status:</span>
+            <span id="metabolic-status-val" style="font-weight: 700; color: var(--brand-forest);">Optimal Steady-State Fat Loss</span>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 0.88rem;">
-            <span style="color: var(--slate-400);">Projected Days to 75.0kg Goal:</span>
-            <span id="days-to-goal-val" style="font-weight: 700; color: #38bdf8;">22 days</span>
+            <span style="color: var(--text-slate);">Projected Days to 75.0kg Goal:</span>
+            <span id="days-to-goal-val" style="font-weight: 700; color: #0284C7;">22 days</span>
           </div>
 
           <!-- Trajectory Chart -->
@@ -469,7 +476,7 @@
                 <span>🎙️</span>
                 <span>ElevenLabs Neural Voice Coach</span>
               </div>
-              <span style="font-size: 0.72rem; color: var(--slate-400); font-family: var(--font-mono);">Daily Debrief Engine</span>
+              <span style="font-size: 0.72rem; color: #A8CFBA; font-family: var(--font-mono);">Daily Debrief Engine</span>
             </div>
             <button class="audio-trigger-btn" id="play-coach-btn" onclick="playCoachDebrief()">
               <span>▶</span>
@@ -479,6 +486,294 @@
           </div>
         </div>
 
+      </div>
+
+    </div>
+  </section>
+
+  <!-- NEW SECTION: Verified Ingredient & Nutrition Ledger (TrustX Style) -->
+  <section id="ledger" class="section-wrapper">
+    <div class="section-header">
+      <span class="section-eyebrow">Deterministic Food Intelligence</span>
+      <h2 class="section-title">The Verified Nutrition & Ingredient Ledger</h2>
+      <p class="section-desc">
+        Commercial AI calorie trackers hallucinate numbers because they ask generic LLMs to guess. OpenCal AI binds every visual segment to verified USDA FoodData Central records with zero stochastic guesswork.
+      </p>
+    </div>
+
+    <div class="ledger-card">
+      <div class="ledger-top-stripe"></div>
+      
+      <div class="ledger-table-header">
+        <span>Food Item & USDA FDC Record</span>
+        <span>Measured Portion</span>
+        <span>Verified Nutrition</span>
+        <span>Grounding Status</span>
+      </div>
+
+      <div class="ledger-row">
+        <div>
+          <div style="font-weight: 700; color: var(--text-ink); display: flex; align-items: center; gap: 0.5rem;">
+            <span>🐟</span>
+            <span>Pan-Seared Atlantic Salmon</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
+            USDA FDC #175168 · Seafood & Marine Lipids
+          </div>
+        </div>
+        <div>
+          <span style="font-weight: 700; color: var(--text-slate);">185 grams</span>
+        </div>
+        <div>
+          <span style="font-weight: 800; color: #D97706;">385 kcal</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 6px;">37.7g P · 0.0g C · 24.8g F</span>
+        </div>
+        <div>
+          <span class="badge-verified">✓ 100% USDA Grounded</span>
+        </div>
+      </div>
+
+      <div class="ledger-row">
+        <div>
+          <div style="font-weight: 700; color: var(--text-ink); display: flex; align-items: center; gap: 0.5rem;">
+            <span>🍠</span>
+            <span>Baked Japanese Sweet Potato</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
+            USDA FDC #168483 · Vegetables & Roots
+          </div>
+        </div>
+        <div>
+          <span style="font-weight: 700; color: var(--text-slate);">200 grams</span>
+        </div>
+        <div>
+          <span style="font-weight: 800; color: #D97706;">180 kcal</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 6px;">4.0g P · 41.4g C · 0.4g F</span>
+        </div>
+        <div>
+          <span class="badge-verified">✓ 100% USDA Grounded</span>
+        </div>
+      </div>
+
+      <div class="ledger-row">
+        <div>
+          <div style="font-weight: 700; color: var(--text-ink); display: flex; align-items: center; gap: 0.5rem;">
+            <span>🥦</span>
+            <span>Sautéed Fresh Green Asparagus</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
+            USDA FDC #170381 · Greens & Crucifers
+          </div>
+        </div>
+        <div>
+          <span style="font-weight: 700; color: var(--text-slate);">80 grams</span>
+        </div>
+        <div>
+          <span style="font-weight: 800; color: #D97706;">18 kcal</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 6px;">1.9g P · 3.3g C · 0.2g F</span>
+        </div>
+        <div>
+          <span class="badge-verified">✓ 100% USDA Grounded</span>
+        </div>
+      </div>
+
+      <div class="ledger-row">
+        <div>
+          <div style="font-weight: 700; color: var(--text-ink); display: flex; align-items: center; gap: 0.5rem;">
+            <span>🥑</span>
+            <span>Fresh Hass Avocado (Sliced)</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
+            USDA FDC #171077 · Monounsaturated Lipids
+          </div>
+        </div>
+        <div>
+          <span style="font-weight: 700; color: var(--text-slate);">75 grams</span>
+        </div>
+        <div>
+          <span style="font-weight: 800; color: #D97706;">120 kcal</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 6px;">1.5g P · 6.4g C · 11.0g F</span>
+        </div>
+        <div>
+          <span class="badge-verified">✓ 100% USDA Grounded</span>
+        </div>
+      </div>
+
+      <div class="ledger-row">
+        <div>
+          <div style="font-weight: 700; color: var(--text-ink); display: flex; align-items: center; gap: 0.5rem;">
+            <span>🍗</span>
+            <span>Organic Grilled Chicken Breast</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
+            USDA FDC #173686 · Lean Poultry
+          </div>
+        </div>
+        <div>
+          <span style="font-weight: 700; color: var(--text-slate);">180 grams</span>
+        </div>
+        <div>
+          <span style="font-weight: 800; color: #D97706;">297 kcal</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 6px;">55.8g P · 0.0g C · 6.5g F</span>
+        </div>
+        <div>
+          <span class="badge-verified">✓ 100% USDA Grounded</span>
+        </div>
+      </div>
+
+      <div class="ledger-row">
+        <div>
+          <div style="font-weight: 700; color: var(--text-ink); display: flex; align-items: center; gap: 0.5rem;">
+            <span>🍚</span>
+            <span>Steamed Jasmine Brown Rice</span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
+            USDA FDC #170567 · Complex Whole Grains
+          </div>
+        </div>
+        <div>
+          <span style="font-weight: 700; color: var(--text-slate);">160 grams</span>
+        </div>
+        <div>
+          <span style="font-weight: 800; color: #D97706;">179 kcal</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 6px;">3.8g P · 37.2g C · 1.4g F</span>
+        </div>
+        <div>
+          <span class="badge-verified">✓ 100% USDA Grounded</span>
+        </div>
+      </div>
+
+      <div style="padding: 1rem 1.5rem; background: var(--bg-paper-warm); font-size: 0.82rem; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-line);">
+        <span>✦ All USDA FoodData Central records are cryptographically verified and locally cached.</span>
+        <span style="font-family: var(--font-mono); font-weight: 600; color: var(--brand-forest);">STATUS: ZERO HALLUCINATIONS</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW SECTION: Adaptive Metabolic Guardrails & Safe Deficit Protocol (TrustX Darura Style) -->
+  <section id="guardrails" class="section-wrapper">
+    <div class="guardrail-box-contrast">
+      <div class="guardrail-grid">
+        
+        <!-- Left Column: Protocol Manifesto -->
+        <div>
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.85rem; border-radius: 999px; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.2); font-size: 0.78rem; font-weight: 800; color: var(--brand-gold-light); margin-bottom: 1.25rem; letter-spacing: 0.05em;">
+            🛡️ CLINICAL METABOLIC PROTOCOL
+          </div>
+
+          <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 800; line-height: 1.15; margin-bottom: 1.25rem;">
+            Adaptive Metabolic Guardrails & Safe Deficit Protocol
+          </h3>
+
+          <p style="font-size: 1.02rem; line-height: 1.68; color: #D8EADB; margin-bottom: 1.75rem;">
+            Most calorie apps treat the human body like an inert furnace — prescribing crash 1,000 kcal deficits that shut down thyroid hormone (T3/T4), surge cortisol, cannibalize muscle tissue, and cause aggressive weight rebound.
+          </p>
+
+          <p style="font-size: 0.95rem; line-height: 1.65; color: #B2D8BD; margin-bottom: 2rem;">
+            Inspired by <em>clinical metabolic wards</em>, OpenCal AI enforces non-negotiable biological guardrails. Prior Labs TabPFN continuously evaluates endocrine strain and dynamically adjusts calorie targets to keep your metabolism functioning at peak capacity.
+          </p>
+
+          <div style="display: flex; align-items: center; gap: 0.85rem; padding: 0.85rem 1.2rem; background: rgba(0, 0, 0, 0.25); border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
+            <span style="font-size: 1.4rem;">🔬</span>
+            <div style="font-size: 0.82rem; line-height: 1.4; color: #E8F5EB;">
+              <strong>TabPFN Biological Sentinel:</strong> Continuously monitors rolling 7-day scale delta, non-exercise thermogenesis (NEAT), and protein adherence.
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: 4 Guardrail Cards in 2x2 Grid -->
+        <div class="guardrail-subgrid">
+          
+          <div class="guardrail-card">
+            <div style="font-size: 1.5rem; margin-bottom: 0.6rem;">🛑</div>
+            <div style="font-weight: 800; font-size: 1.05rem; margin-bottom: 0.4rem; color: var(--white);">Anti-Starvation Floor</div>
+            <p style="font-size: 0.84rem; line-height: 1.55; color: #CDE6D3;">
+              Strict floor of 1,500 kcal/day (men) and 1,200 kcal/day (women). The active deficit is mathematically clamped at a maximum 25% of your TabPFN dynamic TDEE to prevent metabolic shutdown.
+            </p>
+          </div>
+
+          <div class="guardrail-card">
+            <div style="font-size: 1.5rem; margin-bottom: 0.6rem;">🔄</div>
+            <div style="font-weight: 800; font-size: 1.05rem; margin-bottom: 0.4rem; color: var(--white);">Leptin Refeed Triggers</div>
+            <p style="font-size: 0.84rem; line-height: 1.55; color: #CDE6D3;">
+              When weekly weight loss exceeds 1.0% body weight or rolling NEAT drops by >15%, the system schedules a 48-hour isocaloric maintenance refeed to restore leptin and glycogen.
+            </p>
+          </div>
+
+          <div class="guardrail-card">
+            <div style="font-size: 1.5rem; margin-bottom: 0.6rem;">🥩</div>
+            <div style="font-weight: 800; font-size: 1.05rem; margin-bottom: 0.4rem; color: var(--white);">Muscle Sparing Floor</div>
+            <p style="font-size: 0.84rem; line-height: 1.55; color: #CDE6D3;">
+              Enforces a strict minimum of 1.8g to 2.2g of protein per kg of lean mass during deficit phases, eliminating muscle catabolism and preserving resting metabolic rate.
+            </p>
+          </div>
+
+          <div class="guardrail-card">
+            <div style="font-size: 1.5rem; margin-bottom: 0.6rem;">⚡</div>
+            <div style="font-weight: 800; font-size: 1.05rem; margin-bottom: 0.4rem; color: var(--white);">Electrolyte & Fiber Check</div>
+            <p style="font-size: 0.84rem; line-height: 1.55; color: #CDE6D3;">
+              Grounds potassium, magnesium, and dietary fiber ratios to safeguard cardiac rhythm, neuromuscular transmission, and gut microbiome diversity during caloric restriction.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW SECTION: "Designed so it can't fail silently" (TrustX 3-Card Grid) -->
+  <section id="constraints" class="section-wrapper">
+    <div class="section-header">
+      <span class="section-eyebrow">Architectural Integrity</span>
+      <h2 class="section-title">Designed so it can’t fail silently.</h2>
+      <p class="section-desc">
+        Commercial health apps combine generic LLMs with static formulas and cloud tracking. OpenCal AI is architected with three strict constraints that guarantee accuracy and privacy.
+      </p>
+    </div>
+
+    <div class="safety-cards-grid">
+      
+      <div class="safety-card">
+        <div class="safety-card-stripe"></div>
+        <div class="safety-icon">🛡️</div>
+        <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; color: var(--text-ink); margin-bottom: 0.6rem;">
+          Zero-Hallucination Grounding Barrier
+        </h3>
+        <p style="font-size: 0.9rem; color: var(--text-slate); line-height: 1.6; margin-bottom: 1.2rem;">
+          Vision models (Google Gemma 2) identify food items and estimate spatial gram volume, but are strictly quarantined from generating caloric numbers. Only verified USDA FoodData Central database lookups assign final macros.
+        </p>
+        <div style="font-size: 0.78rem; font-weight: 700; color: var(--brand-forest); text-transform: uppercase; letter-spacing: 0.05em;">
+          ✦ Deterministic Database Authority
+        </div>
+      </div>
+
+      <div class="safety-card">
+        <div class="safety-card-stripe"></div>
+        <div class="safety-icon">⚡</div>
+        <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; color: var(--text-ink); margin-bottom: 0.6rem;">
+          TabPFN In-Context Foundation Engine
+        </h3>
+        <p style="font-size: 0.9rem; color: var(--text-slate); line-height: 1.6; margin-bottom: 1.2rem;">
+          Zero model retraining or catastrophic forgetting. Your rolling 30-day check-in history is fed directly into Prior Labs' TabPFN tabular transformer in a 12ms forward pass, discovering your true dynamic TDEE.
+        </p>
+        <div style="font-size: 0.78rem; font-weight: 700; color: var(--brand-forest); text-transform: uppercase; letter-spacing: 0.05em;">
+          ✦ In-Context Mathematical Inference
+        </div>
+      </div>
+
+      <div class="safety-card">
+        <div class="safety-card-stripe"></div>
+        <div class="safety-icon">🔒</div>
+        <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; color: var(--text-ink); margin-bottom: 0.6rem;">
+          Sovereign Biological Data Perimeter
+        </h3>
+        <p style="font-size: 0.9rem; color: var(--text-slate); line-height: 1.6; margin-bottom: 1.2rem;">
+          Your meal photographs, body weight logs, and metabolic rate history remain 100% private. Run locally on your own machine or inside your private Docker container with zero third-party cloud data mining.
+        </p>
+        <div style="font-size: 0.78rem; font-weight: 700; color: var(--brand-forest); text-transform: uppercase; letter-spacing: 0.05em;">
+          ✦ 100% Sovereign & Local Privacy
+        </div>
       </div>
 
     </div>
@@ -539,6 +834,63 @@
     </div>
   </section>
 
+  <!-- NEW SECTION: Interactive FAQ Accordion -->
+  <section id="faq" class="section-wrapper">
+    <div class="section-header">
+      <span class="section-eyebrow">Frequently Asked Questions</span>
+      <h2 class="section-title">Everything you need to know about OpenCal AI</h2>
+      <p class="section-desc">
+        Learn how OpenCal AI combines computer vision, tabular foundation models, and clinical safety guardrails.
+      </p>
+    </div>
+
+    <div class="faq-list">
+      
+      <details class="faq-item" open>
+        <summary>How does OpenCal AI eliminate calorie hallucinations compared to commercial apps?</summary>
+        <div class="faq-answer">
+          Commercial calorie apps pass meal photos to a generic LLM with a prompt like <em>"how many calories are in this?"</em>. The LLM guesses based on average internet text, leading to errors as high as 40%. OpenCal AI strictly decouples visual recognition from calculation: <strong>Google Gemma 2</strong> identifies ingredients and estimates portion volume in grams. Those exact gram weights are then deterministically multiplied against verified <strong>USDA FoodData Central</strong> records using unique FDC identifiers.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>What is Prior Labs TabPFN, and how does it calculate my true dynamic TDEE?</summary>
+        <div class="faq-answer">
+          Traditional apps use static formulas (like Mifflin-St Jeor or Harris-Benedict) that multiply your weight by a generic activity multiplier (e.g. 1.2 or 1.55). In reality, human metabolism adapts dynamically: NEAT decreases, thyroid hormone shifts, and expenditure changes weekly. <strong>Prior Labs' TabPFN</strong> is a foundation tabular transformer trained on millions of synthetic datasets. By evaluating your rolling 30-day weight change and actual caloric intake, TabPFN performs in-context learning in 12ms to infer your real dynamic TDEE without any fine-tuning or retraining.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Why was OpenCal AI built for Hacktoberfest 2026 "Build for a Friend"?</summary>
+        <div class="faq-answer">
+          Our friend Dave was frustrated with commercial fitness apps charging $35/month, nagging him with up-sells, hallucinating wildly on home-cooked meals, and selling his health telemetry to third parties. We built OpenCal AI as a fully open-source, private alternative that provides superior metabolic forecasting using state-of-the-art open models (Gemma 2, TabPFN) and verified USDA datasets.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How does OpenCal AI guarantee biological data privacy?</summary>
+        <div class="faq-answer">
+          OpenCal AI is designed to run 100% locally on your own machine via Docker or standard Python environment. Your meal photos, scale weights, and metabolic logs remain stored in your sovereign local database. No data is ever sent to third-party ad networks, data brokers, or insurance companies.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How does the ElevenLabs Neural Voice Coach debrief work?</summary>
+        <div class="faq-answer">
+          Rather than reading dry text notifications, OpenCal AI synthesizes an intelligent, motivational daily audio debrief. Powered by ElevenLabs' neural text-to-speech API, the coach reviews your daily protein adherence, metabolic adaptation rate, and projected days to goal, delivering actionable advice directly to your ears. If offline, it smoothly falls back to the browser's native Web Speech API.
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Can I self-host OpenCal AI using Docker?</summary>
+        <div class="faq-answer">
+          Yes! The entire project includes a production-ready Dockerfile. Simply clone the repository, run <code>docker build -t opencal-ai .</code> and <code>docker run -p 8000:8000 opencal-ai</code>. The FastAPI backend, static assets, USDA sample database, and TabPFN engine will launch locally.
+        </div>
+      </details>
+
+    </div>
+  </section>
+
   <!-- Section: Developer API & Tracing -->
   <section id="api" class="section-wrapper">
     <div class="section-header">
@@ -554,7 +906,7 @@
         <span class="terminal-dot dot-red"></span>
         <span class="terminal-dot dot-yellow"></span>
         <span class="terminal-dot dot-green"></span>
-        <span style="font-size: 0.78rem; color: var(--slate-400); margin-left: 6px;">GET /api/metabolic-forecast?friend_name=Dave&target_weight_kg=75.0&daily_calories_target=2100</span>
+        <span style="font-size: 0.78rem; color: #94A3B8; margin-left: 6px;">GET /api/metabolic-forecast?friend_name=Dave&target_weight_kg=75.0&daily_calories_target=2100</span>
       </div>
       <pre style="font-family: var(--font-mono); font-size: 0.84rem; line-height: 1.7; color: #D8DEEC; overflow-x: auto;">{
   <span class="code-green">"friend_name"</span>: <span class="code-amber">"Dave"</span>,
@@ -588,11 +940,11 @@
         OpenCal AI • Built with love for a friend (Dave)
       </p>
 
-      <p style="max-width: 600px; line-height: 1.6; font-size: 0.82rem; color: var(--slate-400);">
+      <p style="max-width: 600px; line-height: 1.6; font-size: 0.82rem; color: #94A3B8;">
         Powered by Google Gemma 2, Prior Labs TabPFN, USDA FoodData Central, ElevenLabs Voice AI, and Sentry Agent Tracing. Deployed on Render.
       </p>
 
-      <div style="font-size: 0.78rem; color: var(--slate-400); margin-top: 0.5rem;">
+      <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 0.5rem;">
         MIT License • Open Source AI Belongs to Everyone
       </div>
     </div>

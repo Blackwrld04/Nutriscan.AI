@@ -53,7 +53,7 @@ function initDropzone() {
 
 // Preset Meal Buttons
 function initPresets() {
-    const presetButtons = document.querySelectorAll(".preset-btn");
+    const presetButtons = document.querySelectorAll(".preset-btn, .preset-chip");
     presetButtons.forEach(btn => {
         btn.addEventListener("click", () => {
             const presetType = btn.dataset.preset;
@@ -275,17 +275,17 @@ function renderWeightChart(trajectory, currentWeight, targetWeight) {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    labels: { color: "#94a3b8", font: { family: "Inter", size: 11 } }
+                    labels: { color: "#334155", font: { family: "Inter", size: 12, weight: "600" } }
                 }
             },
             scales: {
                 x: {
-                    grid: { color: "rgba(255, 255, 255, 0.05)" },
-                    ticks: { color: "#64748b" }
+                    grid: { color: "rgba(12, 107, 58, 0.08)" },
+                    ticks: { color: "#475569", font: { family: "Inter", size: 11 } }
                 },
                 y: {
-                    grid: { color: "rgba(255, 255, 255, 0.05)" },
-                    ticks: { color: "#64748b" }
+                    grid: { color: "rgba(12, 107, 58, 0.08)" },
+                    ticks: { color: "#475569", font: { family: "Inter", size: 11 } }
                 }
             }
         }
