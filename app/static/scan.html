@@ -27,7 +27,12 @@
   <header>
     <nav class="nav-wrapper" aria-label="Scanner navigation">
       <a href="/" class="nav-brand">
-        <div class="nav-brand-logo">🥗</div>
+        <div class="nav-brand-logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+          </svg>
+        </div>
         <span>OpenCal<em>.AI</em></span>
       </a>
 
@@ -48,7 +53,10 @@
 
       <div>
         <a href="/" class="studio-back-link">
-          <span>←</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"/>
+            <polyline points="12 19 5 12 12 5"/>
+          </svg>
           <span>Back to Overview</span>
         </a>
       </div>
@@ -61,8 +69,12 @@
     <!-- Header Strip -->
     <div class="studio-header-strip">
       <div class="studio-title-area">
-        <div style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.3rem 0.8rem; border-radius: 999px; background: var(--brand-emerald-pale); border: 1px solid rgba(12, 107, 58, 0.2); font-size: 0.76rem; font-weight: 800; color: var(--brand-forest); margin-bottom: 0.6rem; letter-spacing: 0.05em;">
-          📷 PLATE SCANNER & METABOLIC STUDIO
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.85rem; border-radius: 999px; background: var(--brand-emerald-pale); border: 1px solid rgba(12, 107, 58, 0.2); font-size: 0.76rem; font-weight: 800; color: var(--brand-forest); margin-bottom: 0.6rem; letter-spacing: 0.05em;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          <span>PLATE SCANNER & METABOLIC STUDIO</span>
         </div>
         <h1>Scan Your Plate & Forecast Metabolic Impact</h1>
         <p>Deconstruct your meal with Google Gemma 2, ground every gram with USDA FoodData Central, and simulate your 28-day weight trajectory with Prior Labs TabPFN.</p>
@@ -84,15 +96,24 @@
         <!-- Segmented Mode Tabs -->
         <div class="studio-tabs">
           <button class="studio-tab-btn active" data-tab="upload">
-            <span>📸</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
             <span>Upload Photo</span>
           </button>
           <button class="studio-tab-btn" data-tab="camera">
-            <span>📷</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
             <span>Live Camera</span>
           </button>
           <button class="studio-tab-btn" data-tab="presets">
-            <span>⚡</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
             <span>Verified Presets</span>
           </button>
         </div>
@@ -101,7 +122,13 @@
         <div class="studio-tab-panel active" id="panel-upload">
           <div class="scan-dropzone" id="studio-dropzone">
             <input type="file" id="studio-file-input" accept="image/*" style="display: none;">
-            <div class="dropzone-icon">📥</div>
+            <div class="dropzone-icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--brand-forest)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
             <div class="dropzone-title">Upload Plate Photo</div>
             <div class="dropzone-desc">Drag & drop your meal photo, or click to browse (JPEG, PNG, WebP)</div>
           </div>
@@ -120,7 +147,10 @@
           </div>
           <div class="camera-controls-bar">
             <button class="shutter-btn" onclick="snapPhoto()" title="Snap Plate Photo">
-              📷
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
             </button>
           </div>
         </div>
@@ -133,24 +163,33 @@
           <div style="display: flex; flex-direction: column; gap: 0.65rem;">
             <button class="preset-chip" data-preset="salmon" style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1.1rem; text-align: left;">
               <div>
-                <div style="font-weight: 700; color: var(--text-ink);">🐟 Pan-Seared Atlantic Salmon & Sweet Potato</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted);">435g · Seafood, Roots & Asparagus</div>
+                <div style="font-weight: 700; color: var(--text-ink); display: flex; align-items: center; gap: 6px;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--brand-forest)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6Z"/><path d="M18 12v.5"/><path d="M16 17.93a9.77 9.77 0 0 1 0-11.86"/><path d="M7 10.67C7 8 5.58 5.97 2.73 5.5c-1 1.5-1 5 .23 6.5-1.24 1.5-1.24 5-.23 6.5C5.58 18.03 7 16 7 13.33"/></svg>
+                  Pan-Seared Atlantic Salmon &amp; Sweet Potato
+                </div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-left: 21px;">435g · Seafood, Roots &amp; Asparagus</div>
               </div>
               <span style="font-weight: 800; color: #D97706;">645 kcal</span>
             </button>
 
             <button class="preset-chip" data-preset="chicken" style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1.1rem; text-align: left;">
               <div>
-                <div style="font-weight: 700; color: var(--text-ink);">🍗 Grilled Chicken Breast & Jasmine Rice</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted);">430g · Lean Poultry, Grains & Broccoli</div>
+                <div style="font-weight: 700; color: var(--text-ink); display: flex; align-items: center; gap: 6px;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--brand-forest)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-9.33-5 6 6 0 0 0-7.37 8.35A6 6 0 0 0 6.5 19H12a6 6 0 0 0 6-6v-5Z"/><path d="M15 13l5 5"/></svg>
+                  Grilled Chicken Breast &amp; Jasmine Rice
+                </div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-left: 21px;">430g · Lean Poultry, Grains &amp; Broccoli</div>
               </div>
               <span style="font-weight: 800; color: #D97706;">512 kcal</span>
             </button>
 
             <button class="preset-chip" data-preset="steak" style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1.1rem; text-align: left;">
               <div>
-                <div style="font-weight: 700; color: var(--text-ink);">🥩 Sirloin Steak, Avocado & Brown Rice</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted);">385g · Red Meat, Whole Grains & Healthy Lipids</div>
+                <div style="font-weight: 700; color: var(--text-ink); display: flex; align-items: center; gap: 6px;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--brand-forest)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                  Sirloin Steak, Avocado &amp; Brown Rice
+                </div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-left: 21px;">385g · Red Meat, Whole Grains &amp; Healthy Lipids</div>
               </div>
               <span style="font-weight: 800; color: #D97706;">735 kcal</span>
             </button>
@@ -160,8 +199,14 @@
         <!-- Plate Image Preview Display -->
         <div class="preview-image-box">
           <div class="preview-tags-layer">
-            <span class="plate-tag-badge">✓ Spatial Boundaries Segmented</span>
-            <span class="plate-tag-badge">✓ USDA Grounded</span>
+            <span class="plate-tag-badge">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:-1px; margin-right:3px;"><polyline points="20 6 9 17 4 12"/></svg>
+              Spatial Boundaries Segmented
+            </span>
+            <span class="plate-tag-badge">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:-1px; margin-right:3px;"><polyline points="20 6 9 17 4 12"/></svg>
+              USDA Grounded
+            </span>
           </div>
           <div style="text-align: center; padding: 2.5rem 1rem;">
             <img id="plate-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%230C6B3A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Cpath d='M19 12a7 7 0 0 0-14 0'/%3E%3Ccircle cx='12' cy='5' r='1'/%3E%3C/svg%3E" alt="Plate Preview" style="max-height: 140px; width: auto; object-fit: contain;">
@@ -190,7 +235,8 @@
           </div>
         </div>
 
-        <div id="scanner-status-text" style="text-align: center; font-size: 0.82rem; font-weight: 700; color: var(--brand-forest); margin-bottom: 1.25rem;">
+        <div id="scanner-status-text" style="text-align: center; font-size: 0.82rem; font-weight: 700; color: var(--brand-forest); margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Plate analysis complete · 100% Deterministic Grounding Verified
         </div>
 
@@ -220,7 +266,10 @@
             <h4 id="studio-plate-title" style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--text-ink);">
               Pan-Seared Salmon & Sweet Potato Fuel Plate
             </h4>
-            <span class="badge-verified">✓ USDA Grounded</span>
+            <span class="badge-verified">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:-1px; margin-right:3px;"><polyline points="20 6 9 17 4 12"/></svg>
+              USDA Grounded
+            </span>
           </div>
 
           <div class="food-items-wrap" id="studio-items-table">
@@ -260,19 +309,19 @@
         <!-- Clinical Insights -->
         <div class="insights-container" id="studio-insights-container" style="margin-top: 1.25rem;">
           <div class="insight-pill">
-            <span>⚡</span>
-            <span>High protein density meal (>30% calories from protein) — optimal for lean muscle preservation.</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>High protein density meal (&gt;30% calories from protein) — optimal for lean muscle preservation.</span>
           </div>
           <div class="insight-pill">
-            <span>⚡</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             <span>Rich in Omega-3 fatty acids and complex slow-digesting carbohydrates with 7.2g dietary fiber.</span>
           </div>
         </div>
 
         <!-- Action: Log Plate -->
         <div style="margin-top: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap;">
-          <button class="btn-primary" onclick="logPlateToHistory()" style="background: linear-gradient(135deg, #064A28, #0C6B3A); width: 100%; justify-content: center;">
-            <span>✓</span>
+          <button class="btn-primary" onclick="logPlateToHistory()" style="background: linear-gradient(135deg, #064A28, #0C6B3A); width: 100%; justify-content: center; gap: 0.5rem;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             <span>Log Plate to Metabolic History</span>
           </button>
         </div>
@@ -349,13 +398,19 @@
         <div class="voice-coach-card" style="margin-top: 1.25rem;">
           <div class="voice-card-top">
             <div class="coach-chip">
-              <span>🎙️</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="22"/>
+              </svg>
               <span>ElevenLabs Neural Coach</span>
             </div>
             <span style="font-size: 0.72rem; color: #A8CFBA; font-family: var(--font-mono);">Daily Debrief Engine</span>
           </div>
-          <button class="audio-trigger-btn" id="studio-coach-btn" onclick="playStudioCoachDebrief()">
-            <span>▶</span>
+          <button class="audio-trigger-btn" id="studio-coach-btn" onclick="playStudioCoachDebrief()" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
             <span>Play Daily Voice Debrief</span>
           </button>
           <div class="transcript-quote-box" id="studio-coach-transcript" style="display: none;"></div>
@@ -367,23 +422,111 @@
 
   </main>
 
-  <!-- Footer -->
+  <!-- Footer: TrustX Structured Multi-Column Layout -->
   <footer style="margin-top: 5rem;">
-    <div class="footer-content">
-      <div class="footer-tags-pill">
-        <span class="footer-tag">#devchallenge</span>
-        <span class="footer-tag">#weekendchallenge</span>
-        <span class="footer-tag">#hf26challenge</span>
-        <span class="footer-tag">Hacktoberfest 2026</span>
+    <div class="trustx-footer-stripe"></div>
+    <div class="footer-inner">
+      <div class="footer-top-grid">
+        <!-- Col 1: Brand & Mission -->
+        <div class="footer-col">
+          <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 1rem;">
+            <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-sm); padding: 7px; display: inline-flex; align-items: center; justify-content: center;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+              </svg>
+            </div>
+            <span style="font-family: var(--font-heading); font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; color: #FFFFFF;">
+              OpenCal <span style="color: var(--brand-emerald-light);">AI</span>
+            </span>
+          </div>
+          <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.65); line-height: 1.65; max-width: 380px;">
+            The open-source, biologically grounded calorie and dynamic metabolic forecasting engine. Engineered with Google Gemma 2, USDA FoodData Central, and Prior Labs TabPFN in-context tabular transformers.
+          </p>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem;">
+            <a href="https://github.com" target="_blank" rel="noopener" class="footer-pill-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+              </svg>
+              GitHub Repo
+            </a>
+            <a href="/#api" class="footer-pill-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+              </svg>
+              API Specs
+            </a>
+            <a href="https://dev.to" target="_blank" rel="noopener" class="footer-pill-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="7"/>
+                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+              </svg>
+              DEV Challenge
+            </a>
+          </div>
+        </div>
+
+        <!-- Col 2: Core Systems -->
+        <div class="footer-col">
+          <h5>Core Systems</h5>
+          <ul>
+            <li><a href="/#pipeline">Gemma 2 Vision Pipeline</a></li>
+            <li><a href="/#ledger">USDA Grounding Barrier</a></li>
+            <li><a href="/#tabpfn">Prior Labs TabPFN Engine</a></li>
+            <li><a href="/#safety">Adaptive Guardrails</a></li>
+            <li><a href="/#safety">Sovereign Data Perimeter</a></li>
+            <li><a href="/#api">Sentry Agent Telemetry</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Data Authorities -->
+        <div class="footer-col">
+          <h5>Data Authorities</h5>
+          <ul>
+            <li><a href="https://fdc.nal.usda.gov" target="_blank" rel="noopener">USDA FoodData Central</a></li>
+            <li><a href="https://priorlabs.ai" target="_blank" rel="noopener">Prior Labs Foundation AI</a></li>
+            <li><a href="https://deepmind.google/technologies/gemma/" target="_blank" rel="noopener">Google DeepMind Gemma</a></li>
+            <li><a href="https://elevenlabs.io" target="_blank" rel="noopener">ElevenLabs Neural Voice</a></li>
+            <li><a href="https://sentry.io" target="_blank" rel="noopener">Sentry Performance Tracing</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Hacktoberfest 2026 -->
+        <div class="footer-col">
+          <h5>Hacktoberfest 2026</h5>
+          <ul>
+            <li><a href="https://dev.to" target="_blank" rel="noopener">DEV Weekend Challenge</a></li>
+            <li><a href="/scan">Scan Your Plate</a></li>
+            <li><a href="/#comparison">Closed Apps vs OpenCal</a></li>
+            <li><a href="/#faq">Frequently Asked Questions</a></li>
+            <li><a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">MIT License</a></li>
+          </ul>
+        </div>
       </div>
 
-      <p style="color: var(--white); font-weight: 700; font-size: 1rem;">
-        OpenCal AI • Plate Scanner Studio • Built for a friend (Dave)
-      </p>
-
-      <p style="max-width: 600px; line-height: 1.6; font-size: 0.82rem; color: #94A3B8;">
-        Google Gemma 2 Multimodal + USDA FoodData Central + Prior Labs TabPFN + ElevenLabs AI + Sentry Agent Tracing.
-      </p>
+      <!-- Footer Bottom Bar -->
+      <div class="footer-bottom-bar">
+        <div>
+          <p>
+            OpenCal AI is built for Hacktoberfest 2026 "Build for a Friend" (Dave). Dynamic metabolic forecasting powered by Prior Labs TabPFN foundation models and verified USDA FoodData Central tables. All health insights are grounded in deterministic macronutrient records.
+          </p>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem;">
+            <span class="footer-tag">#devchallenge</span>
+            <span class="footer-tag">#weekendchallenge</span>
+            <span class="footer-tag">#hf26challenge</span>
+            <span class="footer-tag">OpenCal AI v1.0</span>
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <p style="margin: 0; color: rgba(255, 255, 255, 0.7); font-weight: 600;">
+            &copy; 2026 OpenCal AI • Sovereign Biological Intelligence
+          </p>
+          <p style="margin: 0.25rem 0 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.4);">
+            MIT License • Open Source AI Belongs to Everyone
+          </p>
+        </div>
+      </div>
     </div>
   </footer>
 

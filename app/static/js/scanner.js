@@ -332,7 +332,7 @@ function renderScanResult(data) {
         data.health_insights.forEach(insight => {
             const pill = document.createElement("div");
             pill.className = "insight-pill";
-            pill.innerHTML = `<span>⚡</span><span>${insight}</span>`;
+            pill.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>${insight}</span>`;
             insightsBox.appendChild(pill);
         });
     }
@@ -525,7 +525,9 @@ function logPlateToHistory() {
 
         if (toast) {
             toast.style.display = "inline-flex";
-            toast.innerText = `✓ Successfully logged "${currentPlateData.meal_name}" (${Math.round(currentPlateData.calories)} kcal) to your private metabolic ledger!`;
+            toast.style.alignItems = "center";
+            toast.style.gap = "8px";
+            toast.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg><span>Successfully logged "${currentPlateData.meal_name}" (${Math.round(currentPlateData.calories)} kcal) to your private metabolic ledger!</span>`;
             setTimeout(() => {
                 toast.style.display = "none";
             }, 3500);
