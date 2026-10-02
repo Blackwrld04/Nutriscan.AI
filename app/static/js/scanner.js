@@ -1,8 +1,11 @@
 /**
  * OpenCal AI - Dedicated Plate Scanner Studio Logic
+ * Synchronized with Gemma Vision, USDA Grounding & TabPFN In-Context Engine
  */
 
+let weightChart = null;
 let cameraStream = null;
+
 let currentPlateData = {
     meal_name: "Pan-Seared Salmon & Sweet Potato Fuel Plate",
     calories: 645,
@@ -19,10 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
     initTabs();
     initDropzone();
     initPresets();
-    updateBudgetBar(currentPlateData.calories, currentPlateData.daily_budget);
+    initSlider();
+    loadMetabolicForecast(2100);
 });
 
-// Segmented Control Tabs
+// Segmented Control Tabs (Upload, Camera, Presets)
 function initTabs() {
     const tabButtons = document.querySelectorAll(".studio-tab-btn");
     const tabPanels = document.querySelectorAll(".studio-tab-panel");
@@ -152,7 +156,7 @@ async function handlePlateUpload(file) {
     formData.append("file", file);
 
     try {
-        setTimeout(() => setScanningProgress(2), 400); // USDA Grounding
+        setTimeout(() => setScanningProgress(2), 350); // USDA Grounding
 
         const response = await fetch("/api/analyze-plate", {
             method: "POST",
@@ -235,8 +239,8 @@ function loadPreset(type) {
                 ],
                 items: [
                     { name: "Pan-Seared Atlantic Salmon", weight_g: 185, food_group: "Seafood", nutrition: { calories: 384.8, protein_g: 37.7, carbs_g: 0, fat_g: 24.8 } },
-                    { name: "Baked Sweet Potato", weight_g: 200, food_group: "Vegetables & Roots", nutrition: { calories: 180.0, protein_g: 4.0, carbs_g: 41.4, fat_g: 0.4 } },
-                    { name: "Sautéed Asparagus", weight_g: 80, food_group: "Vegetables & Greens", nutrition: { calories: 17.6, protein_g: 1.9, carbs_g: 3.3, fat_g: 0.2 } }
+                    { name: "Baked Japanese Sweet Potato", weight_g: 200, food_group: "Vegetables & Roots", nutrition: { calories: 180.0, protein_g: 4.0, carbs_g: 41.4, fat_g: 0.4 } },
+                    { name: "Sautéed Fresh Asparagus", weight_g: 80, food_group: "Vegetables & Greens", nutrition: { calories: 17.6, protein_g: 1.9, carbs_g: 3.3, fat_g: 0.2 } }
                 ],
                 inference_source: "Gemma 2 Multimodal + USDA Grounding"
             };
@@ -245,7 +249,7 @@ function loadPreset(type) {
         setScanningProgress(3);
         renderScanResult(result);
         resetStepper();
-    }, 600);
+    }, 500);
 }
 
 // Visual Stepper States
@@ -259,7 +263,7 @@ function setScanningProgress(step) {
         if (s1) { s1.classList.add("active"); s1.classList.remove("completed"); }
         if (s2) { s2.classList.remove("active", "completed"); }
         if (s3) { s3.classList.remove("active", "completed"); }
-        if (statusText) statusText.innerText = "Step 1/3: Gemma 2 segmenting food boundaries & estimating volume...";
+        if (statusText) statusText.innerText = "Step 1/3: Gemma 2 segmenting plate geometry & estimating gram volume...";
     } else if (step === 2) {
         if (s1) { s1.classList.remove("active"); s1.classList.add("completed"); }
         if (s2) { s2.classList.add("active"); s2.classList.remove("completed"); }
@@ -286,9 +290,9 @@ function resetStepper() {
 // Render Results
 function renderScanResult(data) {
     document.getElementById("studio-plate-title").innerText = data.meal_name;
-    document.getElementById("macro-cals").innerText = Math.round(data.total_nutrition.calories);
-    document.getElementById("macro-pro").innerText = Math.round(data.total_nutrition.protein_g) + "g";
-    document.getElementById("macro-carb").innerText = Math.round(data.total_nutrition.carbs_g) + "g";
+    document.getElementById("macro-calories").innerText = Math.round(data.total_nutrition.calories);
+    document.getElementById("macro-protein").innerText = Math.round(data.total_nutrition.protein_g) + "g";
+    document.getElementById("macro-carbs").innerText = Math.round(data.total_nutrition.carbs_g) + "g";
     document.getElementById("macro-fat").innerText = Math.round(data.total_nutrition.fat_g) + "g";
 
     // Update global state
@@ -306,22 +310,15 @@ function renderScanResult(data) {
         container.innerHTML = "";
         data.items.forEach(item => {
             const row = document.createElement("div");
-            row.className = "ledger-row";
-            row.style.gridTemplateColumns = "2fr 1fr 1.6fr 1.2fr";
+            row.className = "item-row";
             row.innerHTML = `
                 <div>
-                    <div style="font-weight: 700; color: var(--text-ink);">${item.name}</div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">${item.food_group} · USDA Grounded</div>
+                    <div class="item-left-name">${item.name}</div>
+                    <div class="item-left-sub">${item.weight_g}g • ${item.food_group} (USDA Grounded)</div>
                 </div>
                 <div>
-                    <span style="font-weight: 700; color: var(--text-slate);">${item.weight_g}g</span>
-                </div>
-                <div>
-                    <span style="font-weight: 800; color: #D97706;">${Math.round(item.nutrition.calories)} kcal</span>
-                    <span style="font-size: 0.78rem; color: var(--text-muted); margin-left: 4px;">${Math.round(item.nutrition.protein_g)}P / ${Math.round(item.nutrition.carbs_g)}C / ${Math.round(item.nutrition.fat_g)}F</span>
-                </div>
-                <div>
-                    <span class="badge-verified">✓ Grounded</span>
+                    <div class="item-right-cal">${Math.round(item.nutrition.calories)} kcal</div>
+                    <div class="item-right-macros">${Math.round(item.nutrition.protein_g)}g P / ${Math.round(item.nutrition.carbs_g)}g C / ${Math.round(item.nutrition.fat_g)}g F</div>
                 </div>
             `;
             container.appendChild(row);
@@ -339,6 +336,112 @@ function renderScanResult(data) {
             insightsBox.appendChild(pill);
         });
     }
+}
+
+// TabPFN Metabolic Forecast & Chart
+async function loadMetabolicForecast(caloriesTarget) {
+    try {
+        const response = await fetch(`/api/metabolic-forecast?friend_name=Dave&target_weight_kg=75.0&daily_calories_target=${caloriesTarget}`);
+        if (!response.ok) throw new Error("Forecast request failed");
+        const data = await response.json();
+
+        // Update TDEE cards
+        const dynamicEl = document.getElementById("dynamic-tdee-val");
+        const staticEl = document.getElementById("static-tdee-val");
+        const statusEl = document.getElementById("metabolic-status-val");
+        const daysEl = document.getElementById("days-to-goal-val");
+
+        if (dynamicEl) dynamicEl.innerText = data.insights.dynamic_tdee_kcal + " kcal";
+        if (staticEl) staticEl.innerText = data.insights.static_formula_tdee_kcal + " kcal";
+        if (statusEl) statusEl.innerText = data.insights.metabolic_status;
+        if (daysEl) daysEl.innerText = data.insights.projected_days_to_goal + " days";
+
+        currentPlateData.days_to_goal = data.insights.projected_days_to_goal;
+        currentPlateData.daily_budget = parseInt(caloriesTarget);
+
+        updateBudgetBar(currentPlateData.calories, currentPlateData.daily_budget);
+
+        // Render Chart.js Trajectory
+        renderWeightChart(data.trajectory, data.current_weight_kg, data.target_weight_kg);
+    } catch (err) {
+        console.error("Error loading metabolic forecast:", err);
+    }
+}
+
+function initSlider() {
+    const slider = document.getElementById("calories-slider");
+    const display = document.getElementById("slider-calories-display");
+
+    if (!slider) return;
+
+    slider.addEventListener("input", (e) => {
+        const val = e.target.value;
+        if (display) display.innerText = val + " kcal/day";
+    });
+
+    slider.addEventListener("change", (e) => {
+        loadMetabolicForecast(e.target.value);
+    });
+}
+
+function renderWeightChart(trajectory, currentWeight, targetWeight) {
+    const ctx = document.getElementById("trajectoryChart");
+    if (!ctx) return;
+
+    const labels = ["Day 0", ...trajectory.filter((_, i) => i % 4 === 0).map(t => `Day ${t.day_offset}`)];
+    const values = [currentWeight, ...trajectory.filter((_, i) => i % 4 === 0).map(t => t.projected_weight_kg)];
+
+    if (weightChart) {
+        weightChart.destroy();
+    }
+
+    weightChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "TabPFN In-Context Forecast (kg)",
+                    data: values,
+                    borderColor: "#10b981",
+                    backgroundColor: "rgba(16, 185, 129, 0.12)",
+                    fill: true,
+                    tension: 0.35,
+                    borderWidth: 3,
+                    pointBackgroundColor: "#10b981",
+                    pointRadius: 4
+                },
+                {
+                    label: "Target Goal (75kg)",
+                    data: labels.map(() => targetWeight),
+                    borderColor: "rgba(244, 63, 94, 0.6)",
+                    borderDash: [5, 5],
+                    fill: false,
+                    borderWidth: 2,
+                    pointRadius: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: "#334155", font: { family: "Inter", size: 12, weight: "600" } }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { color: "rgba(12, 107, 58, 0.08)" },
+                    ticks: { color: "#475569", font: { family: "Inter", size: 11 } }
+                },
+                y: {
+                    grid: { color: "rgba(12, 107, 58, 0.08)" },
+                    ticks: { color: "#475569", font: { family: "Inter", size: 11 } }
+                }
+            }
+        }
+    });
 }
 
 function updateBudgetBar(consumed, budget) {
@@ -385,7 +488,7 @@ async function playStudioCoachDebrief() {
             audio.play();
             btn.innerText = "Playing Audio Coach...";
             audio.onended = () => {
-                btn.innerText = "▶ Play Voice Coach Debrief";
+                btn.innerText = "▶ Play Daily Voice Debrief";
                 btn.disabled = false;
             };
         } else if ("speechSynthesis" in window) {
@@ -394,13 +497,13 @@ async function playStudioCoachDebrief() {
             window.speechSynthesis.speak(utterance);
             btn.innerText = "Speaking (Browser Speech)...";
             utterance.onend = () => {
-                btn.innerText = "▶ Play Voice Coach Debrief";
+                btn.innerText = "▶ Play Daily Voice Debrief";
                 btn.disabled = false;
             };
         }
     } catch (err) {
         console.error("Coach error:", err);
-        btn.innerText = "▶ Play Voice Coach Debrief";
+        btn.innerText = "▶ Play Daily Voice Debrief";
         btn.disabled = false;
     }
 }
@@ -422,7 +525,7 @@ function logPlateToHistory() {
 
         if (toast) {
             toast.style.display = "inline-flex";
-            toast.innerText = `✓ Successfully logged "${currentPlateData.meal_name}" to your private metabolic ledger!`;
+            toast.innerText = `✓ Successfully logged "${currentPlateData.meal_name}" (${Math.round(currentPlateData.calories)} kcal) to your private metabolic ledger!`;
             setTimeout(() => {
                 toast.style.display = "none";
             }, 3500);

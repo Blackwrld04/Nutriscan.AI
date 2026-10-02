@@ -4,12 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover">
   <title>OpenCal AI — Plate Scanner Studio & Vision Nutrition Grounding</title>
-  <meta name="description" content="Dedicated meal plate scanner powered by Google Gemma 2 and USDA FoodData Central. Real-time visual parsing, deterministic macro calculations, and TabPFN metabolic sync.">
+  <meta name="description" content="Dedicated meal plate scanner powered by Google Gemma 2, USDA FoodData Central, and Prior Labs TabPFN. Real-time visual parsing, deterministic macro grounding, and in-context metabolic forecasting.">
   
   <!-- Google Fonts: Inter & Outfit & IBM Plex Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Chart.js for Interactive Trajectory Graph -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
   <!-- Core Design System (Green & White Theme) -->
   <link rel="stylesheet" href="/static/css/style.css">
@@ -31,15 +34,15 @@
       <div class="nav-links" style="display: flex; align-items: center; gap: 0.75rem;">
         <span class="pill-badge active-indicator">
           <span class="dot"></span>
-          <span>Gemma 2 Vision</span>
+          <span>Gemma 2 Vision: Online</span>
         </span>
         <span class="pill-badge active-indicator">
           <span class="dot"></span>
-          <span>USDA FDC Grounded</span>
+          <span>USDA Grounded</span>
         </span>
         <span class="pill-badge active-indicator">
           <span class="dot"></span>
-          <span>TabPFN Engine</span>
+          <span>TabPFN In-Context Engine</span>
         </span>
       </div>
 
@@ -59,15 +62,15 @@
     <div class="studio-header-strip">
       <div class="studio-title-area">
         <div style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.3rem 0.8rem; border-radius: 999px; background: var(--brand-emerald-pale); border: 1px solid rgba(12, 107, 58, 0.2); font-size: 0.76rem; font-weight: 800; color: var(--brand-forest); margin-bottom: 0.6rem; letter-spacing: 0.05em;">
-          📷 PLATE SCANNER STUDIO
+          📷 PLATE SCANNER & METABOLIC STUDIO
         </div>
-        <h1>Scan Your Plate & Deconstruct Macros</h1>
-        <p>Take a photo, upload a meal image, or evaluate verified meal presets with zero LLM hallucination.</p>
+        <h1>Scan Your Plate & Forecast Metabolic Impact</h1>
+        <p>Deconstruct your meal with Google Gemma 2, ground every gram with USDA FoodData Central, and simulate your 28-day weight trajectory with Prior Labs TabPFN.</p>
       </div>
 
       <div style="display: flex; gap: 0.5rem; align-items: center;">
         <span style="font-size: 0.82rem; color: var(--text-muted); font-family: var(--font-mono);">
-          Deterministic Accuracy: ±15 kcal
+          Precision: ±15 kcal · 100% Deterministic Grounding
         </span>
       </div>
     </div>
@@ -160,7 +163,6 @@
             <span class="plate-tag-badge">✓ Spatial Boundaries Segmented</span>
             <span class="plate-tag-badge">✓ USDA Grounded</span>
           </div>
-          <!-- Default preview or uploaded image -->
           <div style="text-align: center; padding: 2.5rem 1rem;">
             <img id="plate-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%230C6B3A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Cpath d='M19 12a7 7 0 0 0-14 0'/%3E%3Ccircle cx='12' cy='5' r='1'/%3E%3C/svg%3E" alt="Plate Preview" style="max-height: 140px; width: auto; object-fit: contain;">
             <div style="font-size: 0.85rem; font-weight: 700; color: var(--brand-forest); margin-top: 0.75rem;">
@@ -188,40 +190,22 @@
           </div>
         </div>
 
-        <div id="scanner-status-text" style="text-align: center; font-size: 0.82rem; font-weight: 700; color: var(--brand-forest);">
+        <div id="scanner-status-text" style="text-align: center; font-size: 0.82rem; font-weight: 700; color: var(--brand-forest); margin-bottom: 1.25rem;">
           Plate analysis complete · 100% Deterministic Grounding Verified
         </div>
 
-      </div>
-
-      <!-- Right Column: Nutrition Breakdown & Biological Diagnostics -->
-      <div class="workspace-card" style="padding: 1.75rem;">
-        
-        <!-- Header -->
-        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--border-line); padding-bottom: 1.25rem; margin-bottom: 1.25rem;">
-          <div>
-            <div style="font-size: 0.74rem; font-weight: 800; color: var(--brand-forest); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
-              VERIFIED NUTRITIONAL BREAKDOWN
-            </div>
-            <h2 id="studio-plate-title" style="font-family: var(--font-heading); font-size: 1.45rem; font-weight: 800; color: var(--text-ink); line-height: 1.2;">
-              Pan-Seared Salmon & Sweet Potato Fuel Plate
-            </h2>
-          </div>
-          <span class="badge-verified" style="white-space: nowrap;">✓ Grounded in USDA FDC</span>
-        </div>
-
-        <!-- 4 Macro Metrics -->
+        <!-- Live Macro Summary Strip -->
         <div class="macro-summary-strip" style="margin: 0 0 1.25rem 0;">
           <div class="macro-box">
-            <div class="macro-num color-cal" id="macro-cals">645</div>
+            <div class="macro-num color-cal" id="macro-calories">645</div>
             <div class="macro-txt">Calories (kcal)</div>
           </div>
           <div class="macro-box">
-            <div class="macro-num color-pro" id="macro-pro">48g</div>
+            <div class="macro-num color-pro" id="macro-protein">48g</div>
             <div class="macro-txt">Protein</div>
           </div>
           <div class="macro-box">
-            <div class="macro-num color-carb" id="macro-carb">58g</div>
+            <div class="macro-num color-carb" id="macro-carbs">58g</div>
             <div class="macro-txt">Carbs</div>
           </div>
           <div class="macro-box">
@@ -230,81 +214,44 @@
           </div>
         </div>
 
-        <!-- Daily Metabolic Calorie Budget Bar -->
-        <div class="daily-budget-card">
-          <div class="budget-header-row">
-            <span>Daily Metabolic Deficit Target:</span>
-            <span style="color: var(--brand-forest);" id="budget-text-label">645 kcal consumed of 2100 kcal target (1455 kcal remaining)</span>
-          </div>
-          <div class="budget-bar-track">
-            <div class="budget-bar-fill" id="budget-bar-fill" style="width: 31%;"></div>
-          </div>
-        </div>
-
-        <!-- Verified Items Table -->
-        <div style="margin-top: 1.5rem;">
-          <div style="font-size: 0.78rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.6rem;">
-            Identified Components & USDA Records:
+        <!-- Detected Ingredients Table -->
+        <div style="margin-top: 1.25rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem;">
+            <h4 id="studio-plate-title" style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--text-ink);">
+              Pan-Seared Salmon & Sweet Potato Fuel Plate
+            </h4>
+            <span class="badge-verified">✓ USDA Grounded</span>
           </div>
 
-          <div class="ledger-card" style="border-radius: var(--radius-md);">
-            <div class="ledger-top-stripe"></div>
-            <div class="ledger-table-header" style="grid-template-columns: 2fr 1fr 1.6fr 1.2fr; font-size: 0.72rem; padding: 0.65rem 1rem;">
-              <span>Food Item</span>
-              <span>Portion</span>
-              <span>Macros</span>
-              <span>Status</span>
+          <div class="food-items-wrap" id="studio-items-table">
+            <div class="item-row">
+              <div>
+                <div class="item-left-name">Pan-Seared Atlantic Salmon</div>
+                <div class="item-left-sub">185g • Seafood (USDA FDC #175168)</div>
+              </div>
+              <div>
+                <div class="item-right-cal">385 kcal</div>
+                <div class="item-right-macros">38g P / 0g C / 25g F</div>
+              </div>
             </div>
-            <div id="studio-items-table">
-              <div class="ledger-row" style="grid-template-columns: 2fr 1fr 1.6fr 1.2fr; padding: 0.8rem 1rem;">
-                <div>
-                  <div style="font-weight: 700; color: var(--text-ink);">Pan-Seared Atlantic Salmon</div>
-                  <div style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);">USDA FDC #175168 · Seafood</div>
-                </div>
-                <div>
-                  <span style="font-weight: 700; color: var(--text-slate);">185g</span>
-                </div>
-                <div>
-                  <span style="font-weight: 800; color: #D97706;">385 kcal</span>
-                  <span style="font-size: 0.78rem; color: var(--text-muted); margin-left: 4px;">38g P / 0g C / 25g F</span>
-                </div>
-                <div>
-                  <span class="badge-verified">✓ Grounded</span>
-                </div>
+            <div class="item-row">
+              <div>
+                <div class="item-left-name">Baked Japanese Sweet Potato</div>
+                <div class="item-left-sub">200g • Roots (USDA FDC #168483)</div>
               </div>
-
-              <div class="ledger-row" style="grid-template-columns: 2fr 1fr 1.6fr 1.2fr; padding: 0.8rem 1rem;">
-                <div>
-                  <div style="font-weight: 700; color: var(--text-ink);">Baked Japanese Sweet Potato</div>
-                  <div style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);">USDA FDC #168483 · Roots</div>
-                </div>
-                <div>
-                  <span style="font-weight: 700; color: var(--text-slate);">200g</span>
-                </div>
-                <div>
-                  <span style="font-weight: 800; color: #D97706;">180 kcal</span>
-                  <span style="font-size: 0.78rem; color: var(--text-muted); margin-left: 4px;">4g P / 41g C / 0g F</span>
-                </div>
-                <div>
-                  <span class="badge-verified">✓ Grounded</span>
-                </div>
+              <div>
+                <div class="item-right-cal">180 kcal</div>
+                <div class="item-right-macros">4g P / 41g C / 0g F</div>
               </div>
-
-              <div class="ledger-row" style="grid-template-columns: 2fr 1fr 1.6fr 1.2fr; padding: 0.8rem 1rem;">
-                <div>
-                  <div style="font-weight: 700; color: var(--text-ink);">Sautéed Fresh Asparagus</div>
-                  <div style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);">USDA FDC #170381 · Greens</div>
-                </div>
-                <div>
-                  <span style="font-weight: 700; color: var(--text-slate);">80g</span>
-                </div>
-                <div>
-                  <span style="font-weight: 800; color: #D97706;">18 kcal</span>
-                  <span style="font-size: 0.78rem; color: var(--text-muted); margin-left: 4px;">2g P / 3g C / 0g F</span>
-                </div>
-                <div>
-                  <span class="badge-verified">✓ Grounded</span>
-                </div>
+            </div>
+            <div class="item-row">
+              <div>
+                <div class="item-left-name">Sautéed Fresh Asparagus</div>
+                <div class="item-left-sub">80g • Greens (USDA FDC #170381)</div>
+              </div>
+              <div>
+                <div class="item-right-cal">18 kcal</div>
+                <div class="item-right-macros">2g P / 3g C / 0g F</div>
               </div>
             </div>
           </div>
@@ -322,8 +269,84 @@
           </div>
         </div>
 
-        <!-- ElevenLabs Voice Coach Debrief -->
-        <div class="voice-coach-card" style="margin-top: 1.5rem;">
+        <!-- Action: Log Plate -->
+        <div style="margin-top: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap;">
+          <button class="btn-primary" onclick="logPlateToHistory()" style="background: linear-gradient(135deg, #064A28, #0C6B3A); width: 100%; justify-content: center;">
+            <span>✓</span>
+            <span>Log Plate to Metabolic History</span>
+          </button>
+        </div>
+
+        <!-- Notification Toast -->
+        <div id="log-toast" style="display: none; margin-top: 1rem; padding: 0.75rem 1rem; background: var(--brand-emerald-pale); border: 1px solid rgba(12, 107, 58, 0.25); border-radius: var(--radius-sm); color: var(--brand-forest); font-size: 0.85rem; font-weight: 700; width: 100%;">
+        </div>
+
+      </div>
+
+      <!-- Right Column: TabPFN In-Context Engine & 28-Day Trajectory Graph -->
+      <div class="workspace-card" style="padding: 1.75rem;">
+        
+        <div style="border-bottom: 1px solid var(--border-line); padding-bottom: 1.25rem; margin-bottom: 1.25rem;">
+          <div style="font-size: 0.74rem; font-weight: 800; color: var(--brand-forest); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+            PRIOR LABS TABPFN FOUNDATION ENGINE
+          </div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.45rem; font-weight: 800; color: var(--text-ink); line-height: 1.2;">
+            Dynamic TDEE & 28-Day Weight Trajectory
+          </h2>
+          <p style="font-size: 0.88rem; color: var(--text-slate); margin-top: 0.35rem;">
+            In-context tabular learning computes Dave's true dynamic expenditure without static formula bias.
+          </p>
+        </div>
+
+        <!-- Dynamic TDEE Comparison Cards -->
+        <div class="tdee-card-pair">
+          <div class="tdee-panel active-glow">
+            <div class="tdee-big-val" id="dynamic-tdee-val">2,480 kcal</div>
+            <div class="tdee-desc-label">TabPFN Dynamic TDEE</div>
+          </div>
+          <div class="tdee-panel">
+            <div class="tdee-big-val" id="static-tdee-val" style="color: var(--text-muted);">2,220 kcal</div>
+            <div class="tdee-desc-label">Static Formula TDEE</div>
+          </div>
+        </div>
+
+        <!-- Diagnostic Metrics Row -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; font-size: 0.88rem;">
+          <span style="color: var(--text-slate);">Metabolic Diagnostic Status:</span>
+          <span id="metabolic-status-val" style="font-weight: 700; color: var(--brand-forest);">Optimal Steady-State Fat Loss</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 0.88rem;">
+          <span style="color: var(--text-slate);">Projected Days to 75.0kg Goal:</span>
+          <span id="days-to-goal-val" style="font-weight: 700; color: #0284C7;">22 days</span>
+        </div>
+
+        <!-- Trajectory Chart Box -->
+        <div class="chart-card-box">
+          <canvas id="trajectoryChart"></canvas>
+        </div>
+
+        <!-- Calorie Target Slider -->
+        <div class="slider-panel">
+          <div class="slider-label-row">
+            <span>Simulate Daily Caloric Target:</span>
+            <span class="slider-highlight-num" id="slider-calories-display">2100 kcal/day</span>
+          </div>
+          <input type="range" id="calories-slider" min="1600" max="3000" step="50" value="2100">
+        </div>
+
+        <!-- Daily Metabolic Deficit Budget Bar -->
+        <div class="daily-budget-card">
+          <div class="budget-header-row">
+            <span>Plate vs Daily Deficit Budget:</span>
+            <span style="color: var(--brand-forest);" id="budget-text-label">645 kcal consumed of 2100 kcal target (1455 kcal remaining)</span>
+          </div>
+          <div class="budget-bar-track">
+            <div class="budget-bar-fill" id="budget-bar-fill" style="width: 31%;"></div>
+          </div>
+        </div>
+
+        <!-- ElevenLabs Audio Coach Debrief -->
+        <div class="voice-coach-card" style="margin-top: 1.25rem;">
           <div class="voice-card-top">
             <div class="coach-chip">
               <span>🎙️</span>
@@ -336,23 +359,6 @@
             <span>Play Daily Voice Debrief</span>
           </button>
           <div class="transcript-quote-box" id="studio-coach-transcript" style="display: none;"></div>
-        </div>
-
-        <!-- Actions: Log Plate -->
-        <div style="margin-top: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
-          <button class="btn-primary" onclick="logPlateToHistory()" style="background: linear-gradient(135deg, #064A28, #0C6B3A);">
-            <span>✓</span>
-            <span>Log Plate to Metabolic History</span>
-          </button>
-
-          <a href="/#how" class="btn-secondary" style="font-size: 0.85rem;">
-            <span>Explore Architecture</span>
-            <span>→</span>
-          </a>
-        </div>
-
-        <!-- Notification Toast -->
-        <div id="log-toast" style="display: none; margin-top: 1rem; padding: 0.75rem 1rem; background: var(--brand-emerald-pale); border: 1px solid rgba(12, 107, 58, 0.25); border-radius: var(--radius-sm); color: var(--brand-forest); font-size: 0.85rem; font-weight: 700; width: 100%;">
         </div>
 
       </div>
@@ -376,7 +382,7 @@
       </p>
 
       <p style="max-width: 600px; line-height: 1.6; font-size: 0.82rem; color: #94A3B8;">
-        Gemma 2 Multimodal + USDA FoodData Central + Prior Labs TabPFN + ElevenLabs AI.
+        Google Gemma 2 Multimodal + USDA FoodData Central + Prior Labs TabPFN + ElevenLabs AI + Sentry Agent Tracing.
       </p>
     </div>
   </footer>

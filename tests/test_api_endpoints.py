@@ -65,7 +65,8 @@ def test_scan_page_endpoints():
     res_scan = client.get("/scan")
     assert res_scan.status_code == 200
     assert "text/html" in res_scan.headers["content-type"]
-    assert "PLATE SCANNER STUDIO" in res_scan.text
+    assert "PLATE SCANNER" in res_scan.text
+    assert "trajectoryChart" in res_scan.text
 
     res_scanner = client.get("/scanner")
     assert res_scanner.status_code == 200
