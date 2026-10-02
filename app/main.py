@@ -63,6 +63,15 @@ async def root():
     return {"message": "OpenCal AI API is running. Access /docs for API documentation."}
 
 
+@app.get("/scan")
+@app.get("/scanner")
+async def scan_page():
+    scan_file = static_dir / "scan.html"
+    if scan_file.exists():
+        return FileResponse(scan_file)
+    return FileResponse(static_dir / "index.html")
+
+
 @app.get("/api/health")
 async def health_check():
     return {

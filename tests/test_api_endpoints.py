@@ -59,3 +59,15 @@ def test_coach_debrief_endpoint():
     data = response.json()
     assert "text" in data
     assert "Dave" in data["text"]
+
+
+def test_scan_page_endpoints():
+    res_scan = client.get("/scan")
+    assert res_scan.status_code == 200
+    assert "text/html" in res_scan.headers["content-type"]
+    assert "PLATE SCANNER STUDIO" in res_scan.text
+
+    res_scanner = client.get("/scanner")
+    assert res_scanner.status_code == 200
+    assert "text/html" in res_scanner.headers["content-type"]
+
