@@ -43,40 +43,71 @@ class GemmaVisionService:
         self.model = settings.GEMMA_MODEL
 
     def _call_google_vision(self, image_b64: str) -> Optional[Dict]:
-        """Attempt to call Google AI Vision API (Gemini/Gemma multimodal) if key is provided."""
+        """Attempt to call Google AI Multimodal Vision API (Gemini / Gemma) if key is provided."""
         api_key = settings.GEMINI_API_KEY.strip() if settings.GEMINI_API_KEY else ""
         if not api_key:
             return None
-        try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
-            payload = {
-                "contents": [
-                    {
-                        "parts": [
-                            {"text": GEMMA_VISION_PROMPT},
-                            {
-                                "inline_data": {
-                                    "mime_type": "image/jpeg",
-                                    "data": image_b64
-                                }
+        
+        headers = {
+            "Content-Type": "application/json",
+            "X-goog-api-key": api_key,
+        }
+        
+        payload = {
+            "contents": [
+                {
+                    "parts": [
+                        {"text": GEMMA_VISION_PROMPT},
+                        {
+                            "inline_data": {
+                                "mime_type": "image/jpeg",
+                                "data": image_b64
                             }
-                        ]
-                    }
-                ],
-                "generationConfig": {
-                    "response_mime_type": "application/json"
+                        }
+                    ]
                 }
+            ],
+            "generationConfig": {
+                "response_mime_type": "application/json"
             }
-            resp = requests.post(url, json=payload, timeout=15)
-            if resp.status_code == 200:
-                raw_text = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
-                data = json.loads(raw_text)
-                logger.info("Successfully received live vision inference from Google Multimodal Vision API.")
-                return data
-            else:
-                logger.warning(f"Google Vision API returned {resp.status_code}: {resp.text}")
-        except Exception as e:
-            logger.error(f"Error calling Google Vision API: {e}")
+        }
+        
+        # Priority list of models supported by the API key with instant multimodal vision
+        models_to_try = [
+            "gemini-flash-lite-latest",
+            "gemini-3.1-flash-lite",
+            "gemini-3.7-flash",
+            "gemini-flash-latest",
+        ]
+        
+        for model in models_to_try:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+                resp = requests.post(url, headers=headers, json=payload, timeout=20)
+                if resp.status_code == 200:
+                    resp_json = resp.json()
+                    candidates = resp_json.get("candidates", [])
+                    if candidates:
+                        parts = candidates[0].get("content", {}).get("parts", [])
+                        if parts:
+                            raw_text = parts[0].get("text", "").strip()
+                            if raw_text.startswith("```json"):
+                                raw_text = raw_text[7:]
+                            elif raw_text.startswith("```"):
+                                raw_text = raw_text[3:]
+                            if raw_text.endswith("```"):
+                                raw_text = raw_text[:-3]
+                            data = json.loads(raw_text.strip())
+                            if isinstance(data, dict) and data.get("items"):
+                                logger.info(f"Successfully received live vision inference from Google Multimodal Vision ({model}).")
+                                return data
+                elif resp.status_code in (404, 503):
+                    logger.warning(f"Google Vision API model {model} returned {resp.status_code}, trying next model...")
+                    continue
+                else:
+                    logger.warning(f"Google Vision API ({model}) returned {resp.status_code}: {resp.text}")
+            except Exception as e:
+                logger.error(f"Error calling Google Vision API ({model}): {e}")
         return None
 
     def _call_ollama_gemma(self, image_b64: str) -> Optional[Dict]:
