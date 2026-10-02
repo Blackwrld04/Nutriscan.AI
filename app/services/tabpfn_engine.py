@@ -31,7 +31,8 @@ class TabPFNEngineService:
         if token and len(token) > 10:
             try:
                 import tabpfn_client
-                tabpfn_client.init(token=token)
+                tabpfn_client.set_access_token(token)
+                tabpfn_client.init(use_server=True)
                 from tabpfn_client import TabPFNRegressor
                 self.tabpfn_model = TabPFNRegressor()
                 logger.info("Successfully connected to Prior Labs TabPFN Cloud foundation API.")
