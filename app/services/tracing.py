@@ -16,6 +16,7 @@ def init_tracing():
                 dsn=settings.SENTRY_DSN,
                 traces_sample_rate=settings.SENTRY_TRACES_SAMPLE_RATE,
                 send_default_pii=True,
+                enable_logs=True,
                 environment=settings.ENVIRONMENT,
                 release="opencal-ai@1.0.0",
             )
@@ -34,7 +35,7 @@ def trace_span(op: str, description: str, data: Optional[Dict[str, Any]] = None)
 
     try:
         if sentry_sdk.is_initialized():
-            span = sentry_sdk.start_span(op=op, description=description)
+            span = sentry_sdk.start_span(op=op, name=description)
             if data:
                 for k, v in data.items():
                     span.set_data(k, v)

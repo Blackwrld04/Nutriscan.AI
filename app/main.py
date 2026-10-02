@@ -21,11 +21,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("opencal-ai")
 
 
+# Initialize Sentry Agent Tracing before FastAPI app creation
+init_tracing()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     logger.info("Initializing OpenCal AI Services...")
-    init_tracing()
     # Preload database and models
     _ = tabpfn_service.load_historical_data()
     logger.info("OpenCal AI Ready.")
@@ -155,3 +158,11 @@ async def get_sample_history():
     """Retrieve the friend's 30-day historical calibration log for charts."""
     df = tabpfn_service.load_historical_data()
     return df.to_dict(orient="records")
+
+
+@app.get("/sentry-debug")
+async def trigger_sentry_debug():
+    """Verify Sentry Agent Tracing and Error Monitoring integration."""
+    logger.info("Triggering Sentry test event...")
+    _ = 1 / 0
+
