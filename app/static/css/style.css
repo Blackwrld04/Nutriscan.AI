@@ -1904,3 +1904,166 @@ footer {
   border-radius: 999px;
   transition: width 0.5s ease;
 }
+
+/* ==========================================================================
+   COMPREHENSIVE MOBILE RESPONSIVE OVERRIDES
+   ========================================================================== */
+
+/* ---- Tablet & Small Laptop (max-width: 768px) ---- */
+@media (max-width: 768px) {
+  /* Nav */
+  .nav-wrapper {
+    padding: 0.6rem 1rem;
+  }
+  .nav-brand {
+    font-size: 1.1rem;
+  }
+  .nav-brand-logo {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* Hero */
+  .hero-section {
+    min-height: auto;
+    padding: 6.5rem 1.25rem 3rem;
+  }
+  .hero-title {
+    font-size: clamp(2rem, 7vw, 3rem);
+  }
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hero-actions .btn-primary,
+  .hero-actions .btn-secondary {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Phone Mockup */
+  .phone-mockup {
+    max-width: 260px;
+    margin: 0 auto;
+  }
+
+  /* Section titles */
+  .section-title {
+    font-size: clamp(1.6rem, 5vw, 2.2rem) !important;
+  }
+  .section-subtitle {
+    font-size: 0.95rem !important;
+    padding: 0 0.5rem;
+  }
+
+  /* Content sections padding */
+  .content-section {
+    padding: 3rem 1.25rem !important;
+  }
+
+  /* Comparison table scroll */
+  .comparison-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .comparison-table-wrap table {
+    min-width: 600px;
+  }
+
+  /* Watermark */
+  .bg-watermark { display: none; }
+
+  /* Footer */
+  .footer-top-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    text-align: center;
+  }
+  .footer-bottom-bar {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    text-align: center;
+  }
+
+  /* Stat grid */
+  .stat-num {
+    font-size: 1.8rem;
+  }
+}
+
+/* ---- Mobile Phone (max-width: 480px) ---- */
+@media (max-width: 480px) {
+  /* Nav - tight spacing */
+  header {
+    padding: 0.5rem 0.5rem;
+  }
+  .nav-wrapper {
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+  }
+  .nav-cta {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.78rem;
+  }
+  .nav-brand {
+    font-size: 1rem;
+  }
+
+  /* Hero - stacked, compact */
+  .hero-section {
+    padding: 5.5rem 1rem 2rem;
+  }
+  .hero-badge-pill {
+    font-size: 0.72rem;
+    padding: 0.35rem 0.75rem;
+  }
+  .hero-title {
+    font-size: clamp(1.7rem, 8vw, 2.4rem);
+  }
+  .hero-subtitle {
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  /* Phone Mockup */
+  .phone-mockup {
+    max-width: 220px;
+    border-radius: 32px;
+    padding: 7px;
+  }
+  .phone-screen {
+    border-radius: 26px;
+  }
+
+  /* Technology badges - allow wrap */
+  .hero-tech-partners {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Section padding */
+  .content-section {
+    padding: 2rem 1rem !important;
+  }
+
+  /* Cards */
+  .section-card {
+    padding: 1.25rem !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  /* FAQ */
+  details summary {
+    font-size: 0.88rem;
+    padding: 0.85rem 1rem;
+  }
+
+  /* Footer */
+  footer {
+    padding: 2.5rem 1rem !important;
+  }
+}
