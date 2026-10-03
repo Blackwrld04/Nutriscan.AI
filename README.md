@@ -14,7 +14,16 @@
 
 NutriScan AI eliminates the "Calorie Guesswork Crisis", the dangerous "AI Vision Hallucination Trap", and the "Static Math Fallacy". Commercial food tracking applications charge $35/month while sending intimate meal photos and biological logs to centralized corporate clouds, all while relying on 1990s static formulas (like Mifflin-St Jeor) that completely fail to account for metabolic adaptation, non-exercise activity thermogenesis (NEAT), and water retention. NutriScan AI pairs open-weight **Google Gemma 2 Vision** with **100% deterministic USDA FoodData Central grounding** and **Prior Labs' TabPFN**—the world's leading tabular foundation model—to discover a user's true dynamic daily energy expenditure (TDEE) and project their exact 28-day weight trajectory with Bayesian confidence intervals.
 
-<img width="360" alt="NutriScan AI Mobile App Dashboard" src="https://raw.githubusercontent.com/Blackwrld04/Nutriscan.AI/main/app/static/img/nutriscan_app_mockup.png" />
+
+## Watch the demo
+
+A real-device walkthrough of the NutriScan.AI companion, demonstrating live camera scanning, deterministic USDA FoodData Central macronutrient grounding, TabPFN dynamic metabolic forecasting, and personalized ElevenLabs voice debriefing.
+
+https://github.com/user-attachments/assets/00fd8620-69ec-42ae-8bef-5e0c47a6debe
+
+The walkthrough demonstrates an end-to-end user session: onboarding and metabolic profile configuration, live food plate capture, instant USDA macronutrient breakdown, adjusting daily caloric targets to simulate dynamic metabolic adaptation via TabPFN, and receiving an auditory debrief tailored to the user's logged intake.
+
+---
 
 **Scan your plate. Ground in USDA science. Forecast your dynamic metabolic trajectory.**
 
@@ -106,34 +115,13 @@ We architected **NutriScan.AI** (initially prototyped as *OpenCal AI*) around fi
 4. **ElevenLabs Auditory Voice Coach**: To keep Dave motivated during his morning commute, an AI voice coach (`Rachel`) delivers an empathetic 30-second audio debrief analyzing his plate composition and celebrating milestone achievements.
 5. **Sentry Full-Trace Observability**: Every pipeline stage—from Gemma's visual tokens to TabPFN confidence intervals and ElevenLabs audio buffers—is instrumented with distributed tracing.
 
----
 
-### Act 3: From OpenCal AI to NutriScan.AI — The Design & Engineering Journey
-Over hundreds of pair-programming iterations, the project evolved from a raw terminal backend into a state-of-the-art web application:
-- **Design Inspiration**: We studied modern, high-converting visual showcases like `trustxx.netlify.app` and `nutrilens.site`, creating a signature **Emerald & Teal glassmorphic aesthetic**.
-- **Mobile-First Cal AI Studio**: We built a native-feeling mobile experience with an interactive calorie progress ring, 3 radial macro cards (drumstick for protein, wheat for carbs, avocado for fat), a daily hydration tracker (`+250ml` / `+500ml`), a 16:8 intermittent fasting tracker, and a week calendar strip.
-- **The Floating Action Button**: Designed a fixed camera FAB positioned above the bottom navigation bar for instantaneous 1-tap plate logging on mobile phones.
-- **Interactive Trajectory Studio**: Equipped with Chart.js to render TabPFN's 28-day Bayesian confidence envelope alongside an interactive calorie simulation slider (1,600 to 3,000 kcal/day).
-- **Responsive Widescreen Desktop Studio**: To ensure desktop users weren't trapped in a mobile phone column, we engineered a widescreen layout expanding to 1280px (`max-w-7xl`) with a 2-column analytics grid, desktop navigation header, and "Scan Plate" CTA—**without altering a single pixel of the mobile experience**.
-
----
-
-### Act 4: The Live Handoff & Dave's Unfiltered Reaction
+### Act 3: The Live Handoff & Dave's Unfiltered Reaction
 When we deployed the web application to **Render** (`https://nutriscan-ai-fwn8.onrender.com`) and handed Dave the phone over a post-run lunch, his reaction was instantaneous:
 
 > *"Are you serious? You built this in a weekend? The camera scanner picked up the quinoa and salmon instantly, and the calories match the USDA label to the gram. But the crazy part is the 28-Day Trajectory chart: when I dragged the slider to 2,100 kcal, it told me I'd reach 75.0 kg on Day 21. That's the exact pace I was hoping for. And the voice debrief on my way home literally sounded like my running coach!"*
 
 Dave deleted his paid subscription app that afternoon. NutriScan.AI proved that open-source AI, foundation tabular modeling, and deterministic nutrition science could completely outclass proprietary $35/month paywalled tools while preserving 100% data sovereignty.
-
----
-
-## Watch the demo
-
-A real-device walkthrough of the NutriScan.AI companion, demonstrating live camera scanning, deterministic USDA FoodData Central macronutrient grounding, TabPFN dynamic metabolic forecasting, and personalized ElevenLabs voice debriefing.
-
-https://github.com/user-attachments/assets/00fd8620-69ec-42ae-8bef-5e0c47a6debe
-
-The walkthrough demonstrates an end-to-end user session: onboarding and metabolic profile configuration, live food plate capture, instant USDA macronutrient breakdown, adjusting daily caloric targets to simulate dynamic metabolic adaptation via TabPFN, and receiving an auditory debrief tailored to the user's logged intake.
 
 ---
 
