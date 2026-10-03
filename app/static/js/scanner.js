@@ -51,21 +51,9 @@ function initStorageAndCleanMockData() {
             localStorage.setItem("opencal_water_intake", "0");
         }
 
-        // User profile configuration
-        if (!localStorage.getItem("opencal_user_profile")) {
-            localStorage.setItem("opencal_user_profile", JSON.stringify({
-                sex: "male",
-                weight_lbs: 165,
-                height: "5'10\"",
-                dob: "January 01, 2003",
-                goal: "maintain",
-                activity: "moderate",
-                daily_calories: 2100,
-                target_protein: 150,
-                target_carbs: 220,
-                target_fat: 65
-            }));
-            localStorage.setItem("opencal_onboarded", "true");
+        // Clean out legacy mock water if it was 1750
+        if (localStorage.getItem("opencal_water_intake") === "1750") {
+            localStorage.setItem("opencal_water_intake", "0");
         }
     } catch (e) {
         console.warn("Storage init error:", e);
@@ -341,25 +329,59 @@ function completeOnboarding() {
     const dobD = document.getElementById("onboard-dob-day")?.value || "01";
     const dobY = document.getElementById("onboard-dob-year")?.value || "2003";
 
-    let dailyCals = 2100;
-    let prot = 150;
-    let carbs = 220;
-    let fat = 65;
+    // Basal Metabolic Rate (BMR) calculation via Mifflin-St Jeor formula:
+    // Men: (10 * weight_kg) + (6.25 * height_cm) - (5 * age) + 5
+    // Women: (10 * weight_kg) + (6.25 * height_cm) - (5 * age) - 161
+    const weightKg = weightVal * 0.45359237;
+    let heightCm = 175;
+    const hMatch = String(heightVal).match(/(\d+)'(?:\s*(\d+)")?/);
+    if (hMatch) {
+        const feet = parseInt(hMatch[1]) || 5;
+        const inches = parseInt(hMatch[2]) || 10;
+        heightCm = (feet * 12 + inches) * 2.54;
+    } else {
+        const parsedCm = parseFloat(heightVal);
+        if (!isNaN(parsedCm) && parsedCm > 100 && parsedCm < 250) heightCm = parsedCm;
+    }
+    const currentYear = new Date().getFullYear();
+    const birthYear = parseInt(dobY) || 2000;
+    const age = Math.max(16, Math.min(95, currentYear - birthYear));
 
-    if (selectedGoal === "lose") {
-        dailyCals = 1750;
-        prot = 160;
-        carbs = 160;
-        fat = 55;
-    } else if (selectedGoal === "gain") {
-        dailyCals = 2500;
-        prot = 175;
-        carbs = 280;
-        fat = 75;
+    let bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age);
+    if (selectedSex === "female") {
+        bmr -= 161;
+    } else {
+        bmr += 5;
     }
 
-    if (selectedActivity === "sedentary") dailyCals -= 150;
-    if (selectedActivity === "high") dailyCals += 250;
+    // Daily activity expenditure multiplier
+    let activityMult = 1.375; // moderate
+    if (selectedActivity === "sedentary") activityMult = 1.2;
+    if (selectedActivity === "high") activityMult = 1.55;
+
+    const tdee = Math.round(bmr * activityMult);
+    let dailyCals = tdee;
+    let prot = Math.round(weightKg * 1.8);
+    let fat = Math.round((dailyCals * 0.28) / 9);
+    let carbs = Math.round((dailyCals - (prot * 4) - (fat * 9)) / 4);
+
+    if (selectedGoal === "lose") {
+        dailyCals = Math.round(tdee - 450);
+        prot = Math.round(weightKg * 2.0); // preserve lean mass
+        fat = Math.round((dailyCals * 0.25) / 9);
+        carbs = Math.round((dailyCals - (prot * 4) - (fat * 9)) / 4);
+    } else if (selectedGoal === "gain") {
+        dailyCals = Math.round(tdee + 350);
+        prot = Math.round(weightKg * 2.2); // support hypertrophy
+        fat = Math.round((dailyCals * 0.25) / 9);
+        carbs = Math.round((dailyCals - (prot * 4) - (fat * 9)) / 4);
+    }
+
+    // Safe physiological bounds
+    dailyCals = Math.max(1300, Math.min(4200, dailyCals));
+    prot = Math.max(60, Math.min(280, prot));
+    fat = Math.max(35, Math.min(140, fat));
+    carbs = Math.max(80, Math.min(500, carbs));
 
     const profile = {
         sex: selectedSex,
@@ -376,6 +398,7 @@ function completeOnboarding() {
 
     localStorage.setItem("opencal_user_profile", JSON.stringify(profile));
     localStorage.setItem("opencal_onboarded", "true");
+    localStorage.setItem("nutriscan_onboarded_v2", "true");
 
     updateHomeScreen();
     if (typeof switchMainTab === "function") {
@@ -398,6 +421,7 @@ function skipOnboardingToHome() {
     };
     localStorage.setItem("opencal_user_profile", JSON.stringify(defaultProfile));
     localStorage.setItem("opencal_onboarded", "true");
+    localStorage.setItem("nutriscan_onboarded_v2", "true");
 
     updateHomeScreen();
     if (typeof switchMainTab === "function") {
@@ -405,8 +429,68 @@ function skipOnboardingToHome() {
     }
 }
 
+function populateDobOptions() {
+    const daySelect = document.getElementById("onboard-dob-day");
+    const yearSelect = document.getElementById("onboard-dob-year");
+    if (daySelect && daySelect.options.length <= 8) {
+        const currentDayVal = daySelect.value || "01";
+        daySelect.innerHTML = "";
+        for (let d = 1; d <= 31; d++) {
+            const val = d < 10 ? "0" + d : "" + d;
+            const opt = document.createElement("option");
+            opt.value = val;
+            opt.innerText = val;
+            if (val === currentDayVal) opt.selected = true;
+            daySelect.appendChild(opt);
+        }
+    }
+    if (yearSelect && yearSelect.options.length <= 10) {
+        const currentYearVal = yearSelect.value || "2003";
+        yearSelect.innerHTML = "";
+        const thisYear = new Date().getFullYear();
+        for (let y = thisYear - 12; y >= 1940; y--) {
+            const opt = document.createElement("option");
+            opt.value = "" + y;
+            opt.innerText = "" + y;
+            if (("" + y) === currentYearVal) opt.selected = true;
+            yearSelect.appendChild(opt);
+        }
+    }
+}
+
+function populateOnboardingFieldsFromProfile() {
+    const profile = getUserProfile();
+    if (!profile) return;
+    if (profile.sex) selectSex(profile.sex);
+    if (profile.goal) selectGoal(profile.goal);
+    if (profile.activity) selectActivity(profile.activity);
+
+    const wInput = document.getElementById("onboard-weight");
+    if (wInput && profile.weight_lbs) {
+        wInput.value = profile.weight_lbs;
+        updateOnboardKg(profile.weight_lbs);
+    }
+    const hInput = document.getElementById("onboard-height");
+    if (hInput && profile.height) {
+        hInput.value = profile.height;
+    }
+    if (profile.dob) {
+        const parts = profile.dob.replace(",", "").split(/\s+/);
+        if (parts.length >= 3) {
+            const mSelect = document.getElementById("onboard-dob-month");
+            const dSelect = document.getElementById("onboard-dob-day");
+            const ySelect = document.getElementById("onboard-dob-year");
+            if (mSelect) mSelect.value = parts[0];
+            if (dSelect) dSelect.value = parts[1].padStart(2, "0");
+            if (ySelect) ySelect.value = parts[2];
+        }
+    }
+}
+
 function openOnboardingFromSettings() {
     closeSettingsModal();
+    populateDobOptions();
+    populateOnboardingFieldsFromProfile();
     if (typeof switchMainTab === "function") {
         switchMainTab("onboarding");
     }
@@ -958,6 +1042,7 @@ function confirmPlateAndLog() {
 document.addEventListener("DOMContentLoaded", () => {
     resetScannerState();
     initStorageAndCleanMockData();
+    populateDobOptions();
     initTabs();
     initDropzone();
     initPresets();
@@ -967,11 +1052,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // Build the calendar strip with real current-week dates
     buildCalendarStrip();
 
-    // Boot directly into Home view
-    if (typeof switchMainTab === "function") {
-        switchMainTab("home");
+    // Check if user has completed personalized onboarding v2
+    const isOnboarded = localStorage.getItem("nutriscan_onboarded_v2") === "true";
+    if (isOnboarded) {
+        if (typeof switchMainTab === "function") {
+            switchMainTab("home");
+        }
+        updateHomeScreen();
+    } else {
+        populateOnboardingFieldsFromProfile();
+        if (typeof switchMainTab === "function") {
+            switchMainTab("onboarding");
+        }
     }
-    updateHomeScreen();
 });
 
 // Segmented Control Tabs (Upload, Camera, Presets)
@@ -1683,4 +1776,6 @@ function updateOnboardKg(val) {
         }
     }
 }
+window.populateDobOptions = populateDobOptions;
+window.populateOnboardingFieldsFromProfile = populateOnboardingFieldsFromProfile;
 window.updateOnboardKg = updateOnboardKg;
