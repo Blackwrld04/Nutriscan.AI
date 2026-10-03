@@ -43,18 +43,46 @@
         <a href="#how">How It Works</a>
         <a href="#ledger">Nutrition Ledger</a>
         <a href="#guardrails">Safety Guardrails</a>
-        <a href="#constraints">Integrity</a>
-        <a href="#comparison">Compare</a>
+        <a href="#constraints" class="nav-link-secondary">Integrity</a>
+        <a href="#comparison" class="nav-link-secondary">Compare</a>
         <a href="#faq">FAQ</a>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <div class="nav-actions">
         <a href="/scan" class="nav-cta">
           <span>Scan Your Plate</span>
           <span>→</span>
         </a>
+        <button type="button" class="nav-mobile-toggle" id="nav-mobile-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+          <svg class="hamburger-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="6" x2="20" y2="6"/>
+            <line x1="4" y1="12" x2="20" y2="12"/>
+            <line x1="4" y1="18" x2="20" y2="18"/>
+          </svg>
+          <svg class="close-icon hidden" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
       </div>
     </nav>
+
+    <!-- Mobile Drawer Menu -->
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+      <div class="mobile-nav-content">
+        <a href="#how" class="mobile-nav-link">How It Works</a>
+        <a href="#ledger" class="mobile-nav-link">Nutrition Ledger</a>
+        <a href="#guardrails" class="mobile-nav-link">Safety Guardrails</a>
+        <a href="#constraints" class="mobile-nav-link">System Integrity</a>
+        <a href="#comparison" class="mobile-nav-link">Dave vs Legacy Apps</a>
+        <a href="#faq" class="mobile-nav-link">FAQ</a>
+        <div class="mobile-nav-divider"></div>
+        <a href="/scan" class="mobile-nav-cta">
+          <span>Scan Your Plate Studio</span>
+          <span>→</span>
+        </a>
+      </div>
+    </div>
   </header>
 
   <!-- Hero Section -->
@@ -883,5 +911,53 @@
       </div>
     </div>
   </footer>
+
+  <!-- Mobile Drawer Toggle Script -->
+  <script>
+    (function() {
+      const toggleBtn = document.getElementById('nav-mobile-toggle');
+      const drawer = document.getElementById('mobile-nav-drawer');
+      if (!toggleBtn || !drawer) return;
+
+      const hamburgerIcon = toggleBtn.querySelector('.hamburger-icon');
+      const closeIcon = toggleBtn.querySelector('.close-icon');
+
+      function toggleDrawer(open) {
+        const isOpen = open !== undefined ? open : !drawer.classList.contains('is-open');
+        drawer.classList.toggle('is-open', isOpen);
+        toggleBtn.setAttribute('aria-expanded', String(isOpen));
+        if (hamburgerIcon && closeIcon) {
+          hamburgerIcon.classList.toggle('hidden', isOpen);
+          closeIcon.classList.toggle('hidden', !isOpen);
+        }
+      }
+
+      toggleBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleDrawer();
+      });
+
+      // Close on clicking any link inside drawer
+      drawer.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+          toggleDrawer(false);
+        });
+      });
+
+      // Close on clicking anywhere outside
+      document.addEventListener('click', function(e) {
+        if (drawer.classList.contains('is-open') && !drawer.contains(e.target) && !toggleBtn.contains(e.target)) {
+          toggleDrawer(false);
+        }
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && drawer.classList.contains('is-open')) {
+          toggleDrawer(false);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
