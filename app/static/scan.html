@@ -52,17 +52,44 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Active Indicator Line for Bottom Nav */
+    /* Bottom Navigation Active & Inactive States */
+    .bottom-nav-item {
+      color: #94a3b8; /* slate-400 */
+      transition: color 0.15s ease;
+    }
+    .bottom-nav-item .nav-label {
+      color: inherit;
+      font-weight: 500;
+      transition: color 0.15s ease, font-weight 0.15s ease;
+    }
+    .bottom-nav-item .nav-icon-wrap {
+      color: inherit;
+      border-radius: 9999px;
+      transition: all 0.15s ease;
+    }
+    .bottom-nav-item .nav-indicator {
+      width: 0;
+      height: 2px;
+      background-color: transparent;
+      border-radius: 9999px;
+      transition: all 0.15s ease;
+    }
+
+    /* Active Indicator & Icon for Bottom Nav */
     .bottom-nav-item.active {
-      color: #0f172a;
+      color: #0f172a !important; /* slate-900 */
+    }
+    .bottom-nav-item.active .nav-label {
+      color: #0f172a !important;
+      font-weight: 800 !important;
     }
     .bottom-nav-item.active .nav-indicator {
-      background-color: #0f172a;
-      width: 1.25rem;
+      background-color: #0f172a !important;
+      width: 1.25rem !important;
     }
     .bottom-nav-item.active .nav-icon-wrap {
-      background-color: #f1f5f9;
-      color: #0f172a;
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
     }
 
     /* Segmented Mode Tabs */
@@ -784,8 +811,8 @@
             <polyline points="9 22 9 12 15 12 15 22"/>
           </svg>
         </div>
-        <span class="text-[10px] font-bold tracking-tight">Home</span>
-        <span class="nav-indicator w-4 h-0.5 bg-slate-900 rounded-full transition-all"></span>
+        <span class="nav-label text-[10px] font-bold tracking-tight text-slate-900">Home</span>
+        <span class="nav-indicator w-5 h-0.5 bg-slate-900 rounded-full transition-all"></span>
       </button>
 
       <button class="bottom-nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-700 transition-colors" data-nav="trajectory" onclick="switchMainTab('trajectory')">
@@ -796,7 +823,7 @@
             <line x1="6" y1="20" x2="6" y2="14"/>
           </svg>
         </div>
-        <span class="text-[10px] font-semibold tracking-tight">Trajectory</span>
+        <span class="nav-label text-[10px] font-medium tracking-tight text-slate-400">Trajectory</span>
         <span class="nav-indicator w-0 h-0.5 bg-transparent rounded-full transition-all"></span>
       </button>
 
@@ -808,7 +835,7 @@
             <line x1="12" y1="19" x2="12" y2="22"/>
           </svg>
         </div>
-        <span class="text-[10px] font-semibold tracking-tight">Coach</span>
+        <span class="nav-label text-[10px] font-medium tracking-tight text-slate-400">Coach</span>
         <span class="nav-indicator w-0 h-0.5 bg-transparent rounded-full transition-all"></span>
       </button>
 
@@ -816,10 +843,10 @@
         <div class="nav-icon-wrap p-1 rounded-full">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
+            <polyline points="12 6 12 16 14"/>
           </svg>
         </div>
-        <span class="text-[10px] font-semibold tracking-tight">History</span>
+        <span class="nav-label text-[10px] font-medium tracking-tight text-slate-400">History</span>
         <span class="nav-indicator w-0 h-0.5 bg-transparent rounded-full transition-all"></span>
       </button>
     </nav>
@@ -1152,10 +1179,32 @@
       document.querySelectorAll('.bottom-nav-item').forEach(el => {
         const isActive = el.dataset.nav === tabName;
         el.classList.toggle('active', isActive);
+
+        // Toggle active/inactive text color on button
+        if (isActive) {
+          el.classList.remove('text-slate-400');
+          el.classList.add('text-slate-900');
+        } else {
+          el.classList.remove('text-slate-900');
+          el.classList.add('text-slate-400');
+        }
+
+        // Toggle active/inactive bold styling on label
+        const label = el.querySelector('.nav-label');
+        if (label) {
+          if (isActive) {
+            label.classList.remove('text-slate-400', 'font-medium');
+            label.classList.add('text-slate-900', 'font-bold');
+          } else {
+            label.classList.remove('text-slate-900', 'font-bold');
+            label.classList.add('text-slate-400', 'font-medium');
+          }
+        }
+
         const indicator = el.querySelector('.nav-indicator');
         if (indicator) {
           indicator.className = isActive 
-            ? 'nav-indicator w-4 h-0.5 bg-slate-900 rounded-full transition-all'
+            ? 'nav-indicator w-5 h-0.5 bg-slate-900 rounded-full transition-all'
             : 'nav-indicator w-0 h-0.5 bg-transparent rounded-full transition-all';
         }
       });
