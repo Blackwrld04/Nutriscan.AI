@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover">
-  <title>OpenCal AI — Mobile Plate Scanner & Metabolic Studio</title>
-  <meta name="description" content="Dedicated meal plate scanner powered by Google Gemma 2, USDA FoodData Central, and Prior Labs TabPFN. Real-time visual parsing, deterministic macro grounding, and in-context metabolic forecasting.">
-  
+  <title>OpenCal AI — Daily Calorie & Macro Tracker</title>
+  <meta name="description" content="Open-source Cal AI with Google Gemma Vision, USDA FoodData Central grounding, and Prior Labs TabPFN in-context metabolic forecasting.">
+
   <!-- Google Fonts: Inter & Outfit & IBM Plex Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- Tailwind CSS CDN for Mobile-Responsive Layout -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -31,9 +31,7 @@
               600: '#059669',
               700: '#047857',
               800: '#065f46',
-              900: '#064e3b',
-              forest: '#0C6B3A',
-              dark: '#064A28'
+              900: '#064e3b'
             }
           }
         }
@@ -41,726 +39,949 @@
     }
   </script>
 
-  <!-- Chart.js for Interactive Trajectory Graph -->
+  <!-- Chart.js for Trajectory & Progress Graphs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-
-  <!-- Base Custom Tokens -->
-  <link rel="stylesheet" href="/static/css/style.css">
 
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #F8FAF9;
+      background-color: #f8fafc;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Active Indicator Line for Bottom Nav */
+    /* Cal AI Style Nav Indicator */
     .bottom-nav-item.active {
-      color: #059669;
-    }
-    .bottom-nav-item.active .nav-indicator {
-      background-color: #059669;
-      width: 1.25rem;
+      color: #0f172a;
     }
     .bottom-nav-item.active .nav-icon-wrap {
-      background-color: #ecfdf5;
-      color: #059669;
+      color: #0f172a;
     }
 
-    /* Segmented Mode Tabs */
-    .studio-tab-btn.active {
-      background: #ffffff;
-      color: #064e3b;
-      box-shadow: 0 2px 8px rgba(6, 74, 40, 0.08);
-      font-weight: 700;
+    /* Smooth Progress Rings */
+    .progress-ring-circle {
+      transition: stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+
+    /* Modal Animation */
+    .modal-sheet-enter {
+      animation: sheetUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes sheetUp {
+      from { transform: translateY(100%); opacity: 0.6; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     /* Viewfinder Corner Reticle Brackets */
     .viewfinder-corner-tl {
       position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 18px;
-      height: 18px;
-      border-top: 3px solid #059669;
-      border-left: 3px solid #059669;
-      border-top-left-radius: 4px;
+      top: 14px;
+      left: 14px;
+      width: 22px;
+      height: 22px;
+      border-top: 3.5px solid #ffffff;
+      border-left: 3.5px solid #ffffff;
+      border-top-left-radius: 6px;
     }
     .viewfinder-corner-tr {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 18px;
-      height: 18px;
-      border-top: 3px solid #059669;
-      border-right: 3px solid #059669;
-      border-top-right-radius: 4px;
+      top: 14px;
+      right: 14px;
+      width: 22px;
+      height: 22px;
+      border-top: 3.5px solid #ffffff;
+      border-right: 3.5px solid #ffffff;
+      border-top-right-radius: 6px;
     }
     .viewfinder-corner-bl {
       position: absolute;
-      bottom: 10px;
-      left: 10px;
-      width: 18px;
-      height: 18px;
-      border-bottom: 3px solid #059669;
-      border-left: 3px solid #059669;
-      border-bottom-left-radius: 4px;
+      bottom: 14px;
+      left: 14px;
+      width: 22px;
+      height: 22px;
+      border-bottom: 3.5px solid #ffffff;
+      border-left: 3.5px solid #ffffff;
+      border-bottom-left-radius: 6px;
     }
     .viewfinder-corner-br {
       position: absolute;
-      bottom: 10px;
-      right: 10px;
-      width: 18px;
-      height: 18px;
-      border-bottom: 3px solid #059669;
-      border-right: 3px solid #059669;
-      border-bottom-right-radius: 4px;
+      bottom: 14px;
+      right: 14px;
+      width: 22px;
+      height: 22px;
+      border-bottom: 3.5px solid #ffffff;
+      border-right: 3.5px solid #ffffff;
+      border-bottom-right-radius: 6px;
     }
 
-    /* Scan Laser Ray Animation */
+    /* Shutter Button Ring */
+    .shutter-ring {
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.4), 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Scan Laser Animation */
     @keyframes scanRay {
-      0% { top: 5%; opacity: 0.8; }
-      50% { top: 90%; opacity: 1; }
-      100% { top: 5%; opacity: 0.8; }
+      0% { top: 5%; opacity: 0.9; }
+      50% { top: 88%; opacity: 1; }
+      100% { top: 5%; opacity: 0.9; }
     }
     .scan-laser {
       position: absolute;
       left: 0;
       right: 0;
-      height: 2px;
+      height: 2.5px;
       background: linear-gradient(90deg, transparent, #10b981, #34d399, transparent);
-      box-shadow: 0 0 12px #10b981;
-      animation: scanRay 2.4s ease-in-out infinite;
+      box-shadow: 0 0 14px #10b981;
+      animation: scanRay 2.2s ease-in-out infinite;
       z-index: 10;
-    }
-
-    /* Smooth Fade In */
-    .animate-fadeIn {
-      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
-<body class="min-h-screen text-slate-800 antialiased pb-28 md:pb-12 bg-slate-50/50">
+<body class="min-h-screen text-slate-800 antialiased bg-slate-100/70">
 
   <!-- Mobile-First App Wrapper -->
-  <div class="max-w-2xl mx-auto min-h-screen bg-white md:my-6 md:rounded-[36px] md:shadow-2xl md:border md:border-slate-200/80 overflow-hidden flex flex-col relative">
+  <div class="max-w-md mx-auto min-h-screen bg-white shadow-2xl md:my-6 md:rounded-[40px] md:border md:border-slate-200/80 overflow-hidden flex flex-col relative pb-20">
 
-    <!-- Dynamic Multi-Tab Content Container -->
+    <!-- Top App Header -->
+    <header class="pt-5 px-5 pb-3 flex items-center justify-between border-b border-slate-100 bg-white sticky top-0 z-20">
+      <a href="/" class="flex items-center gap-2 text-slate-900 no-underline group">
+        <div class="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+          </svg>
+        </div>
+        <span class="text-lg font-black tracking-tight text-slate-900">OpenCal<span class="text-emerald-600">.AI</span></span>
+      </a>
+
+      <div class="flex items-center gap-2">
+        <!-- Streak Flame Badge (Cal AI Style) -->
+        <div class="flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200/80 rounded-full text-xs font-black text-amber-700 shadow-xs">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="text-amber-500">
+            <path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-1.78-1.07-2.95-2-3.85-.92-.89-1.5-1.72-1.5-2.65 0-.15.02-.3.05-.44-.66.8-1.55 2.1-1.55 3.44 0 .93.58 1.76 1.5 2.65.93.9 2 2.07 2 3.85A3.5 3.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.5c0-3.5 2.5-6.5 6-8.5-1 2-1 4.5 0 6 1.1-.9 2-2.1 2-3.5 2.5 2 4.5 5 4.5 8.5A6.5 6.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.5c0-1.2.3-2.3.8-3.3.4 1.4 1.2 2.6 2.2 3.3Z"/>
+          </svg>
+          <span id="header-streak-count">7</span>
+        </div>
+
+        <a href="/" class="text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded-full transition-colors no-underline">
+          Overview
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Content Views -->
     <main class="flex-1 flex flex-col">
 
-      <!-- ========================================== -->
-      <!-- VIEW 1: PLATE SCANNER (Primary Screen)     -->
-      <!-- ========================================== -->
-      <section id="view-scan" class="app-view-section block animate-fadeIn">
+      <!-- ============================================== -->
+      <!-- VIEW 1: HOME VIEW (Cal AI Main Dashboard)       -->
+      <!-- ============================================== -->
+      <section id="view-home" class="app-view-tab block p-4 space-y-4">
         
-        <!-- Emerald Gradient Header (Only shown on Scan page with Logo & Overview) -->
-        <header class="relative bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-700 pt-7 px-5 pb-16 text-white overflow-hidden shadow-sm">
-          <!-- Ambient Decorative Glow -->
-          <div class="absolute -right-12 -top-12 w-48 h-48 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none"></div>
-          <div class="absolute -left-12 bottom-0 w-36 h-36 bg-teal-300/20 rounded-full blur-xl pointer-events-none"></div>
+        <!-- Horizontal Week Calendar Strip (Cal AI Screenshot 2) -->
+        <div class="bg-white rounded-2xl p-2.5 border border-slate-200/80 shadow-xs flex items-center justify-between" id="calendar-week-strip">
+          <!-- Populated dynamically via JS -->
+        </div>
 
-          <!-- Top Action Bar -->
-          <div class="relative z-10 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-2.5 text-white no-underline group">
-              <div class="w-8 h-8 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white shadow-sm group-hover:bg-white/30 transition-all">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
-                  <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+        <!-- Hero Calorie Progress Ring Card (Cal AI Screenshot 2) -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-baseline gap-1.5">
+                <span class="text-4xl font-black text-slate-900 tracking-tight" id="home-cal-eaten">0</span>
+                <span class="text-sm font-semibold text-slate-400" id="home-cal-target">/ 2,168</span>
+              </div>
+              <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Calories eaten</div>
+              <div class="text-xs text-emerald-700 font-medium mt-1.5 flex items-center gap-1" id="home-cal-remaining-label">
+                <span>2,168 kcal remaining</span>
+              </div>
+            </div>
+
+            <!-- Circular SVG Ring (Cal AI Style) -->
+            <div class="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
+              <svg class="w-full h-full" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" stroke="#f1f5f9" stroke-width="10" fill="transparent" />
+                <circle id="home-calorie-ring" class="progress-ring-circle" cx="50" cy="50" r="40" stroke="#0f172a" stroke-width="10" stroke-linecap="round" fill="transparent" stroke-dasharray="251.3" stroke-dashoffset="251.3" />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center text-slate-900 pointer-events-none">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" class="text-slate-900">
+                  <path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-1.78-1.07-2.95-2-3.85-.92-.89-1.5-1.72-1.5-2.65 0-.15.02-.3.05-.44-.66.8-1.55 2.1-1.55 3.44 0 .93.58 1.76 1.5 2.65.93.9 2 2.07 2 3.85A3.5 3.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.5c0-3.5 2.5-6.5 6-8.5-1 2-1 4.5 0 6 1.1-.9 2-2.1 2-3.5 2.5 2 4.5 5 4.5 8.5A6.5 6.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.5c0-1.2.3-2.3.8-3.3.4 1.4 1.2 2.6 2.2 3.3Z"/>
                 </svg>
               </div>
-              <span class="text-xl font-extrabold tracking-tight">OpenCal<span class="font-normal opacity-80">.AI</span></span>
-            </a>
+            </div>
+          </div>
+        </div>
 
-            <div class="flex items-center gap-2">
-              <a href="/" class="text-xs font-semibold text-emerald-900 bg-white/95 hover:bg-white rounded-full px-3.5 py-1.5 backdrop-blur shadow-sm transition-all flex items-center gap-1.5 no-underline">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="19" y1="12" x2="5" y2="12"></line>
-                  <polyline points="12 19 5 12 12 5"></polyline>
+        <!-- 3 Macro Progress Ring Cards (Cal AI Screenshot 2) -->
+        <div class="grid grid-cols-3 gap-2.5">
+          <!-- Protein Card -->
+          <div class="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-xs flex flex-col items-center text-center">
+            <div class="text-[11px] font-bold text-slate-900 tracking-tight">
+              <span id="home-protein-eaten">0</span><span class="text-slate-400 font-normal">/<span id="home-protein-target">113</span>g</span>
+            </div>
+            <div class="text-[10px] text-slate-400 uppercase font-semibold mb-2">Protein</div>
+            <div class="relative w-12 h-12 flex items-center justify-center">
+              <svg class="w-full h-full" viewBox="0 0 60 60">
+                <circle cx="30" cy="30" r="22" stroke="#ffe4e6" stroke-width="6" fill="transparent" />
+                <circle id="home-ring-protein" class="progress-ring-circle" cx="30" cy="30" r="22" stroke="#f43f5e" stroke-width="6" stroke-linecap="round" fill="transparent" stroke-dasharray="138.2" stroke-dashoffset="138.2" />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m14 10-1.5 1.5a4.24 4.24 0 0 1-6 0l-.5-.5a4.24 4.24 0 0 1 0-6L7.5 3.5a4.24 4.24 0 0 1 6 0l.5.5a4.24 4.24 0 0 1 0 6Z"/>
+                  <path d="m14 10 3 3"/>
+                  <circle cx="19" cy="15" r="2"/>
+                  <circle cx="17" cy="19" r="2"/>
                 </svg>
-                <span>Overview</span>
-              </a>
-            </div>
-          </div>
-        </header>
-
-        <!-- Scan View Body Content -->
-        <div class="px-5 pt-0 pb-6">
-
-          <!-- Dave's Metabolic Progress Card (Only shown on Scan View) -->
-          <div class="-mt-9 mb-4 relative z-20">
-            <div class="bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-lg shadow-slate-900/5">
-              <div class="flex items-start justify-between">
-                <div>
-                  <div class="flex items-center gap-1.5 text-[11px] font-bold text-emerald-800 uppercase tracking-wider mb-1">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>Dave's Metabolic Progress</span>
-                  </div>
-                  <div class="flex items-baseline gap-1.5">
-                    <span class="text-3xl font-extrabold text-slate-900 tracking-tight" id="hero-cal-consumed">0</span>
-                    <span class="text-xs font-medium text-slate-500">/ 2,100 kcal target</span>
-                  </div>
-                  <div class="text-[11px] text-slate-500 mt-1" id="budget-text-label">
-                    Awaiting meal scan · 2,100 kcal daily target
-                  </div>
-                </div>
-                <div class="text-right">
-                  <span class="inline-flex items-center text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200" id="metabolic-status-val">
-                    Hyper-Metabolic
-                  </span>
-                  <div class="text-[11px] text-slate-400 mt-2">
-                    Goal: <strong class="text-slate-700">75.0 kg</strong> · <span id="days-to-goal-val" class="font-bold text-sky-600">22 days</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Deficit Budget Progress Bar -->
-              <div class="w-full bg-slate-100 h-2 rounded-full mt-3 overflow-hidden">
-                <div class="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full transition-all duration-500" id="budget-bar-fill" style="width: 0%;"></div>
               </div>
             </div>
           </div>
-        
-        <!-- Segmented Mode Selector (Upload | Camera | Presets) -->
-        <div class="flex p-1 bg-slate-100 rounded-xl mb-4 border border-slate-200/60">
-          <button class="studio-tab-btn active flex-1 py-2 rounded-lg text-xs font-semibold text-slate-600 transition-all flex items-center justify-center gap-1.5" data-tab="upload">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            <span>Upload</span>
-          </button>
-          <button class="studio-tab-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-600 transition-all flex items-center justify-center gap-1.5" data-tab="camera">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            <span>Camera</span>
-          </button>
-          <button class="studio-tab-btn flex-1 py-2 rounded-lg text-xs font-semibold text-slate-600 transition-all flex items-center justify-center gap-1.5" data-tab="presets">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <span>Presets</span>
-          </button>
-        </div>
 
-        <!-- Mode Panel 1: Upload Viewfinder (TrustX Screenshot 3 Style) -->
-        <div class="studio-tab-panel active" id="panel-upload">
-          <div class="relative rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/40 p-6 flex flex-col items-center justify-center cursor-pointer transition-all hover:border-emerald-500 hover:bg-emerald-50/70" id="studio-dropzone">
-            
-            <!-- Corner Reticle Brackets (TrustX Style) -->
-            <span class="viewfinder-corner-tl"></span>
-            <span class="viewfinder-corner-tr"></span>
-            <span class="viewfinder-corner-bl"></span>
-            <span class="viewfinder-corner-br"></span>
-
-            <input type="file" id="studio-file-input" accept="image/*" class="hidden">
-            
-            <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mb-2 shadow-inner">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
+          <!-- Carbs Card -->
+          <div class="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-xs flex flex-col items-center text-center">
+            <div class="text-[11px] font-bold text-slate-900 tracking-tight">
+              <span id="home-carbs-eaten">0</span><span class="text-slate-400 font-normal">/<span id="home-carbs-target">294</span>g</span>
+            </div>
+            <div class="text-[10px] text-slate-400 uppercase font-semibold mb-2">Carbs</div>
+            <div class="relative w-12 h-12 flex items-center justify-center">
+              <svg class="w-full h-full" viewBox="0 0 60 60">
+                <circle cx="30" cy="30" r="22" stroke="#fef3c7" stroke-width="6" fill="transparent" />
+                <circle id="home-ring-carbs" class="progress-ring-circle" cx="30" cy="30" r="22" stroke="#f59e0b" stroke-width="6" stroke-linecap="round" fill="transparent" stroke-dasharray="138.2" stroke-dashoffset="138.2" />
               </svg>
+              <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 22 16 8"/>
+                  <path d="M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"/>
+                  <path d="M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"/>
+                </svg>
+              </div>
             </div>
-            
-            <div class="font-bold text-slate-800 text-sm">Upload Meal Plate</div>
-            <div class="text-[11px] text-slate-500 mt-0.5 text-center">Tap to select photo from gallery or drag & drop</div>
           </div>
-        </div>
 
-        <!-- Mode Panel 2: Live Camera Viewfinder -->
-        <div class="studio-tab-panel hidden" id="panel-camera">
-          <div class="relative rounded-2xl overflow-hidden bg-black aspect-video flex items-center justify-center">
-            <video id="camera-video" class="w-full h-full object-cover" autoplay playsinline muted></video>
-            <div class="absolute inset-0 border-2 border-emerald-400/50 rounded-2xl pointer-events-none flex items-center justify-center">
-              <span class="text-xs font-semibold text-white/90 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">Align Food Plate in Reticle</span>
+          <!-- Fats Card -->
+          <div class="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-xs flex flex-col items-center text-center">
+            <div class="text-[11px] font-bold text-slate-900 tracking-tight">
+              <span id="home-fats-eaten">0</span><span class="text-slate-400 font-normal">/<span id="home-fats-target">60</span>g</span>
             </div>
-          </div>
-          <div id="camera-status-msg" class="text-center text-[11px] text-slate-500 mt-2">
-            Click the shutter button below to snap your plate.
-          </div>
-          <div class="flex justify-center mt-3">
-            <button class="w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-lg transition-transform active:scale-95" onclick="snapPhoto()">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <circle cx="12" cy="12" r="3"></circle>
+            <div class="text-[10px] text-slate-400 uppercase font-semibold mb-2">Fats</div>
+            <div class="relative w-12 h-12 flex items-center justify-center">
+              <svg class="w-full h-full" viewBox="0 0 60 60">
+                <circle cx="30" cy="30" r="22" stroke="#e0f2fe" stroke-width="6" fill="transparent" />
+                <circle id="home-ring-fats" class="progress-ring-circle" cx="30" cy="30" r="22" stroke="#0284c7" stroke-width="6" stroke-linecap="round" fill="transparent" stroke-dasharray="138.2" stroke-dashoffset="138.2" />
               </svg>
-            </button>
+              <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2a6 6 0 0 0-6 6c0 4 2 8 6 13 4-5 6-9 6-13a6 6 0 0 0-6-6Z"/>
+                  <circle cx="12" cy="13" r="3"/>
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Mode Panel 3: Verified Presets -->
-        <div class="studio-tab-panel hidden" id="panel-presets">
-          <div class="space-y-2">
-            <button class="preset-chip w-full flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200/90 hover:border-emerald-500 hover:bg-emerald-50/30 transition-all text-left shadow-xs" data-preset="salmon">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">1</div>
-                <div>
-                  <div class="font-bold text-slate-800 text-xs">Pan-Seared Salmon & Sweet Potato</div>
-                  <div class="text-[10px] text-slate-400">435g · Seafood, Roots & Asparagus</div>
-                </div>
-              </div>
-              <span class="text-xs font-extrabold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">645 kcal</span>
-            </button>
+        <!-- Recently Uploaded Section (Cal AI Screenshot 2) -->
+        <div>
+          <div class="flex items-center justify-between mb-3 px-1">
+            <h3 class="font-extrabold text-slate-900 text-sm tracking-tight">Recently uploaded</h3>
+            <span class="text-xs text-slate-400 font-medium" id="home-meals-count">0 meals today</span>
+          </div>
 
-            <button class="preset-chip w-full flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200/90 hover:border-emerald-500 hover:bg-emerald-50/30 transition-all text-left shadow-xs" data-preset="chicken">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">2</div>
-                <div>
-                  <div class="font-bold text-slate-800 text-xs">Grilled Chicken Breast & Jasmine Rice</div>
-                  <div class="text-[10px] text-slate-400">430g · Lean Poultry, Grains & Broccoli</div>
-                </div>
-              </div>
-              <span class="text-xs font-extrabold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">512 kcal</span>
-            </button>
-
-            <button class="preset-chip w-full flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200/90 hover:border-emerald-500 hover:bg-emerald-50/30 transition-all text-left shadow-xs" data-preset="steak">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">3</div>
-                <div>
-                  <div class="font-bold text-slate-800 text-xs">Sirloin Steak, Avocado & Brown Rice</div>
-                  <div class="text-[10px] text-slate-400">385g · Red Meat, Whole Grains & Lipids</div>
-                </div>
-              </div>
-              <span class="text-xs font-extrabold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">735 kcal</span>
-            </button>
+          <div id="home-recent-list" class="space-y-2.5">
+            <!-- Dynamically populated or empty state -->
           </div>
         </div>
 
-        <!-- Big Primary Action Button (TrustX "Check Status" Pill Button) -->
-        <button class="w-full mt-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-3.5 px-6 rounded-full shadow-lg shadow-emerald-700/20 text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]" onclick="document.getElementById('studio-file-input').click()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-            <circle cx="12" cy="13" r="4"/>
-          </svg>
-          <span>Analyze Plate with Vision AI</span>
-        </button>
-
-        <!-- ============================================== -->
-        <!-- ANALYZED RESULT (ONLY SHOWN AFTER SCAN)        -->
-        <!-- ============================================== -->
-        <div id="scan-results-container" class="hidden mt-5 space-y-4">
-
-          <!-- Preview Image Box with Scanning Laser -->
-          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 relative overflow-hidden flex flex-col items-center">
-            <div class="scan-laser"></div>
-            <img id="plate-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Cpath d='M19 12a7 7 0 0 0-14 0'/%3E%3Ccircle cx='12' cy='5' r='1'/%3E%3C/svg%3E" alt="Plate Preview" class="max-h-36 object-contain rounded-lg">
-            <div class="text-[11px] font-bold text-emerald-800 mt-2" id="plate-preview-caption">Spatial Plate Geometry Captured</div>
-            <div class="text-[10px] text-slate-400">Processed locally on-device · Private visual parsing</div>
-          </div>
-
-          <!-- 3-Step Pipeline Stepper -->
-          <div class="flex items-center justify-between px-2">
-            <div class="flex items-center gap-1.5" id="step-1">
-              <div class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold">1</div>
-              <span class="text-[11px] font-semibold text-slate-700">Vision</span>
-            </div>
-            <div class="h-0.5 flex-1 bg-emerald-200 mx-2"></div>
-            <div class="flex items-center gap-1.5" id="step-2">
-              <div class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold">2</div>
-              <span class="text-[11px] font-semibold text-slate-700">USDA</span>
-            </div>
-            <div class="h-0.5 flex-1 bg-emerald-200 mx-2"></div>
-            <div class="flex items-center gap-1.5" id="step-3">
-              <div class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold">3</div>
-              <span class="text-[11px] font-semibold text-slate-700">TabPFN</span>
-            </div>
-          </div>
-
-          <div id="scanner-status-text" class="text-center text-xs font-bold text-emerald-700 flex items-center justify-center gap-1">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Plate analysis complete · Deterministic Grounding Verified</span>
-          </div>
-
-          <!-- Live Macro Summary Strip (4 Cards) -->
-          <div class="grid grid-cols-4 gap-2">
-            <div class="bg-amber-50/70 border border-amber-200/80 rounded-xl p-2.5 text-center">
-              <div class="text-lg font-black text-amber-700 leading-none" id="macro-calories">645</div>
-              <div class="text-[9px] font-bold text-amber-900/70 uppercase mt-1">Calories</div>
-            </div>
-            <div class="bg-emerald-50/70 border border-emerald-200/80 rounded-xl p-2.5 text-center">
-              <div class="text-lg font-black text-emerald-700 leading-none" id="macro-protein">48g</div>
-              <div class="text-[9px] font-bold text-emerald-900/70 uppercase mt-1">Protein</div>
-            </div>
-            <div class="bg-sky-50/70 border border-sky-200/80 rounded-xl p-2.5 text-center">
-              <div class="text-lg font-black text-sky-700 leading-none" id="macro-carbs">58g</div>
-              <div class="text-[9px] font-bold text-sky-900/70 uppercase mt-1">Carbs</div>
-            </div>
-            <div class="bg-rose-50/70 border border-rose-200/80 rounded-xl p-2.5 text-center">
-              <div class="text-lg font-black text-rose-700 leading-none" id="macro-fat">22g</div>
-              <div class="text-[9px] font-bold text-rose-900/70 uppercase mt-1">Fats</div>
-            </div>
-          </div>
-
-          <!-- Detected Ingredients Table -->
-          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs">
-            <div class="flex items-center justify-between mb-3">
-              <h3 class="font-bold text-slate-800 text-xs tracking-tight" id="studio-plate-title">
-                Pan-Seared Salmon & Sweet Potato Fuel Plate
-              </h3>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
-                USDA Grounded
-              </span>
-            </div>
-
-            <div class="divide-y divide-slate-100 text-xs" id="studio-items-table">
-              <div class="py-2.5 flex items-center justify-between">
-                <div>
-                  <div class="font-bold text-slate-800">Pan-Seared Atlantic Salmon</div>
-                  <div class="text-[10px] text-slate-400">185g • Seafood (USDA FDC #175168)</div>
-                </div>
-                <div class="text-right">
-                  <div class="font-black text-slate-800">385 kcal</div>
-                  <div class="text-[10px] text-slate-500">38g P / 0g C / 25g F</div>
-                </div>
-              </div>
-              <div class="py-2.5 flex items-center justify-between">
-                <div>
-                  <div class="font-bold text-slate-800">Baked Japanese Sweet Potato</div>
-                  <div class="text-[10px] text-slate-400">200g • Roots (USDA FDC #168483)</div>
-                </div>
-                <div class="text-right">
-                  <div class="font-black text-slate-800">180 kcal</div>
-                  <div class="text-[10px] text-slate-500">4g P / 41g C / 0g F</div>
-                </div>
-              </div>
-              <div class="py-2.5 flex items-center justify-between">
-                <div>
-                  <div class="font-bold text-slate-800">Sautéed Fresh Asparagus</div>
-                  <div class="text-[10px] text-slate-400">80g • Greens (USDA FDC #170381)</div>
-                </div>
-                <div class="text-right">
-                  <div class="font-black text-slate-800">18 kcal</div>
-                  <div class="text-[10px] text-slate-500">2g P / 3g C / 0g F</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Clinical & Health Insights -->
-          <div class="space-y-2" id="studio-insights-container">
-            <div class="p-3 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-xs text-emerald-900 flex items-start gap-2">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 flex-shrink-0 text-emerald-600"><polyline points="20 6 9 17 4 12"/></svg>
-              <span>High protein density meal (>30% calories from protein) — optimal for lean muscle preservation.</span>
-            </div>
-            <div class="p-3 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-xs text-emerald-900 flex items-start gap-2">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 flex-shrink-0 text-emerald-600"><polyline points="20 6 9 17 4 12"/></svg>
-              <span>Rich in Omega-3 fatty acids and complex slow-digesting carbohydrates with 7.2g dietary fiber.</span>
-            </div>
-          </div>
-
-          <!-- Action: Log Plate -->
-          <button class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all active:scale-[0.98]" onclick="logPlateToHistory()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Log Plate to Metabolic History</span>
-          </button>
-
-          <!-- Log Toast Notification -->
-          <div id="log-toast" class="hidden p-3 bg-emerald-100 border border-emerald-300 rounded-xl text-xs font-bold text-emerald-800 items-center gap-2">
-          </div>
-
-        </div> <!-- /#scan-results-container -->
-
-        </div> <!-- /px-5 pt-0 pb-6 -->
       </section>
 
-      <!-- ========================================== -->
-      <!-- VIEW 2: 28-DAY TRAJECTORY & TABPFN         -->
-      <!-- ========================================== -->
-      <section id="view-trajectory" class="app-view-section hidden animate-fadeIn px-5 pt-5 pb-6">
+      <!-- ============================================== -->
+      <!-- VIEW 2: PROGRESS VIEW (Cal AI Track Progress)   -->
+      <!-- ============================================== -->
+      <section id="view-progress" class="app-view-tab hidden p-4 space-y-4">
         
-        <!-- Clean Minimal Header (Task-Specific, No Logo/Overview) -->
-        <div class="flex items-center justify-between mb-4">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-1">
           <div>
-            <div class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">Metabolic Forecast</div>
-            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">28-Day Trajectory</h1>
+            <h2 class="text-xl font-black text-slate-900 tracking-tight">Progress</h2>
+            <p class="text-xs text-slate-500">In-context TabPFN trajectory & body composition</p>
           </div>
-          <span class="inline-flex items-center text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
-            Goal: 75.0 kg
-          </span>
+          <button onclick="openOnboardingModal()" class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200 hover:bg-emerald-100 transition-colors">
+            Update Stats
+          </button>
         </div>
 
-        <div class="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
-          <!-- Dynamic vs Static TDEE Cards -->
-          <div class="grid grid-cols-2 gap-2.5">
-            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-center">
-              <div class="text-xl font-black text-emerald-800" id="dynamic-tdee-val">3,152 kcal</div>
-              <div class="text-[10px] font-bold text-emerald-900/70 uppercase mt-0.5">TabPFN Dynamic TDEE</div>
+        <!-- Top Stats Row (Your Weight & Day Streak - Cal AI Screenshot 4) -->
+        <div class="grid grid-cols-2 gap-2.5">
+          <!-- Your Weight Card -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Your Weight</div>
+            <div class="text-2xl font-black text-slate-900 mt-0.5" id="progress-current-weight">165.0 lbs</div>
+            <div class="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
+              <div class="bg-slate-900 h-full rounded-full" style="width: 75%;"></div>
             </div>
-            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
-              <div class="text-xl font-black text-slate-400" id="static-tdee-val">2,587 kcal</div>
-              <div class="text-[10px] font-bold text-slate-500 uppercase mt-0.5">Static Formula TDEE</div>
+            <div class="text-[10px] text-slate-500 mt-1.5 font-medium">Goal: <span id="progress-goal-weight">165.0 lbs</span></div>
+          </div>
+
+          <!-- Day Streak Card -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div class="flex items-center gap-1.5">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-amber-500">
+                <path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-1.78-1.07-2.95-2-3.85-.92-.89-1.5-1.72-1.5-2.65 0-.15.02-.3.05-.44-.66.8-1.55 2.1-1.55 3.44 0 .93.58 1.76 1.5 2.65.93.9 2 2.07 2 3.85A3.5 3.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.5c0-3.5 2.5-6.5 6-8.5-1 2-1 4.5 0 6 1.1-.9 2-2.1 2-3.5 2.5 2 4.5 5 4.5 8.5A6.5 6.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.5c0-1.2.3-2.3.8-3.3.4 1.4 1.2 2.6 2.2 3.3Z"/>
+              </svg>
+              <span class="text-lg font-black text-slate-900">7 Day Streak</span>
             </div>
+            <div class="flex items-center justify-between text-[10px] font-bold text-slate-400 mt-3 font-mono">
+              <span class="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-[9px]">S</span>
+              <span class="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-[9px]">M</span>
+              <span class="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-[9px]">T</span>
+              <span class="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-[9px]">W</span>
+              <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-[9px]">T</span>
+              <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-[9px]">F</span>
+              <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-[9px]">S</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weight Progress Interactive Chart (Cal AI Screenshot 4) -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-extrabold text-slate-900 text-sm tracking-tight">Weight Progress</h3>
+            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+              80% of goal
+            </span>
+          </div>
+
+          <!-- Time Range Selector (90D, 6M, 1Y, ALL - Cal AI style) -->
+          <div class="flex p-1 bg-slate-100 rounded-xl text-xs font-semibold text-slate-500">
+            <button class="flex-1 py-1 rounded-lg text-center transition-all hover:text-slate-900">30D</button>
+            <button class="flex-1 py-1 rounded-lg text-center transition-all hover:text-slate-900">90D</button>
+            <button class="flex-1 py-1 rounded-lg text-center bg-white text-slate-900 font-bold shadow-xs">6M</button>
+            <button class="flex-1 py-1 rounded-lg text-center transition-all hover:text-slate-900">ALL</button>
           </div>
 
           <!-- Interactive Chart Box -->
-          <div class="relative w-full aspect-[16/10] bg-slate-50 rounded-xl p-2 border border-slate-100">
+          <div class="relative w-full aspect-[16/10] bg-slate-50 rounded-2xl p-2 border border-slate-100">
             <canvas id="trajectoryChart"></canvas>
           </div>
 
-          <!-- Calorie Target Slider Panel -->
-          <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
-            <div class="flex items-center justify-between text-xs mb-2">
-              <span class="font-semibold text-slate-700">Simulate Daily Caloric Target:</span>
-              <span class="font-extrabold text-emerald-700 bg-white px-2.5 py-0.5 rounded-full border border-slate-200" id="slider-calories-display">2100 kcal/day</span>
+          <!-- Motivational Encouragement Banner (Cal AI style) -->
+          <div class="p-3 bg-emerald-50/70 border border-emerald-200/80 rounded-xl text-xs font-semibold text-emerald-800 text-center">
+            Great job! Consistency is key, and you're mastering it!
+          </div>
+
+          <!-- Dynamic vs Static TDEE comparison -->
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
+              <div class="text-base font-black text-slate-900" id="dynamic-tdee-val">3,152 kcal</div>
+              <div class="text-[9px] font-bold text-emerald-700 uppercase mt-0.5">TabPFN Dynamic TDEE</div>
             </div>
-            <input type="range" id="calories-slider" min="1600" max="3000" step="50" value="2100" class="w-full accent-emerald-600 cursor-pointer">
-            <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-mono">
-              <span>1,600 (Aggressive)</span>
-              <span>2,100 (Optimal)</span>
-              <span>3,000 (Surplus)</span>
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
+              <div class="text-base font-black text-slate-400" id="static-tdee-val">2,587 kcal</div>
+              <div class="text-[9px] font-bold text-slate-500 uppercase mt-0.5">Static Formula TDEE</div>
             </div>
           </div>
         </div>
+
       </section>
 
-      <!-- ========================================== -->
-      <!-- VIEW 3: ELEVENLABS VOICE COACH (TrustX AI) -->
-      <!-- ========================================== -->
-      <section id="view-coach" class="app-view-section hidden animate-fadeIn px-5 pt-5 pb-6">
+      <!-- ============================================== -->
+      <!-- VIEW 3: SETTINGS VIEW (Profile, Coach, Status)  -->
+      <!-- ============================================== -->
+      <section id="view-settings" class="app-view-tab hidden p-4 space-y-4">
         
-        <!-- Clean Minimal Header (Task-Specific, No Logo/Overview) -->
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <div class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">Auditory Debrief</div>
-            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Voice Coach</h1>
-          </div>
-          <span class="inline-flex items-center text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
-            ElevenLabs AI
-          </span>
+        <!-- Header -->
+        <div class="px-1">
+          <h2 class="text-xl font-black text-slate-900 tracking-tight">Settings & Profile</h2>
+          <p class="text-xs text-slate-500">Manage your personalized metabolic targets & voice coach</p>
         </div>
 
-        <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs text-center">
-          <!-- Coach Avatar Icon -->
-          <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-3 shadow-inner">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-              <line x1="12" y1="19" x2="12" y2="22"/>
-            </svg>
-          </div>
-
-          <h3 class="text-base font-extrabold text-slate-900 tracking-tight">Daily Metabolic Debrief</h3>
-          <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-            Personalized auditory feedback powered by ElevenLabs Neural Voice & TabPFN in-context metabolic projections.
-          </p>
-
-          <!-- Voice Trigger Button -->
-          <div class="mt-5">
-            <button class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-3.5 px-6 rounded-full shadow-lg shadow-emerald-700/20 text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98]" id="studio-coach-btn" onclick="playStudioCoachDebrief()">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="5 3 19 12 5 21 5 3"/>
+        <!-- Profile Card with Edit Button -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-extrabold text-slate-900 text-sm" id="settings-user-name">Dave's Metabolic Profile</h3>
+                <p class="text-xs text-slate-500" id="settings-user-summary">165 lbs · Moderate Activity · Maintain</p>
+              </div>
+            </div>
+            <button onclick="openOnboardingModal()" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
               </svg>
-              <span>Play Daily Voice Debrief</span>
             </button>
           </div>
 
-          <!-- Suggested Coaching Topics -->
-          <div class="mt-6 text-left">
-            <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-2.5">
-              Suggested Questions & Discussion
+          <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-xs">
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+              <div class="text-[10px] font-bold text-slate-400 uppercase">Daily Calorie Target</div>
+              <div class="font-extrabold text-slate-800 text-sm mt-0.5" id="settings-target-cals">2,168 kcal</div>
             </div>
-            <div class="space-y-2">
-              <button class="w-full p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left text-xs text-slate-700 flex items-center justify-between transition-all" onclick="playStudioCoachDebrief()">
-                <div class="flex items-center gap-2">
-                  <span class="text-emerald-600 font-bold">?</span>
-                  <span>How does today's meal affect my 75.0kg timeline?</span>
-                </div>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-              </button>
-              <button class="w-full p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left text-xs text-slate-700 flex items-center justify-between transition-all" onclick="playStudioCoachDebrief()">
-                <div class="flex items-center gap-2">
-                  <span class="text-emerald-600 font-bold">?</span>
-                  <span>What is my dynamic TDEE burn rate today?</span>
-                </div>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-              </button>
-              <button class="w-full p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left text-xs text-slate-700 flex items-center justify-between transition-all" onclick="playStudioCoachDebrief()">
-                <div class="flex items-center gap-2">
-                  <span class="text-emerald-600 font-bold">?</span>
-                  <span>Should I increase protein for my evening meal?</span>
-                </div>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-              </button>
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+              <div class="text-[10px] font-bold text-slate-400 uppercase">Primary Goal</div>
+              <div class="font-extrabold text-slate-800 text-sm mt-0.5" id="settings-target-goal">Maintain Weight</div>
             </div>
           </div>
 
-          <!-- Transcript Quote Box -->
-          <div class="transcript-quote-box text-left mt-5 text-xs text-slate-600 bg-emerald-50/50 p-4 rounded-xl border border-emerald-200/80 italic leading-relaxed" id="studio-coach-transcript" style="display: none;"></div>
-        </div>
-      </section>
-
-      <!-- ========================================== -->
-      <!-- VIEW 4: MEAL & METABOLIC HISTORY (TrustX)   -->
-      <!-- ========================================== -->
-      <section id="view-history" class="app-view-section hidden animate-fadeIn px-5 pt-5 pb-6">
-        
-        <!-- Clean Minimal Header (Task-Specific, No Logo/Overview) -->
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <div class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">Nutrition Log</div>
-            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Scan History</h1>
-          </div>
-          <button class="inline-flex items-center gap-1 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-full shadow-sm transition-all" onclick="switchMainTab('scan')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <span>New Scan</span>
+          <button onclick="openOnboardingModal()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+            <span>Edit Profile & Macro Plan</span>
           </button>
         </div>
 
-        <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs">
-          <!-- Dynamic Items List -->
-          <div id="history-items-list" class="space-y-2.5"></div>
-
-          <!-- Empty State (TrustX Screenshot 1 Style) -->
-          <div id="history-empty-state" class="py-10 text-center">
-            <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-3 shadow-inner">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 6 12 12 16 14"/>
+        <!-- Voice Coach Section -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm space-y-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="22"/>
               </svg>
             </div>
-            <h3 class="text-sm font-bold text-slate-800">No meal scans logged yet</h3>
-            <p class="text-xs text-slate-500 max-w-xs mx-auto mt-1 mb-4">
-              Every time you verify a meal plate or snap a photo, your receipt and macro breakdown will appear here.
-            </p>
-            <div class="flex justify-center gap-2">
-              <button class="px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all" onclick="switchMainTab('scan')">
-                Scan Plate Now
-              </button>
-              <button class="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all" onclick="loadPreset('salmon'); switchMainTab('scan');">
-                Load Sample Meal
-              </button>
+            <div>
+              <h3 class="font-bold text-slate-900 text-xs tracking-tight">OpenCal Daily Voice Coach</h3>
+              <p class="text-[10px] text-slate-400">Powered by ElevenLabs Neural Voice</p>
             </div>
           </div>
+
+          <button class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98]" id="studio-coach-btn" onclick="playStudioCoachDebrief()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            <span>Play Daily Voice Debrief</span>
+          </button>
+
+          <div class="transcript-quote-box text-xs text-slate-600 bg-emerald-50/50 p-3 rounded-xl border border-emerald-200/80 italic leading-relaxed" id="studio-coach-transcript" style="display: none;"></div>
         </div>
+
+        <!-- System & Privacy Info -->
+        <div class="p-4 bg-slate-50 border border-slate-200/80 rounded-2xl text-[11px] text-slate-500 space-y-1">
+          <div class="font-bold text-slate-700">100% Deterministic & Sovereign</div>
+          <div>All meals grounded with USDA FoodData Central. Trajectory modeled with Prior Labs TabPFN foundation model. Traced with Sentry.</div>
+          <div class="pt-2">
+            <button onclick="clearAllHistory()" class="text-rose-600 font-bold hover:underline">Clear Meal History</button>
+          </div>
+        </div>
+
       </section>
 
     </main>
 
-    <!-- 4. Fixed Mobile Bottom Navigation Bar (TrustX & Nexus) -->
-    <nav class="fixed md:sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-6 py-2.5 flex items-center justify-around z-50 shadow-lg md:rounded-b-[36px]">
-      <button class="bottom-nav-item active flex flex-col items-center gap-0.5 text-emerald-700 transition-colors" data-nav="scan" onclick="switchMainTab('scan')">
-        <div class="nav-icon-wrap p-1 rounded-full">
+    <!-- Floating Scan Action Button (+) (Cal AI Screenshot 2 & 4) -->
+    <button id="fab-scan-btn" onclick="openScannerModal()" aria-label="Scan food plate" class="fixed bottom-20 right-5 md:right-[calc(50%-195px)] w-14 h-14 bg-slate-950 hover:bg-slate-800 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-40 cursor-pointer border-2 border-white">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    </button>
+
+    <!-- Fixed Mobile Bottom Navigation Bar (Cal AI Style: Home, Progress, Settings) -->
+    <nav class="fixed md:sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-6 py-2.5 flex items-center justify-around z-30 shadow-lg md:rounded-b-[40px]">
+      
+      <!-- Home Tab -->
+      <button class="bottom-nav-item active flex flex-col items-center gap-0.5 text-slate-900 transition-colors" data-nav="home" onclick="switchAppTab('home')">
+        <div class="nav-icon-wrap p-1">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-            <circle cx="12" cy="13" r="4"/>
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
           </svg>
         </div>
-        <span class="text-[10px] font-bold tracking-tight">Scan</span>
-        <span class="nav-indicator w-4 h-0.5 bg-emerald-600 rounded-full transition-all"></span>
+        <span class="text-[10px] font-bold tracking-tight">Home</span>
       </button>
 
-      <button class="bottom-nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-700 transition-colors" data-nav="trajectory" onclick="switchMainTab('trajectory')">
-        <div class="nav-icon-wrap p-1 rounded-full">
+      <!-- Progress Tab -->
+      <button class="bottom-nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-700 transition-colors" data-nav="progress" onclick="switchAppTab('progress')">
+        <div class="nav-icon-wrap p-1">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="20" x2="18" y2="10"/>
             <line x1="12" y1="20" x2="12" y2="4"/>
             <line x1="6" y1="20" x2="6" y2="14"/>
           </svg>
         </div>
-        <span class="text-[10px] font-semibold tracking-tight">Trajectory</span>
-        <span class="nav-indicator w-0 h-0.5 bg-transparent rounded-full transition-all"></span>
+        <span class="text-[10px] font-semibold tracking-tight">Progress</span>
       </button>
 
-      <button class="bottom-nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-700 transition-colors" data-nav="coach" onclick="switchMainTab('coach')">
-        <div class="nav-icon-wrap p-1 rounded-full">
+      <!-- Settings Tab -->
+      <button class="bottom-nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-700 transition-colors" data-nav="settings" onclick="switchAppTab('settings')">
+        <div class="nav-icon-wrap p-1">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-            <line x1="12" y1="19" x2="12" y2="22"/>
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+            <circle cx="12" cy="12" r="3"/>
           </svg>
         </div>
-        <span class="text-[10px] font-semibold tracking-tight">Coach</span>
-        <span class="nav-indicator w-0 h-0.5 bg-transparent rounded-full transition-all"></span>
+        <span class="text-[10px] font-semibold tracking-tight">Settings</span>
       </button>
 
-      <button class="bottom-nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-700 transition-colors" data-nav="history" onclick="switchMainTab('history')">
-        <div class="nav-icon-wrap p-1 rounded-full">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-          </svg>
-        </div>
-        <span class="text-[10px] font-semibold tracking-tight">History</span>
-        <span class="nav-indicator w-0 h-0.5 bg-transparent rounded-full transition-all"></span>
-      </button>
     </nav>
 
   </div>
 
-  <!-- Tab Navigation & History Controller -->
-  <script>
-    function switchMainTab(tabName) {
-      // Update Bottom Navigation Active States
-      document.querySelectorAll('.bottom-nav-item').forEach(el => {
-        const isActive = el.dataset.nav === tabName;
-        el.classList.toggle('active', isActive);
-        const indicator = el.querySelector('.nav-indicator');
-        if (indicator) {
-          indicator.className = isActive 
-            ? 'nav-indicator w-4 h-0.5 bg-emerald-600 rounded-full transition-all'
-            : 'nav-indicator w-0 h-0.5 bg-transparent rounded-full transition-all';
-        }
-      });
+  <!-- ============================================================== -->
+  <!-- MODAL 1: SINGLE-PAGE ONBOARDING & PROFILE SETUP (Cal AI Style) -->
+  <!-- ============================================================== -->
+  <div id="modal-onboarding" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="max-w-md w-full bg-white rounded-3xl p-6 shadow-2xl max-h-[92vh] overflow-y-auto relative modal-sheet-enter">
+      
+      <!-- Close button (only shown if profile already exists) -->
+      <button id="onboarding-close-btn" onclick="closeOnboardingModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors hidden">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
 
-      // Switch Main View Panels
-      document.querySelectorAll('.app-view-section').forEach(el => {
-        if (el.id === `view-${tabName}`) {
-          el.classList.remove('hidden');
-          el.classList.add('block');
-        } else {
-          el.classList.add('hidden');
-          el.classList.remove('block');
-        }
-      });
+      <!-- STEP 1: FORM -->
+      <div id="onboarding-step-form" class="space-y-4">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold uppercase tracking-wider mb-1.5">
+            <span>Sovereign Metabolic Blueprint</span>
+          </div>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight">Personalize your plan</h2>
+          <p class="text-xs text-slate-500 mt-1">This will be taken into account when calculating your daily nutrition goals.</p>
+        </div>
 
-      // Special Tab Actions
-      if (tabName === 'trajectory' && window.weightChart) {
-        setTimeout(() => window.weightChart.resize(), 50);
-      }
-      if (tabName === 'history') {
-        renderHistoryView();
-      }
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function renderHistoryView() {
-      const listEl = document.getElementById('history-items-list');
-      const emptyEl = document.getElementById('history-empty-state');
-      if (!listEl || !emptyEl) return;
-
-      const history = JSON.parse(localStorage.getItem('opencal_meal_history') || '[]');
-      if (history.length === 0) {
-        emptyEl.style.display = 'block';
-        listEl.style.display = 'none';
-      } else {
-        emptyEl.style.display = 'none';
-        listEl.style.display = 'flex';
-        listEl.className = 'space-y-2.5 flex-col';
-        listEl.innerHTML = history.slice().reverse().map(item => `
-          <div class="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between">
-              <div>
-                <h4 class="font-bold text-slate-800 text-xs">${item.meal_name}</h4>
-                <div class="text-[10px] text-slate-400 mt-0.5">${new Date(item.date).toLocaleDateString(undefined, {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'})}</div>
-              </div>
-              <span class="text-xs font-black text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">${Math.round(item.calories)} kcal</span>
-            </div>
-            <div class="flex items-center gap-3 mt-2.5 pt-2 border-t border-slate-100 text-[11px] text-slate-600">
-              <span><strong class="text-emerald-700 font-bold">${Math.round(item.protein_g)}g</strong> Protein</span>
-              <span>•</span>
-              <span><strong class="text-sky-700 font-bold">${Math.round(item.carbs_g)}g</strong> Carbs</span>
-              <span>•</span>
-              <span><strong class="text-rose-700 font-bold">${Math.round(item.fat_g)}g</strong> Fats</span>
+        <form id="onboarding-profile-form" onsubmit="handleOnboardingSubmit(event)" class="space-y-4">
+          
+          <!-- Biological Sex -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Biological Sex</label>
+            <div class="grid grid-cols-2 gap-2">
+              <label class="sex-radio-label flex items-center justify-center gap-2 p-3 rounded-2xl border-2 border-slate-200 cursor-pointer hover:border-slate-400 transition-all font-bold text-xs">
+                <input type="radio" name="sex" value="male" checked class="hidden">
+                <span>Male</span>
+              </label>
+              <label class="sex-radio-label flex items-center justify-center gap-2 p-3 rounded-2xl border-2 border-slate-200 cursor-pointer hover:border-slate-400 transition-all font-bold text-xs">
+                <input type="radio" name="sex" value="female" class="hidden">
+                <span>Female</span>
+              </label>
             </div>
           </div>
-        `).join('');
-      }
-    }
 
-    window.switchMainTab = switchMainTab;
-    window.renderHistoryView = renderHistoryView;
-  </script>
+          <!-- Weight & Unit -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-bold text-slate-700">Current Weight</label>
+              <div class="flex p-0.5 bg-slate-100 rounded-lg text-[10px] font-bold">
+                <button type="button" class="px-2 py-0.5 rounded-md bg-white text-slate-900 shadow-xs" id="weight-unit-lbs" onclick="setWeightUnit('lbs')">lbs</button>
+                <button type="button" class="px-2 py-0.5 rounded-md text-slate-500" id="weight-unit-kg" onclick="setWeightUnit('kg')">kg</button>
+              </div>
+            </div>
+            <div class="relative">
+              <input type="number" id="onboarding-weight" value="165" step="0.5" min="60" max="450" required class="w-full p-3.5 rounded-2xl border-2 border-slate-200 focus:border-slate-900 focus:outline-none font-black text-xl text-slate-900">
+              <span class="absolute right-4 top-4 text-xs font-bold text-slate-400" id="weight-unit-label">lbs</span>
+            </div>
+          </div>
 
-  <!-- Core Scanner Logic -->
+          <!-- Height -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Height (cm or ft/in)</label>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="number" id="onboarding-height-ft" placeholder="Feet" value="5" min="3" max="7" class="p-3 rounded-2xl border-2 border-slate-200 focus:border-slate-900 focus:outline-none font-bold text-sm">
+              <input type="number" id="onboarding-height-in" placeholder="Inches" value="10" min="0" max="11" class="p-3 rounded-2xl border-2 border-slate-200 focus:border-slate-900 focus:outline-none font-bold text-sm">
+            </div>
+          </div>
+
+          <!-- Age / Year Born -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Age</label>
+            <input type="number" id="onboarding-age" value="27" min="15" max="100" required class="w-full p-3 rounded-2xl border-2 border-slate-200 focus:border-slate-900 focus:outline-none font-bold text-sm">
+          </div>
+
+          <!-- Goal (Cal AI Screenshot 3) -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">What is your goal?</label>
+            <div class="space-y-2">
+              <label class="goal-radio-card flex items-center justify-between p-3.5 rounded-2xl border-2 border-slate-200 cursor-pointer transition-all">
+                <input type="radio" name="goal" value="lose" class="hidden">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-black text-slate-800">↓</div>
+                  <div>
+                    <div class="font-extrabold text-xs text-slate-900">Lose Weight</div>
+                    <div class="text-[10px] text-slate-400">Moderate caloric deficit for healthy fat loss</div>
+                  </div>
+                </div>
+                <div class="goal-radio-circle w-4 h-4 rounded-full border-2 border-slate-300"></div>
+              </label>
+
+              <label class="goal-radio-card active flex items-center justify-between p-3.5 rounded-2xl border-2 border-slate-900 cursor-pointer transition-all">
+                <input type="radio" name="goal" value="maintain" checked class="hidden">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-black text-slate-800">-</div>
+                  <div>
+                    <div class="font-extrabold text-xs text-slate-900">Maintain</div>
+                    <div class="text-[10px] text-slate-400">Stay steady with your current weight & energy</div>
+                  </div>
+                </div>
+                <div class="goal-radio-circle w-4 h-4 rounded-full border-2 border-slate-900 bg-slate-900"></div>
+              </label>
+
+              <label class="goal-radio-card flex items-center justify-between p-3.5 rounded-2xl border-2 border-slate-200 cursor-pointer transition-all">
+                <input type="radio" name="goal" value="gain" class="hidden">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-black text-slate-800">↑</div>
+                  <div>
+                    <div class="font-extrabold text-xs text-slate-900">Gain Weight / Muscle</div>
+                    <div class="text-[10px] text-slate-400">High protein surplus for lean hypertrophy</div>
+                  </div>
+                </div>
+                <div class="goal-radio-circle w-4 h-4 rounded-full border-2 border-slate-300"></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Activity Level -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Activity Level</label>
+            <select id="onboarding-activity" class="w-full p-3 rounded-2xl border-2 border-slate-200 focus:border-slate-900 focus:outline-none font-bold text-xs bg-white text-slate-800">
+              <option value="sedentary">Sedentary (desk work, minimal exercise)</option>
+              <option value="light">Light (light exercise 1-3 days/wk)</option>
+              <option value="moderate" selected>Moderate (training 3-5 days/wk)</option>
+              <option value="heavy">Heavy / Athletic (intense daily training)</option>
+            </select>
+          </div>
+
+          <!-- Submit Button (Solid Black Pill) -->
+          <button type="submit" class="w-full py-4 bg-slate-950 hover:bg-slate-800 text-white font-extrabold rounded-full text-sm shadow-xl transition-all active:scale-[0.98] mt-4 flex items-center justify-center gap-2">
+            <span>Generate My Plan</span>
+            <span>→</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- STEP 2: PLAN RECOMMENDATION SUMMARY (Cal AI Screenshot 1) -->
+      <div id="onboarding-step-summary" class="hidden space-y-5 text-center">
+        <div>
+          <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-2 shadow-inner">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight" id="summary-goal-title">Maintain your current weight</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Stay steady with this personalized approach.</p>
+        </div>
+
+        <div class="text-left">
+          <div class="text-xs font-bold text-slate-800 mb-1">Your daily recommendation</div>
+          <p class="text-[11px] text-slate-400 mb-3">You can edit this anytime in Settings.</p>
+
+          <!-- Flame Calorie Hero Card -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-sm flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center shadow-xs">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-1.78-1.07-2.95-2-3.85-.92-.89-1.5-1.72-1.5-2.65 0-.15.02-.3.05-.44-.66.8-1.55 2.1-1.55 3.44 0 .93.58 1.76 1.5 2.65.93.9 2 2.07 2 3.85A3.5 3.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.5c0-3.5 2.5-6.5 6-8.5-1 2-1 4.5 0 6 1.1-.9 2-2.1 2-3.5 2.5 2 4.5 5 4.5 8.5A6.5 6.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.5c0-1.2.3-2.3.8-3.3.4 1.4 1.2 2.6 2.2 3.3Z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="text-2xl font-black text-slate-900" id="summary-calories-val">2,168</div>
+                <div class="text-[10px] font-bold text-slate-400 uppercase">Calories</div>
+              </div>
+            </div>
+            <div class="text-xs text-slate-400">Target</div>
+          </div>
+
+          <!-- 3 Macro Cards -->
+          <div class="grid grid-cols-3 gap-2">
+            <div class="bg-white rounded-2xl p-3 border border-slate-200/90 shadow-xs text-center">
+              <div class="w-6 h-6 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="m14 10-1.5 1.5a4.24 4.24 0 0 1-6 0l-.5-.5a4.24 4.24 0 0 1 0-6L7.5 3.5a4.24 4.24 0 0 1 6 0l.5.5a4.24 4.24 0 0 1 0 6Z"/>
+                </svg>
+              </div>
+              <div class="text-sm font-black text-slate-900" id="summary-protein-val">113g</div>
+              <div class="text-[9px] font-bold text-slate-400 uppercase">Protein</div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-3 border border-slate-200/90 shadow-xs text-center">
+              <div class="w-6 h-6 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center mx-auto mb-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M2 22 16 8"/>
+                  <path d="M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"/>
+                </svg>
+              </div>
+              <div class="text-sm font-black text-slate-900" id="summary-carbs-val">294g</div>
+              <div class="text-[9px] font-bold text-slate-400 uppercase">Carbs</div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-3 border border-slate-200/90 shadow-xs text-center">
+              <div class="w-6 h-6 rounded-lg bg-sky-50 text-sky-500 flex items-center justify-center mx-auto mb-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 2a6 6 0 0 0-6 6c0 4 2 8 6 13 4-5 6-9 6-13a6 6 0 0 0-6-6Z"/>
+                </svg>
+              </div>
+              <div class="text-sm font-black text-slate-900" id="summary-fats-val">60g</div>
+              <div class="text-[9px] font-bold text-slate-400 uppercase">Fats</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info Card (Cal AI Screenshot 1) -->
+        <div class="p-4 bg-slate-50 border border-slate-200/80 rounded-2xl text-left text-xs space-y-2">
+          <div class="font-extrabold text-slate-900 text-xs">Your info</div>
+          <div class="flex items-center gap-2 text-slate-600">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Your weight: <strong class="text-slate-800" id="summary-info-weight">165 lbs</strong></span>
+          </div>
+          <div class="flex items-center gap-2 text-slate-600">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <span>Activity level: <strong class="text-slate-800" id="summary-info-activity">Moderate</strong></span>
+          </div>
+        </div>
+
+        <button onclick="finishOnboardingAndEnterApp()" class="w-full py-4 bg-slate-950 hover:bg-slate-800 text-white font-extrabold rounded-full text-sm shadow-xl transition-all active:scale-[0.98]">
+          Continue to Dashboard
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 2: FULL PLATE SCANNER MODAL (Cal AI "Just Snap a Pic")   -->
+  <!-- ============================================================== -->
+  <div id="modal-scanner" class="fixed inset-0 bg-slate-900/85 backdrop-blur-md z-50 flex flex-col justify-end hidden">
+    
+    <div class="max-w-md w-full mx-auto bg-white rounded-t-[36px] max-h-[92vh] overflow-y-auto flex flex-col relative modal-sheet-enter shadow-2xl">
+      
+      <!-- Top Modal Bar -->
+      <div class="p-4 flex items-center justify-between border-b border-slate-100">
+        <button onclick="closeScannerModal()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 hover:bg-slate-200 transition-colors">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <span class="text-xs font-extrabold tracking-tight text-slate-900">Scan Meal Plate</span>
+        <button onclick="loadPreset('salmon')" class="text-xs font-bold text-emerald-700 hover:underline">
+          Sample
+        </button>
+      </div>
+
+      <!-- Mode Selector (Scan Food | Presets | Upload - Cal AI style) -->
+      <div class="p-3 bg-slate-50 border-b border-slate-100 flex gap-1">
+        <button class="scanner-mode-tab active flex-1 py-2 rounded-xl text-xs font-bold text-slate-900 bg-white shadow-xs transition-all flex items-center justify-center gap-1.5" data-mode="camera" onclick="switchScannerMode('camera')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span>Camera</span>
+        </button>
+        <button class="scanner-mode-tab flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5" data-mode="presets" onclick="switchScannerMode('presets')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span>Presets</span>
+        </button>
+        <button class="scanner-mode-tab flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5" data-mode="upload" onclick="switchScannerMode('upload')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/></svg>
+          <span>Upload</span>
+        </button>
+      </div>
+
+      <!-- SCANNER INPUT BODY -->
+      <div id="scanner-input-container" class="p-4 space-y-4">
+        
+        <!-- Mode 1: Camera Viewfinder (Cal AI "Just snap a pic" - Screenshot 1) -->
+        <div id="mode-panel-camera" class="scanner-panel block">
+          <div class="relative rounded-3xl overflow-hidden bg-slate-950 aspect-[4/3] flex items-center justify-center">
+            
+            <video id="camera-video" class="w-full h-full object-cover" autoplay playsinline muted></video>
+            
+            <!-- Corner Brackets -->
+            <span class="viewfinder-corner-tl"></span>
+            <span class="viewfinder-corner-tr"></span>
+            <span class="viewfinder-corner-bl"></span>
+            <span class="viewfinder-corner-br"></span>
+
+            <!-- Center Target Reticle -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <span class="text-[11px] font-semibold text-white/90 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">Align Food Plate in Frame</span>
+            </div>
+
+            <!-- AI Callout Tags (Cal AI Camera Screenshot 1: Lettuce, Salmon, Parmesan) -->
+            <div class="absolute top-6 left-6 bg-white/95 backdrop-blur text-slate-900 font-bold text-[10px] px-2.5 py-1 rounded-full shadow-md border border-white/40 pointer-events-none flex items-center gap-1 animate-pulse">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span>Protein</span>
+            </div>
+            <div class="absolute bottom-6 right-6 bg-white/95 backdrop-blur text-slate-900 font-bold text-[10px] px-2.5 py-1 rounded-full shadow-md border border-white/40 pointer-events-none flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+              <span>Carbs</span>
+            </div>
+          </div>
+
+          <div class="text-center text-[11px] text-slate-400 mt-2">
+            Gemma 2 Visual Segmentation · 100% On-Device & Private
+          </div>
+
+          <!-- Big Circular Shutter Button (Cal AI Camera Shutter) -->
+          <div class="flex items-center justify-center pt-2">
+            <button onclick="snapPhoto()" class="w-18 h-18 rounded-full bg-slate-900 p-1 shutter-ring hover:scale-105 active:scale-95 transition-transform flex items-center justify-center">
+              <div class="w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-inner">
+                <div class="w-11 h-11 rounded-full border-2 border-slate-900"></div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mode 2: Presets Panel -->
+        <div id="mode-panel-presets" class="scanner-panel hidden space-y-2.5">
+          <div class="text-xs font-bold text-slate-700 mb-1">Tap a verified plate to simulate instant visual scan:</div>
+          
+          <button onclick="loadPreset('salmon')" class="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-900 hover:bg-slate-50 transition-all text-left shadow-xs">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-black text-sm">1</div>
+              <div>
+                <div class="font-extrabold text-slate-900 text-xs">Pan-Seared Salmon & Sweet Potato</div>
+                <div class="text-[10px] text-slate-400">435g · Seafood, Roots & Asparagus</div>
+              </div>
+            </div>
+            <span class="text-xs font-black text-slate-900 bg-slate-100 px-2.5 py-1 rounded-full">645 kcal</span>
+          </button>
+
+          <button onclick="loadPreset('chicken')" class="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-900 hover:bg-slate-50 transition-all text-left shadow-xs">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-black text-sm">2</div>
+              <div>
+                <div class="font-extrabold text-slate-900 text-xs">Grilled Chicken Breast & Jasmine Rice</div>
+                <div class="text-[10px] text-slate-400">430g · Lean Poultry, Grains & Broccoli</div>
+              </div>
+            </div>
+            <span class="text-xs font-black text-slate-900 bg-slate-100 px-2.5 py-1 rounded-full">512 kcal</span>
+          </button>
+
+          <button onclick="loadPreset('steak')" class="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-900 hover:bg-slate-50 transition-all text-left shadow-xs">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center font-black text-sm">3</div>
+              <div>
+                <div class="font-extrabold text-slate-900 text-xs">Sirloin Steak, Avocado & Brown Rice</div>
+                <div class="text-[10px] text-slate-400">385g · Red Meat, Whole Grains & Lipids</div>
+              </div>
+            </div>
+            <span class="text-xs font-black text-slate-900 bg-slate-100 px-2.5 py-1 rounded-full">735 kcal</span>
+          </button>
+        </div>
+
+        <!-- Mode 3: Upload Dropzone -->
+        <div id="mode-panel-upload" class="scanner-panel hidden">
+          <input type="file" id="studio-file-input" accept="image/*" class="hidden">
+          <div id="studio-dropzone" class="rounded-3xl border-2 border-dashed border-slate-300 p-8 flex flex-col items-center justify-center cursor-pointer hover:border-slate-900 hover:bg-slate-50 transition-all text-center">
+            <div class="w-14 h-14 rounded-full bg-slate-100 text-slate-800 flex items-center justify-center mb-3">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div class="font-extrabold text-slate-900 text-sm">Upload meal photo from gallery</div>
+            <div class="text-xs text-slate-400 mt-1">Tap to select JPEG, PNG, or drag & drop</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SCANNING LASER & ANALYSIS PROGRESS (Only visible while processing) -->
+      <div id="scanner-processing-box" class="p-4 border-t border-slate-100 space-y-3 hidden">
+        <div class="relative bg-slate-100 rounded-2xl p-4 overflow-hidden text-center">
+          <div class="scan-laser"></div>
+          <div class="text-xs font-bold text-slate-900" id="scanner-status-text">Segmenting plate geometry with Gemma 2...</div>
+          <div class="text-[10px] text-slate-400 mt-0.5">Querying USDA FoodData Central deterministic database</div>
+        </div>
+      </div>
+
+      <!-- ========================================================== -->
+      <!-- RESULT VIEW: CAL AI SCAN RESULT CARD (Cal AI Screenshot 3) -->
+      <!-- ========================================================== -->
+      <div id="scanner-result-sheet" class="p-4 space-y-4 border-t border-slate-100 hidden">
+        
+        <!-- Food Plate Preview Box -->
+        <div class="relative rounded-2xl overflow-hidden bg-slate-100 aspect-video flex items-center justify-center border border-slate-200">
+          <img id="plate-preview-img" src="" alt="Scanned Food Plate" class="w-full h-full object-cover">
+          <div class="absolute bottom-2.5 left-2.5 bg-black/60 backdrop-blur px-2.5 py-1 rounded-full text-white text-[10px] font-bold" id="result-timestamp-pill">
+            6:21 PM · Scanned
+          </div>
+        </div>
+
+        <!-- Floating Result Content Card (Exact Cal AI Screenshot 3) -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm space-y-4">
+          
+          <!-- Title & Servings Stepper -->
+          <div class="flex items-center justify-between">
+            <h3 class="font-black text-slate-900 text-base tracking-tight" id="result-meal-title">
+              Pan-Seared Salmon & Sweet Potato
+            </h3>
+            
+            <div class="flex items-center gap-2 bg-slate-100 px-2 py-1 rounded-full text-xs font-bold text-slate-800">
+              <button onclick="adjustServing(-1)" class="w-5 h-5 rounded-full bg-white flex items-center justify-center hover:bg-slate-200">-</button>
+              <span id="result-serving-val">1</span>
+              <button onclick="adjustServing(1)" class="w-5 h-5 rounded-full bg-white flex items-center justify-center hover:bg-slate-200">+</button>
+            </div>
+          </div>
+
+          <!-- Hero Calorie Pill (Cal AI style) -->
+          <div class="bg-white rounded-2xl p-3.5 border border-slate-200 flex items-center gap-3 shadow-xs">
+            <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-1.78-1.07-2.95-2-3.85-.92-.89-1.5-1.72-1.5-2.65 0-.15.02-.3.05-.44-.66.8-1.55 2.1-1.55 3.44 0 .93.58 1.76 1.5 2.65.93.9 2 2.07 2 3.85A3.5 3.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.5c0-3.5 2.5-6.5 6-8.5-1 2-1 4.5 0 6 1.1-.9 2-2.1 2-3.5 2.5 2 4.5 5 4.5 8.5A6.5 6.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.5c0-1.2.3-2.3.8-3.3.4 1.4 1.2 2.6 2.2 3.3Z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="text-[10px] font-bold text-slate-400 uppercase">Calories</div>
+              <div class="text-2xl font-black text-slate-900" id="result-calories-val">645</div>
+            </div>
+          </div>
+
+          <!-- 3 Macro Pills (Cal AI Screenshot 3) -->
+          <div class="grid grid-cols-3 gap-2">
+            <div class="p-2.5 rounded-xl bg-rose-50/70 border border-rose-200/80 text-center">
+              <div class="text-[10px] font-bold text-rose-800 uppercase flex items-center justify-center gap-1 mb-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Protein
+              </div>
+              <div class="text-base font-black text-rose-900" id="result-protein-val">48g</div>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-center">
+              <div class="text-[10px] font-bold text-amber-800 uppercase flex items-center justify-center gap-1 mb-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Carbs
+              </div>
+              <div class="text-base font-black text-amber-900" id="result-carbs-val">58g</div>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-sky-50/70 border border-sky-200/80 text-center">
+              <div class="text-[10px] font-bold text-sky-800 uppercase flex items-center justify-center gap-1 mb-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> Fats
+              </div>
+              <div class="text-base font-black text-sky-900" id="result-fats-val">22g</div>
+            </div>
+          </div>
+
+          <!-- Ingredients Breakdown (Cal AI Screenshot 3) -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-slate-800">Ingredients</span>
+              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">USDA Grounded</span>
+            </div>
+            <div id="result-ingredients-table" class="divide-y divide-slate-100 text-xs">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Clinical Health Insights -->
+          <div id="result-insights-box" class="space-y-1.5 text-xs text-emerald-900">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Action Buttons: Fix Results & Done (Cal AI Screenshot 3) -->
+          <div class="grid grid-cols-2 gap-2.5 pt-2">
+            <button onclick="fixResultsAction()" class="py-3.5 px-4 rounded-full border-2 border-slate-300 hover:border-slate-400 font-extrabold text-xs text-slate-800 transition-all flex items-center justify-center gap-1.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span>Fix Results</span>
+            </button>
+            <button onclick="commitPlateToLog()" class="py-3.5 px-4 rounded-full bg-slate-950 hover:bg-slate-800 font-extrabold text-xs text-white shadow-xl transition-all active:scale-[0.98]">
+              Done
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="app-toast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-slate-950 text-white px-4 py-2.5 rounded-full text-xs font-bold shadow-2xl z-50 flex items-center gap-2 hidden transition-all">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toast-text">Meal logged to your daily ledger!</span>
+  </div>
+
+  <!-- App Core JavaScript Logic -->
   <script src="/static/js/scanner.js"></script>
 </body>
 </html>

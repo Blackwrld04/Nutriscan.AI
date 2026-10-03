@@ -1,85 +1,561 @@
 /**
- * OpenCal AI - Dedicated Plate Scanner Studio Logic
- * Synchronized with Gemma Vision, USDA Grounding & TabPFN In-Context Engine
+ * OpenCal AI — Mobile Application Controller
+ * Inspired by Cal AI & TrustX Architecture
+ * Integrates Google Gemma Vision, USDA Deterministic Grounding, TabPFN In-Context Engine & ElevenLabs Voice Coach
  */
 
 let weightChart = null;
 let cameraStream = null;
+let currentScannedPlate = null;
+let currentServingMultiplier = 1;
 
-let currentPlateData = {
-    meal_name: "",
-    calories: 0,
-    protein_g: 0,
-    carbs_g: 0,
-    fat_g: 0,
-    fiber_g: 0,
-    days_to_goal: 22,
-    target_weight: 75.0,
-    daily_budget: 2100
+// Default profile for Dave if none in localStorage
+const DEFAULT_PROFILE = {
+    name: "Dave",
+    sex: "male",
+    weight_val: 165,
+    weight_unit: "lbs",
+    weight_kg: 75.0,
+    height_ft: 5,
+    height_in: 10,
+    height_cm: 178,
+    age: 27,
+    goal: "maintain",
+    activity: "moderate",
+    target_calories: 2168,
+    target_protein: 113,
+    target_carbs: 294,
+    target_fats: 60,
+    streak_days: 7
 };
 
-function getLoggedCaloriesTotal() {
-    try {
-        const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
-        return history.reduce((sum, item) => sum + (Number(item.calories) || 0), 0);
-    } catch {
-        return 0;
+// Preset Nutritional Data
+const PRESETS_DB = {
+    salmon: {
+        meal_name: "Pan-Seared Salmon & Sweet Potato",
+        total_nutrition: { calories: 645, protein_g: 48.2, carbs_g: 58.5, fat_g: 22.4, fiber_g: 7.2 },
+        items: [
+            { name: "Pan-Seared Atlantic Salmon", weight_g: 185, food_group: "Seafood (USDA FDC #175168)", nutrition: { calories: 385, protein_g: 37.7, carbs_g: 0, fat_g: 24.8 } },
+            { name: "Baked Japanese Sweet Potato", weight_g: 200, food_group: "Roots (USDA FDC #168483)", nutrition: { calories: 180, protein_g: 4.0, carbs_g: 41.4, fat_g: 0.4 } },
+            { name: "Sautéed Fresh Asparagus", weight_g: 80, food_group: "Greens (USDA FDC #170381)", nutrition: { calories: 18, protein_g: 1.9, carbs_g: 3.3, fat_g: 0.2 } }
+        ],
+        health_insights: [
+            "High protein density meal (>30% calories from protein) — optimal for lean muscle preservation.",
+            "Rich in Omega-3 fatty acids and complex slow-digesting carbohydrates with 7.2g dietary fiber."
+        ],
+        image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Cpath d='M19 12a7 7 0 0 0-14 0'/%3E%3Ccircle cx='12' cy='5' r='1'/%3E%3C/svg%3E"
+    },
+    chicken: {
+        meal_name: "Grilled Chicken Breast & Jasmine Rice",
+        total_nutrition: { calories: 512, protein_g: 58.6, carbs_g: 46.2, fat_g: 6.8, fiber_g: 3.0 },
+        items: [
+            { name: "Grilled Chicken Breast", weight_g: 180, food_group: "Poultry (USDA FDC #171077)", nutrition: { calories: 297, protein_g: 55.8, carbs_g: 0, fat_g: 6.5 } },
+            { name: "Cooked White Jasmine Rice", weight_g: 160, food_group: "Grains (USDA FDC #168884)", nutrition: { calories: 208, protein_g: 4.3, carbs_g: 45.1, fat_g: 0.5 } },
+            { name: "Steamed Organic Broccoli", weight_g: 90, food_group: "Vegetables (USDA FDC #170379)", nutrition: { calories: 31, protein_g: 2.2, carbs_g: 6.5, fat_g: 0.4 } }
+        ],
+        health_insights: [
+            "High protein density meal (45% calories from protein) — ideal for post-workout glycogen replenishment.",
+            "Rich in bioavailable zinc, phosphorus, and B-complex vitamins."
+        ],
+        image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 24 24' fill='none' stroke='%23d97706' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3C/svg%3E"
+    },
+    steak: {
+        meal_name: "Sirloin Steak, Avocado & Brown Rice",
+        total_nutrition: { calories: 735, protein_g: 52.4, carbs_g: 42.0, fat_g: 38.6, fiber_g: 8.5 },
+        items: [
+            { name: "Pan-Seared Sirloin Steak", weight_g: 170, food_group: "Red Meat (USDA FDC #170208)", nutrition: { calories: 369, protein_g: 44.4, carbs_g: 0, fat_g: 20.1 } },
+            { name: "Cooked Brown Rice", weight_g: 140, food_group: "Whole Grains (USDA FDC #169704)", nutrition: { calories: 157, protein_g: 3.6, carbs_g: 32.9, fat_g: 1.3 } },
+            { name: "Fresh Hass Avocado", weight_g: 75, food_group: "Lipids (USDA FDC #171705)", nutrition: { calories: 120, protein_g: 1.5, carbs_g: 6.4, fat_g: 11.0 } }
+        ],
+        health_insights: [
+            "High micronutrient and healthy lipid profile supporting natural hormonal synthesis.",
+            "Substantial meal volume with 8.5g dietary fiber for sustained fullness."
+        ],
+        image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 24 24' fill='none' stroke='%23e11d48' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Cpath d='M8 12h8'/%3E%3C/svg%3E"
     }
-}
+};
 
-function showScanResultsContainer() {
-    const container = document.getElementById("scan-results-container");
-    if (container) {
-        container.classList.remove("hidden");
-        setTimeout(() => {
-            container.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 100);
-    }
-}
-
+// Initialize App
 document.addEventListener("DOMContentLoaded", () => {
-    initTabs();
+    initCalendarStrip();
     initDropzone();
-    initPresets();
-    initSlider();
-    loadMetabolicForecast(2100);
+    initGoalRadioCards();
+    checkProfileAndInitialize();
 });
 
-// Segmented Control Tabs (Upload, Camera, Presets)
-function initTabs() {
-    const tabButtons = document.querySelectorAll(".studio-tab-btn");
-    const tabPanels = document.querySelectorAll(".studio-tab-panel");
+// Profile Management
+function getStoredProfile() {
+    try {
+        const stored = localStorage.getItem("opencal_user_profile");
+        return stored ? JSON.parse(stored) : null;
+    } catch {
+        return null;
+    }
+}
 
-    tabButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            const targetTab = btn.dataset.tab;
+function checkProfileAndInitialize() {
+    const profile = getStoredProfile();
+    if (!profile) {
+        // Show onboarding modal immediately on first visit
+        openOnboardingModal();
+    } else {
+        applyProfileToUI(profile);
+    }
 
-            tabButtons.forEach(b => b.classList.remove("active"));
-            tabPanels.forEach(p => p.classList.remove("active"));
+    refreshHomeScreen();
+    loadMetabolicForecast(profile ? profile.target_calories : DEFAULT_PROFILE.target_calories);
+}
 
-            btn.classList.add("active");
-            const activePanel = document.getElementById(`panel-${targetTab}`);
-            if (activePanel) activePanel.classList.add("active");
+function applyProfileToUI(profile) {
+    // Update Home Header & Targets
+    const calTargetEl = document.getElementById("home-cal-target");
+    const proteinTargetEl = document.getElementById("home-protein-target");
+    const carbsTargetEl = document.getElementById("home-carbs-target");
+    const fatsTargetEl = document.getElementById("home-fats-target");
+    const streakEl = document.getElementById("header-streak-count");
 
-            // Handle Camera Lifecycle
-            if (targetTab === "camera") {
-                startCamera();
-            } else {
-                stopCamera();
-            }
+    if (calTargetEl) calTargetEl.innerText = `/ ${profile.target_calories.toLocaleString()}`;
+    if (proteinTargetEl) proteinTargetEl.innerText = profile.target_protein;
+    if (carbsTargetEl) carbsTargetEl.innerText = profile.target_carbs;
+    if (fatsTargetEl) fatsTargetEl.innerText = profile.target_fats;
+    if (streakEl) streakEl.innerText = profile.streak_days || 7;
+
+    // Update Progress View Stats
+    const progressWeightEl = document.getElementById("progress-current-weight");
+    const progressGoalEl = document.getElementById("progress-goal-weight");
+    if (progressWeightEl) progressWeightEl.innerText = `${profile.weight_val} ${profile.weight_unit}`;
+    if (progressGoalEl) progressGoalEl.innerText = `${profile.weight_val} ${profile.weight_unit}`;
+
+    // Update Settings View Stats
+    const settingsUserSummary = document.getElementById("settings-user-summary");
+    const settingsTargetCals = document.getElementById("settings-target-cals");
+    const settingsTargetGoal = document.getElementById("settings-target-goal");
+
+    if (settingsUserSummary) settingsUserSummary.innerText = `${profile.weight_val} ${profile.weight_unit} · ${capitalize(profile.activity)} · ${capitalize(profile.goal)}`;
+    if (settingsTargetCals) settingsTargetCals.innerText = `${profile.target_calories.toLocaleString()} kcal`;
+    if (settingsTargetGoal) settingsTargetGoal.innerText = `${capitalize(profile.goal)} Weight`;
+}
+
+// Single-Page Onboarding Controls
+function openOnboardingModal() {
+    const modal = document.getElementById("modal-onboarding");
+    const closeBtn = document.getElementById("onboarding-close-btn");
+    const stepForm = document.getElementById("onboarding-step-form");
+    const stepSummary = document.getElementById("onboarding-step-summary");
+
+    if (!modal) return;
+    modal.classList.remove("hidden");
+    if (stepForm) stepForm.classList.remove("hidden");
+    if (stepSummary) stepSummary.classList.add("hidden");
+
+    // If profile already exists, show close button
+    if (getStoredProfile() && closeBtn) {
+        closeBtn.classList.remove("hidden");
+    } else if (closeBtn) {
+        closeBtn.classList.add("hidden");
+    }
+}
+
+function closeOnboardingModal() {
+    const modal = document.getElementById("modal-onboarding");
+    if (modal) modal.classList.add("hidden");
+}
+
+let activeWeightUnit = "lbs";
+function setWeightUnit(unit) {
+    activeWeightUnit = unit;
+    const lbsBtn = document.getElementById("weight-unit-lbs");
+    const kgBtn = document.getElementById("weight-unit-kg");
+    const label = document.getElementById("weight-unit-label");
+    const input = document.getElementById("onboarding-weight");
+
+    if (unit === "kg") {
+        if (lbsBtn) lbsBtn.className = "px-2 py-0.5 rounded-md text-slate-500";
+        if (kgBtn) kgBtn.className = "px-2 py-0.5 rounded-md bg-white text-slate-900 shadow-xs";
+        if (label) label.innerText = "kg";
+        if (input && input.value === "165") input.value = "75";
+    } else {
+        if (lbsBtn) lbsBtn.className = "px-2 py-0.5 rounded-md bg-white text-slate-900 shadow-xs";
+        if (kgBtn) kgBtn.className = "px-2 py-0.5 rounded-md text-slate-500";
+        if (label) label.innerText = "lbs";
+        if (input && input.value === "75") input.value = "165";
+    }
+}
+
+function initGoalRadioCards() {
+    const cards = document.querySelectorAll(".goal-radio-card");
+    cards.forEach(card => {
+        card.addEventListener("click", () => {
+            cards.forEach(c => {
+                c.classList.remove("active", "border-slate-900");
+                c.classList.add("border-slate-200");
+                const circle = c.querySelector(".goal-radio-circle");
+                if (circle) circle.className = "goal-radio-circle w-4 h-4 rounded-full border-2 border-slate-300";
+            });
+            card.classList.add("active", "border-slate-900");
+            card.classList.remove("border-slate-200");
+            const radio = card.querySelector("input[type=radio]");
+            if (radio) radio.checked = true;
+            const activeCircle = card.querySelector(".goal-radio-circle");
+            if (activeCircle) activeCircle.className = "goal-radio-circle w-4 h-4 rounded-full border-2 border-slate-900 bg-slate-900";
         });
     });
 }
 
-// Camera Controls
-async function startCamera() {
-    const video = document.getElementById("camera-video");
-    const statusMsg = document.getElementById("camera-status-msg");
+function handleOnboardingSubmit(e) {
+    e.preventDefault();
 
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        if (statusMsg) statusMsg.innerText = "Camera API not supported in this browser. Please use upload.";
+    const sex = document.querySelector("input[name='sex']:checked")?.value || "male";
+    const weightVal = parseFloat(document.getElementById("onboarding-weight")?.value || "165");
+    const weightUnit = activeWeightUnit;
+    const heightFt = parseInt(document.getElementById("onboarding-height-ft")?.value || "5");
+    const heightIn = parseInt(document.getElementById("onboarding-height-in")?.value || "10");
+    const age = parseInt(document.getElementById("onboarding-age")?.value || "27");
+    const goal = document.querySelector("input[name='goal']:checked")?.value || "maintain";
+    const activity = document.getElementById("onboarding-activity")?.value || "moderate";
+
+    // Conversion
+    const weightKg = weightUnit === "lbs" ? weightVal * 0.453592 : weightVal;
+    const heightCm = (heightFt * 12 + heightIn) * 2.54;
+
+    // Harris-Benedict / Mifflin-St Jeor Formula
+    const bmr = 10 * weightKg + 6.25 * heightCm - 5 * age + (sex === "male" ? 5 : -161);
+    const activityMultipliers = { sedentary: 1.2, light: 1.375, moderate: 1.55, heavy: 1.725 };
+    const tdee = Math.round(bmr * (activityMultipliers[activity] || 1.55));
+
+    let targetCalories = tdee;
+    if (goal === "lose") targetCalories = Math.max(1400, tdee - 450);
+    if (goal === "gain") targetCalories = tdee + 350;
+
+    // Macro Target Breakdown
+    const targetProtein = Math.round(weightKg * (goal === "lose" ? 2.2 : 1.9)); // Lean muscle preservation
+    const targetFats = Math.round((targetCalories * 0.25) / 9); // 25% healthy fats
+    const targetCarbs = Math.max(50, Math.round((targetCalories - (targetProtein * 4) - (targetFats * 9)) / 4));
+
+    const newProfile = {
+        name: "Dave",
+        sex,
+        weight_val: weightVal,
+        weight_unit: weightUnit,
+        weight_kg: Math.round(weightKg * 10) / 10,
+        height_ft: heightFt,
+        height_in: heightIn,
+        height_cm: Math.round(heightCm),
+        age,
+        goal,
+        activity,
+        target_calories: targetCalories,
+        target_protein: targetProtein,
+        target_carbs: targetCarbs,
+        target_fats: targetFats,
+        streak_days: 7
+    };
+
+    // Store in global window memory until committed
+    window._pendingProfile = newProfile;
+
+    // Populate Step 2 Recommendation Summary (Cal AI Screenshot 1)
+    const goalTitleEl = document.getElementById("summary-goal-title");
+    const calEl = document.getElementById("summary-calories-val");
+    const protEl = document.getElementById("summary-protein-val");
+    const carbsEl = document.getElementById("summary-carbs-val");
+    const fatsEl = document.getElementById("summary-fats-val");
+    const infoWeight = document.getElementById("summary-info-weight");
+    const infoActivity = document.getElementById("summary-info-activity");
+
+    if (goalTitleEl) {
+        goalTitleEl.innerText = goal === "lose" ? "Lose body fat steadily" : goal === "gain" ? "Build lean muscle mass" : "Maintain your current weight";
+    }
+    if (calEl) calEl.innerText = targetCalories.toLocaleString();
+    if (protEl) protEl.innerText = `${targetProtein}g`;
+    if (carbsEl) carbsEl.innerText = `${targetCarbs}g`;
+    if (fatsEl) fatsEl.innerText = `${targetFats}g`;
+    if (infoWeight) infoWeight.innerText = `${weightVal} ${weightUnit}`;
+    if (infoActivity) infoActivity.innerText = capitalize(activity);
+
+    // Switch to Step 2
+    document.getElementById("onboarding-step-form")?.classList.add("hidden");
+    document.getElementById("onboarding-step-summary")?.classList.remove("hidden");
+}
+
+function finishOnboardingAndEnterApp() {
+    const profile = window._pendingProfile || DEFAULT_PROFILE;
+    localStorage.setItem("opencal_user_profile", JSON.stringify(profile));
+    applyProfileToUI(profile);
+    closeOnboardingModal();
+    refreshHomeScreen();
+    loadMetabolicForecast(profile.target_calories);
+    showToast(`Welcome! Your daily target is ${profile.target_calories.toLocaleString()} kcal.`);
+}
+
+// Navigation Tabs
+function switchAppTab(tabName) {
+    document.querySelectorAll(".bottom-nav-item").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.nav === tabName);
+    });
+
+    document.querySelectorAll(".app-view-tab").forEach(tab => {
+        if (tab.id === `view-${tabName}`) {
+            tab.classList.remove("hidden");
+            tab.classList.add("block");
+        } else {
+            tab.classList.add("hidden");
+            tab.classList.remove("block");
+        }
+    });
+
+    if (tabName === "progress" && weightChart) {
+        setTimeout(() => weightChart.resize(), 60);
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Horizontal Calendar Strip (Cal AI Screenshot 2)
+function initCalendarStrip() {
+    const strip = document.getElementById("calendar-week-strip");
+    if (!strip) return;
+
+    const today = new Date();
+    const currentDayIdx = today.getDay(); // 0 is Sunday
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - currentDayIdx);
+
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    strip.innerHTML = "";
+
+    days.forEach((dayName, idx) => {
+        const d = new Date(startOfWeek);
+        d.setDate(startOfWeek.getDate() + idx);
+        const isToday = idx === currentDayIdx;
+
+        const col = document.createElement("div");
+        col.className = `flex flex-col items-center flex-1 cursor-pointer transition-all ${isToday ? "text-slate-900" : "text-slate-400 hover:text-slate-600"}`;
+        col.innerHTML = `
+            <span class="text-[10px] font-bold uppercase mb-1">${dayName}</span>
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${isToday ? "border-2 border-slate-900 bg-slate-900 text-white shadow-xs" : "hover:bg-slate-100"}">
+                ${d.getDate()}
+            </div>
+        `;
+        strip.appendChild(col);
+    });
+}
+
+// Home Screen Dashboard Logic
+function refreshHomeScreen() {
+    const profile = getStoredProfile() || DEFAULT_PROFILE;
+    const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
+
+    // Sum today's macros
+    let totalCals = 0;
+    let totalProtein = 0;
+    let totalCarbs = 0;
+    let totalFats = 0;
+
+    history.forEach(item => {
+        totalCals += Number(item.calories) || 0;
+        totalProtein += Number(item.protein_g) || 0;
+        totalCarbs += Number(item.carbs_g) || 0;
+        totalFats += Number(item.fat_g) || 0;
+    });
+
+    totalCals = Math.round(totalCals);
+    totalProtein = Math.round(totalProtein);
+    totalCarbs = Math.round(totalCarbs);
+    totalFats = Math.round(totalFats);
+
+    // Update numbers
+    const eatenEl = document.getElementById("home-cal-eaten");
+    const targetEl = document.getElementById("home-cal-target");
+    const remLabel = document.getElementById("home-cal-remaining-label");
+    const pEaten = document.getElementById("home-protein-eaten");
+    const cEaten = document.getElementById("home-carbs-eaten");
+    const fEaten = document.getElementById("home-fats-eaten");
+
+    if (eatenEl) eatenEl.innerText = totalCals.toLocaleString();
+    if (targetEl) targetEl.innerText = `/ ${profile.target_calories.toLocaleString()}`;
+    if (pEaten) pEaten.innerText = totalProtein;
+    if (cEaten) cEaten.innerText = totalCarbs;
+    if (fEaten) fEaten.innerText = totalFats;
+
+    const remaining = Math.max(0, profile.target_calories - totalCals);
+    if (remLabel) {
+        remLabel.innerHTML = totalCals >= profile.target_calories
+            ? `<span class="text-amber-600 font-bold">Daily target reached!</span>`
+            : `<span>${remaining.toLocaleString()} kcal remaining</span>`;
+    }
+
+    // Update SVG Progress Rings
+    // Main Calorie Ring: radius 40, circ = 2 * PI * 40 = 251.3
+    const calRing = document.getElementById("home-calorie-ring");
+    if (calRing) {
+        const pct = Math.min(1, totalCals / profile.target_calories);
+        calRing.style.strokeDashoffset = 251.3 * (1 - pct);
+    }
+
+    // 3 Mini Macro Rings: radius 22, circ = 2 * PI * 22 = 138.2
+    const pRing = document.getElementById("home-ring-protein");
+    const cRing = document.getElementById("home-ring-carbs");
+    const fRing = document.getElementById("home-ring-fats");
+
+    if (pRing) {
+        const pct = Math.min(1, totalProtein / profile.target_protein);
+        pRing.style.strokeDashoffset = 138.2 * (1 - pct);
+    }
+    if (cRing) {
+        const pct = Math.min(1, totalCarbs / profile.target_carbs);
+        cRing.style.strokeDashoffset = 138.2 * (1 - pct);
+    }
+    if (fRing) {
+        const pct = Math.min(1, totalFats / profile.target_fats);
+        fRing.style.strokeDashoffset = 138.2 * (1 - pct);
+    }
+
+    // Render Recently Uploaded List (Cal AI Screenshot 2)
+    renderRecentlyUploadedList(history);
+}
+
+function renderRecentlyUploadedList(history) {
+    const container = document.getElementById("home-recent-list");
+    const countEl = document.getElementById("home-meals-count");
+    if (!container) return;
+
+    if (countEl) countEl.innerText = `${history.length} meal${history.length === 1 ? "" : "s"} today`;
+
+    if (history.length === 0) {
+        container.innerHTML = `
+            <div class="p-6 bg-white rounded-3xl border border-slate-200/80 text-center shadow-xs">
+                <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-2 text-slate-500">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/>
+                        <path d="M19 12a7 7 0 0 0-14 0"/>
+                        <circle cx="12" cy="5" r="1"/>
+                    </svg>
+                </div>
+                <h4 class="font-extrabold text-slate-800 text-xs">No meals tracked today yet</h4>
+                <p class="text-[11px] text-slate-400 mt-0.5 mb-3">Snap a photo of your plate to auto-calculate calories & macros.</p>
+                <button onclick="openScannerModal()" class="px-4 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-sm">
+                    Scan Plate Now
+                </button>
+            </div>
+        `;
         return;
     }
+
+    container.innerHTML = "";
+    // Display in reverse order (newest first)
+    [...history].reverse().forEach((item, index) => {
+        const timeStr = item.date ? new Date(item.date).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "Today";
+        const realIndex = history.length - 1 - index;
+
+        const card = document.createElement("div");
+        card.className = "p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-xs flex items-center justify-between";
+        card.innerHTML = `
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex items-center justify-center flex-shrink-0">
+                    ${item.image ? `<img src="${item.image}" class="w-full h-full object-cover">` : `
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.8">
+                            <path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/>
+                            <path d="M19 12a7 7 0 0 0-14 0"/>
+                            <circle cx="12" cy="5" r="1"/>
+                        </svg>
+                    `}
+                </div>
+                <div>
+                    <div class="font-bold text-slate-900 text-xs tracking-tight">${item.meal_name}</div>
+                    <div class="flex items-center gap-1.5 text-[10px] text-slate-400 mt-0.5">
+                        <span>${timeStr}</span>
+                        <span>•</span>
+                        <span class="font-bold text-slate-700 flex items-center gap-0.5">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-orange-500"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-1.78-1.07-2.95-2-3.85-.92-.89-1.5-1.72-1.5-2.65 0-.15.02-.3.05-.44-.66.8-1.55 2.1-1.55 3.44 0 .93.58 1.76 1.5 2.65.93.9 2 2.07 2 3.85A3.5 3.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.5c0-3.5 2.5-6.5 6-8.5-1 2-1 4.5 0 6 1.1-.9 2-2.1 2-3.5 2.5 2 4.5 5 4.5 8.5A6.5 6.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.5c0-1.2.3-2.3.8-3.3.4 1.4 1.2 2.6 2.2 3.3Z"/></svg>
+                            ${Math.round(item.calories)} kcal
+                        </span>
+                    </div>
+                    <div class="text-[10px] text-slate-500 font-mono mt-0.5">
+                        <span class="text-rose-600 font-bold">${Math.round(item.protein_g)}g P</span> · 
+                        <span class="text-amber-600 font-bold">${Math.round(item.carbs_g)}g C</span> · 
+                        <span class="text-sky-600 font-bold">${Math.round(item.fat_g)}g F</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="deleteMealItem(${realIndex})" class="p-2 text-slate-300 hover:text-rose-600 transition-colors" title="Delete meal">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function deleteMealItem(index) {
+    try {
+        const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
+        history.splice(index, 1);
+        localStorage.setItem("opencal_meal_history", JSON.stringify(history));
+        refreshHomeScreen();
+        showToast("Meal removed from today's ledger.");
+    } catch (e) {
+        console.error("Delete error:", e);
+    }
+}
+
+function clearAllHistory() {
+    if (confirm("Are you sure you want to reset all meal records?")) {
+        localStorage.removeItem("opencal_meal_history");
+        refreshHomeScreen();
+        showToast("Meal history cleared.");
+    }
+}
+
+// Scanner Modal Controls (Cal AI Camera + Presets + Upload)
+function openScannerModal() {
+    const modal = document.getElementById("modal-scanner");
+    if (!modal) return;
+    modal.classList.remove("hidden");
+
+    // Reset scanner state to camera view
+    resetScannerState();
+    switchScannerMode("camera");
+}
+
+function closeScannerModal() {
+    const modal = document.getElementById("modal-scanner");
+    if (modal) modal.classList.add("hidden");
+    stopCamera();
+}
+
+function resetScannerState() {
+    document.getElementById("scanner-input-container")?.classList.remove("hidden");
+    document.getElementById("scanner-processing-box")?.classList.add("hidden");
+    document.getElementById("scanner-result-sheet")?.classList.add("hidden");
+    currentScannedPlate = null;
+    currentServingMultiplier = 1;
+}
+
+function switchScannerMode(mode) {
+    document.querySelectorAll(".scanner-mode-tab").forEach(btn => {
+        const isActive = btn.dataset.mode === mode;
+        btn.classList.toggle("active", isActive);
+        btn.classList.toggle("bg-white", isActive);
+        btn.classList.toggle("text-slate-900", isActive);
+        btn.classList.toggle("shadow-xs", isActive);
+        btn.classList.toggle("text-slate-500", !isActive);
+    });
+
+    document.querySelectorAll(".scanner-panel").forEach(p => p.classList.add("hidden"));
+    const activePanel = document.getElementById(`mode-panel-${mode}`);
+    if (activePanel) activePanel.classList.remove("hidden");
+
+    if (mode === "camera") {
+        startCamera();
+    } else {
+        stopCamera();
+    }
+}
+
+// Camera Lifecycle
+async function startCamera() {
+    const video = document.getElementById("camera-video");
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
 
     try {
         cameraStream = await navigator.mediaDevices.getUserMedia({
@@ -89,10 +565,8 @@ async function startCamera() {
             video.srcObject = cameraStream;
             video.play();
         }
-        if (statusMsg) statusMsg.innerText = "Camera active. Align food plate within the frame.";
     } catch (err) {
-        console.warn("Camera access denied or unavailable:", err);
-        if (statusMsg) statusMsg.innerText = "Camera access unavailable. Using verified meal presets or upload.";
+        console.warn("Camera access unavailable, defaulting to verified presets:", err);
     }
 }
 
@@ -116,324 +590,211 @@ function snapPhoto() {
     const ctx = canvas.getContext("2d");
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    canvas.toBlob((blob) => {
+    canvas.toBlob(blob => {
         if (!blob) return;
-        const file = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
-        
-        showScanResultsContainer();
-        const previewImg = document.getElementById("plate-preview-img");
-        if (previewImg) previewImg.src = URL.createObjectURL(blob);
-        const caption = document.getElementById("plate-preview-caption");
-        if (caption) caption.innerText = "Camera Snapshot Captured";
-
-        handlePlateUpload(file);
+        const file = new File([blob], "camera_snap.jpg", { type: "image/jpeg" });
+        const imgUrl = URL.createObjectURL(blob);
+        handlePlateUpload(file, imgUrl);
     }, "image/jpeg", 0.92);
 }
 
-// File Upload & Dropzone
+// Dropzone & File Upload
 function initDropzone() {
     const dropzone = document.getElementById("studio-dropzone");
     const fileInput = document.getElementById("studio-file-input");
-
     if (!dropzone || !fileInput) return;
 
     dropzone.addEventListener("click", () => fileInput.click());
-
-    dropzone.addEventListener("dragover", (e) => {
+    dropzone.addEventListener("dragover", e => { e.preventDefault(); dropzone.classList.add("border-slate-900"); });
+    dropzone.addEventListener("dragleave", () => dropzone.classList.remove("border-slate-900"));
+    dropzone.addEventListener("drop", e => {
         e.preventDefault();
-        dropzone.classList.add("dragover");
-    });
-
-    dropzone.addEventListener("dragleave", () => {
-        dropzone.classList.remove("dragover");
-    });
-
-    dropzone.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dropzone.classList.remove("dragover");
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            processSelectedFile(e.dataTransfer.files[0]);
+        dropzone.classList.remove("border-slate-900");
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            const file = e.dataTransfer.files[0];
+            handlePlateUpload(file, URL.createObjectURL(file));
         }
     });
 
-    fileInput.addEventListener("change", (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            processSelectedFile(e.target.files[0]);
+    fileInput.addEventListener("change", e => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            handlePlateUpload(file, URL.createObjectURL(file));
         }
     });
 }
 
-function processSelectedFile(file) {
-    showScanResultsContainer();
-    const previewImg = document.getElementById("plate-preview-img");
-    if (previewImg) {
-        previewImg.src = URL.createObjectURL(file);
-    }
-    const caption = document.getElementById("plate-preview-caption");
-    if (caption) caption.innerText = file.name || "Uploaded Plate Photo";
+// Process Upload to API
+async function handlePlateUpload(file, imagePreviewUrl) {
+    showProcessingState("Segmenting plate geometry with Gemma 2...");
 
-    handlePlateUpload(file);
-}
-
-async function handlePlateUpload(file) {
-    showScanResultsContainer();
-    setScanningProgress(1); // Gemma vision
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-        setTimeout(() => setScanningProgress(2), 350); // USDA Grounding
+        setTimeout(() => setProcessingStatus("Querying USDA FoodData Central deterministic database..."), 400);
 
         const response = await fetch("/api/analyze-plate", {
             method: "POST",
             body: formData
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        setScanningProgress(3); // TabPFN sync
-        setTimeout(() => {
-            renderScanResult(data);
-            resetStepper();
-        }, 300);
+
+        data.image = imagePreviewUrl;
+        setTimeout(() => renderScanResultSheet(data), 350);
     } catch (err) {
-        console.warn("API request fallback to preset:", err);
+        console.warn("API fallback to preset:", err);
         loadPreset("salmon");
     }
 }
 
-// Preset Buttons
-function initPresets() {
-    const chips = document.querySelectorAll(".preset-chip");
-    chips.forEach(chip => {
-        chip.addEventListener("click", () => {
-            const type = chip.dataset.preset;
-            loadPreset(type);
-        });
-    });
-}
-
-function loadPreset(type) {
-    showScanResultsContainer();
-
-    const previewImg = document.getElementById("plate-preview-img");
-    const caption = document.getElementById("plate-preview-caption");
-
-    if (type === "chicken") {
-        if (previewImg) previewImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%23d97706' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3C/svg%3E";
-        if (caption) caption.innerText = "Preset: Grilled Chicken Breast";
-    } else if (type === "steak") {
-        if (previewImg) previewImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%23e11d48' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Cpath d='M8 12h8'/%3E%3C/svg%3E";
-        if (caption) caption.innerText = "Preset: Sirloin Steak Plate";
-    } else {
-        if (previewImg) previewImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Cpath d='M19 12a7 7 0 0 0-14 0'/%3E%3Ccircle cx='12' cy='5' r='1'/%3E%3C/svg%3E";
-        if (caption) caption.innerText = "Preset: Pan-Seared Salmon";
-    }
-
-    setScanningProgress(1);
-    setTimeout(() => setScanningProgress(2), 300);
+// Preset Loader
+function loadPreset(presetKey) {
+    const preset = PRESETS_DB[presetKey] || PRESETS_DB.salmon;
+    showProcessingState("Loading verified USDA grounded macro plate...");
 
     setTimeout(() => {
-        let result;
-        if (type === "chicken") {
-            result = {
-                meal_name: "Lean Chicken Breast & Jasmine Rice Macro Plate",
-                total_nutrition: { calories: 512.0, protein_g: 58.6, carbs_g: 46.2, fat_g: 6.8, fiber_g: 3.0 },
-                health_insights: [
-                    "High protein density meal (45% calories from protein) — optimal for cutting deficits.",
-                    "Low fat, clean fuel plate ideal for post-workout glycogen replenishment.",
-                    "Rich in bioavailable zinc, phosphorus, and B-complex vitamins."
-                ],
-                items: [
-                    { name: "Grilled Chicken Breast", weight_g: 180, food_group: "Poultry", nutrition: { calories: 297.0, protein_g: 55.8, carbs_g: 0, fat_g: 6.5 } },
-                    { name: "Cooked White Jasmine Rice", weight_g: 160, food_group: "Grains", nutrition: { calories: 208.0, protein_g: 4.3, carbs_g: 45.1, fat_g: 0.5 } },
-                    { name: "Steamed Organic Broccoli", weight_g: 90, food_group: "Vegetables", nutrition: { calories: 31.5, protein_g: 2.2, carbs_g: 6.5, fat_g: 0.4 } }
-                ],
-                inference_source: "Gemma 2 Multimodal + USDA Grounding"
-            };
-        } else if (type === "steak") {
-            result = {
-                meal_name: "Sirloin Steak, Hass Avocado & Brown Rice Power Plate",
-                total_nutrition: { calories: 735.0, protein_g: 52.4, carbs_g: 42.0, fat_g: 38.6, fiber_g: 8.5 },
-                health_insights: [
-                    "High micronutrient and healthy fat profile supporting natural hormonal synthesis.",
-                    "Substantial meal volume with 8.5g dietary fiber. Great for sustained fullness across intermittent fasts.",
-                    "Abundant in bioavailable heme iron, creatine, and potassium."
-                ],
-                items: [
-                    { name: "Pan-Seared Sirloin Steak", weight_g: 170, food_group: "Meat", nutrition: { calories: 368.9, protein_g: 44.4, carbs_g: 0, fat_g: 20.1 } },
-                    { name: "Cooked Brown Rice", weight_g: 140, food_group: "Grains", nutrition: { calories: 156.8, protein_g: 3.6, carbs_g: 32.9, fat_g: 1.3 } },
-                    { name: "Fresh Hass Avocado (Sliced)", weight_g: 75, food_group: "Healthy Fats", nutrition: { calories: 120.0, protein_g: 1.5, carbs_g: 6.4, fat_g: 11.0 } }
-                ],
-                inference_source: "Gemma 2 Multimodal + USDA Grounding"
-            };
-        } else {
-            result = {
-                meal_name: "Pan-Seared Salmon & Sweet Potato Fuel Plate",
-                total_nutrition: { calories: 645.0, protein_g: 48.2, carbs_g: 58.5, fat_g: 22.4, fiber_g: 7.2 },
-                health_insights: [
-                    "High protein density meal (>30% calories from protein) — optimal for lean muscle preservation.",
-                    "Rich in Omega-3 fatty acids (EPA/DHA) and complex slow-digesting carbohydrates.",
-                    "Excellent dietary fiber (7.2g) helps blunt glycemic spike and sustains energy."
-                ],
-                items: [
-                    { name: "Pan-Seared Atlantic Salmon", weight_g: 185, food_group: "Seafood", nutrition: { calories: 384.8, protein_g: 37.7, carbs_g: 0, fat_g: 24.8 } },
-                    { name: "Baked Japanese Sweet Potato", weight_g: 200, food_group: "Vegetables & Roots", nutrition: { calories: 180.0, protein_g: 4.0, carbs_g: 41.4, fat_g: 0.4 } },
-                    { name: "Sautéed Fresh Asparagus", weight_g: 80, food_group: "Vegetables & Greens", nutrition: { calories: 17.6, protein_g: 1.9, carbs_g: 3.3, fat_g: 0.2 } }
-                ],
-                inference_source: "Gemma 2 Multimodal + USDA Grounding"
-            };
-        }
-
-        setScanningProgress(3);
-        renderScanResult(result);
-        resetStepper();
-    }, 500);
+        renderScanResultSheet(preset);
+    }, 400);
 }
 
-// Visual Stepper States
-function setScanningProgress(step) {
-    const s1 = document.getElementById("step-1");
-    const s2 = document.getElementById("step-2");
-    const s3 = document.getElementById("step-3");
-    const statusText = document.getElementById("scanner-status-text");
-
-    if (step === 1) {
-        if (s1) { s1.classList.add("active"); s1.classList.remove("completed"); }
-        if (s2) { s2.classList.remove("active", "completed"); }
-        if (s3) { s3.classList.remove("active", "completed"); }
-        if (statusText) statusText.innerText = "Step 1/3: Gemma 2 segmenting plate geometry & estimating gram volume...";
-    } else if (step === 2) {
-        if (s1) { s1.classList.remove("active"); s1.classList.add("completed"); }
-        if (s2) { s2.classList.add("active"); s2.classList.remove("completed"); }
-        if (s3) { s3.classList.remove("active", "completed"); }
-        if (statusText) statusText.innerText = "Step 2/3: Querying USDA FoodData Central deterministic database...";
-    } else if (step === 3) {
-        if (s1) s1.classList.add("completed");
-        if (s2) s2.classList.add("completed");
-        if (s3) { s3.classList.add("active"); }
-        if (statusText) statusText.innerText = "Step 3/3: Synchronizing with TabPFN in-context metabolic trajectory...";
-    }
+function showProcessingState(statusMsg) {
+    document.getElementById("scanner-input-container")?.classList.add("hidden");
+    const processingBox = document.getElementById("scanner-processing-box");
+    if (processingBox) processingBox.classList.remove("hidden");
+    setProcessingStatus(statusMsg);
 }
 
-function resetStepper() {
-    const statusText = document.getElementById("scanner-status-text");
-    const s3 = document.getElementById("step-3");
-    if (s3) {
-        s3.classList.remove("active");
-        s3.classList.add("completed");
-    }
-    if (statusText) statusText.innerText = "Plate analysis complete · 100% Deterministic Grounding Verified";
+function setProcessingStatus(msg) {
+    const textEl = document.getElementById("scanner-status-text");
+    if (textEl) textEl.innerText = msg;
 }
 
-// Render Results
-function renderScanResult(data) {
-    showScanResultsContainer();
-    const titleEl = document.getElementById("studio-plate-title");
-    if (titleEl) titleEl.innerText = data.meal_name;
+// Render Result Sheet (Cal AI Screenshot 3)
+function renderScanResultSheet(plateData) {
+    currentScannedPlate = JSON.parse(JSON.stringify(plateData));
+    currentServingMultiplier = 1;
 
-    const calEl = document.getElementById("macro-calories");
-    const protEl = document.getElementById("macro-protein");
-    const carbEl = document.getElementById("macro-carbs");
-    const fatEl = document.getElementById("macro-fat");
+    document.getElementById("scanner-processing-box")?.classList.add("hidden");
+    const sheet = document.getElementById("scanner-result-sheet");
+    if (sheet) sheet.classList.remove("hidden");
 
-    if (calEl) calEl.innerText = Math.round(data.total_nutrition.calories);
-    if (protEl) protEl.innerText = Math.round(data.total_nutrition.protein_g) + "g";
-    if (carbEl) carbEl.innerText = Math.round(data.total_nutrition.carbs_g) + "g";
-    if (fatEl) fatEl.innerText = Math.round(data.total_nutrition.fat_g) + "g";
+    // Populate Fields
+    const titleEl = document.getElementById("result-meal-title");
+    const previewImg = document.getElementById("plate-preview-img");
+    const timePill = document.getElementById("result-timestamp-pill");
+    const servingVal = document.getElementById("result-serving-val");
 
-    // Update global state
-    currentPlateData.meal_name = data.meal_name;
-    currentPlateData.calories = data.total_nutrition.calories;
-    currentPlateData.protein_g = data.total_nutrition.protein_g;
-    currentPlateData.carbs_g = data.total_nutrition.carbs_g;
-    currentPlateData.fat_g = data.total_nutrition.fat_g;
+    if (titleEl) titleEl.innerText = plateData.meal_name;
+    if (previewImg) previewImg.src = plateData.image || PRESETS_DB.salmon.image;
+    if (timePill) timePill.innerText = `${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })} · Scanned`;
+    if (servingVal) servingVal.innerText = "1";
 
-    const loggedTotal = getLoggedCaloriesTotal();
-    updateBudgetBar(loggedTotal + data.total_nutrition.calories, currentPlateData.daily_budget);
+    updateServingDisplay();
 
-    // Render Food items table
-    const container = document.getElementById("studio-items-table");
-    if (container) {
-        container.innerHTML = "";
-        data.items.forEach(item => {
+    // Render Ingredients List
+    const table = document.getElementById("result-ingredients-table");
+    if (table) {
+        table.innerHTML = "";
+        (plateData.items || []).forEach(item => {
             const row = document.createElement("div");
             row.className = "py-2.5 flex items-center justify-between";
             row.innerHTML = `
                 <div>
-                    <div class="font-bold text-slate-800">${item.name}</div>
-                    <div class="text-[10px] text-slate-400">${item.weight_g}g • ${item.food_group} (USDA Grounded)</div>
+                    <div class="font-bold text-slate-900">${item.name}</div>
+                    <div class="text-[10px] text-slate-400">${item.weight_g}g • ${item.food_group}</div>
                 </div>
                 <div class="text-right">
-                    <div class="font-black text-slate-800">${Math.round(item.nutrition.calories)} kcal</div>
-                    <div class="text-[10px] text-slate-500">${Math.round(item.nutrition.protein_g)}g P / ${Math.round(item.nutrition.carbs_g)}g C / ${Math.round(item.nutrition.fat_g)}g F</div>
+                    <div class="font-black text-slate-900">${Math.round(item.nutrition.calories)} kcal</div>
+                    <div class="text-[10px] text-slate-400 font-mono">${Math.round(item.nutrition.protein_g)}g P / ${Math.round(item.nutrition.carbs_g)}g C / ${Math.round(item.nutrition.fat_g)}g F</div>
                 </div>
             `;
-            container.appendChild(row);
+            table.appendChild(row);
         });
     }
 
     // Render Insights
-    const insightsBox = document.getElementById("studio-insights-container");
+    const insightsBox = document.getElementById("result-insights-box");
     if (insightsBox) {
         insightsBox.innerHTML = "";
-        data.health_insights.forEach(insight => {
+        (plateData.health_insights || []).forEach(insight => {
             const pill = document.createElement("div");
-            pill.className = "p-3 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-xs text-emerald-900 flex items-start gap-2";
-            pill.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 flex-shrink-0 text-emerald-600"><polyline points="20 6 9 17 4 12"/></svg><span>${insight}</span>`;
+            pill.className = "p-2.5 bg-emerald-50 border border-emerald-200/80 rounded-xl text-[11px] text-emerald-900 flex items-start gap-2";
+            pill.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="mt-0.5 flex-shrink-0 text-emerald-600"><polyline points="20 6 9 17 4 12"/></svg><span>${insight}</span>`;
             insightsBox.appendChild(pill);
         });
     }
 }
 
-// TabPFN Metabolic Forecast & Chart
+function adjustServing(delta) {
+    currentServingMultiplier = Math.max(0.5, Math.min(5, currentServingMultiplier + delta * 0.5));
+    const servingVal = document.getElementById("result-serving-val");
+    if (servingVal) servingVal.innerText = currentServingMultiplier;
+    updateServingDisplay();
+}
+
+function updateServingDisplay() {
+    if (!currentScannedPlate) return;
+    const nutrition = currentScannedPlate.total_nutrition;
+    const mult = currentServingMultiplier;
+
+    const calEl = document.getElementById("result-calories-val");
+    const pEl = document.getElementById("result-protein-val");
+    const cEl = document.getElementById("result-carbs-val");
+    const fEl = document.getElementById("result-fats-val");
+
+    if (calEl) calEl.innerText = Math.round(nutrition.calories * mult);
+    if (pEl) pEl.innerText = `${Math.round(nutrition.protein_g * mult)}g`;
+    if (cEl) cEl.innerText = `${Math.round(nutrition.carbs_g * mult)}g`;
+    if (fEl) fEl.innerText = `${Math.round(nutrition.fat_g * mult)}g`;
+}
+
+function fixResultsAction() {
+    // Return to input mode
+    resetScannerState();
+}
+
+function commitPlateToLog() {
+    if (!currentScannedPlate) return;
+
+    const mult = currentServingMultiplier;
+    const finalMeal = {
+        date: new Date().toISOString(),
+        meal_name: currentScannedPlate.meal_name + (mult !== 1 ? ` (${mult}x)` : ""),
+        calories: Math.round(currentScannedPlate.total_nutrition.calories * mult),
+        protein_g: Math.round(currentScannedPlate.total_nutrition.protein_g * mult),
+        carbs_g: Math.round(currentScannedPlate.total_nutrition.carbs_g * mult),
+        fat_g: Math.round(currentScannedPlate.total_nutrition.fat_g * mult),
+        image: currentScannedPlate.image
+    };
+
+    const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
+    history.push(finalMeal);
+    localStorage.setItem("opencal_meal_history", JSON.stringify(history));
+
+    closeScannerModal();
+    refreshHomeScreen();
+    showToast(`Logged "${finalMeal.meal_name}" (${finalMeal.calories} kcal) to today's ledger!`);
+}
+
+// TabPFN Dynamic Forecast & Trajectory Graph
 async function loadMetabolicForecast(caloriesTarget) {
     try {
         const response = await fetch(`/api/metabolic-forecast?friend_name=Dave&target_weight_kg=75.0&daily_calories_target=${caloriesTarget}`);
-        if (!response.ok) throw new Error("Forecast request failed");
+        if (!response.ok) throw new Error("Forecast failed");
         const data = await response.json();
 
-        // Update TDEE cards
-        const dynamicEl = document.getElementById("dynamic-tdee-val");
-        const staticEl = document.getElementById("static-tdee-val");
-        const statusEl = document.getElementById("metabolic-status-val");
-        const daysEl = document.getElementById("days-to-goal-val");
+        const dynEl = document.getElementById("dynamic-tdee-val");
+        const statEl = document.getElementById("static-tdee-val");
+        if (dynEl) dynEl.innerText = `${data.insights.dynamic_tdee_kcal} kcal`;
+        if (statEl) statEl.innerText = `${data.insights.static_formula_tdee_kcal} kcal`;
 
-        if (dynamicEl) dynamicEl.innerText = data.insights.dynamic_tdee_kcal + " kcal";
-        if (staticEl) staticEl.innerText = data.insights.static_formula_tdee_kcal + " kcal";
-        if (statusEl) statusEl.innerText = data.insights.metabolic_status;
-        if (daysEl) daysEl.innerText = data.insights.projected_days_to_goal + " days";
-
-        currentPlateData.days_to_goal = data.insights.projected_days_to_goal;
-        currentPlateData.daily_budget = parseInt(caloriesTarget);
-
-        const initialConsumed = getLoggedCaloriesTotal();
-        updateBudgetBar(initialConsumed, currentPlateData.daily_budget);
-
-        // Render Chart.js Trajectory
         renderWeightChart(data.trajectory, data.current_weight_kg, data.target_weight_kg);
     } catch (err) {
-        console.error("Error loading metabolic forecast:", err);
+        console.error("Forecast error:", err);
     }
-}
-
-function initSlider() {
-    const slider = document.getElementById("calories-slider");
-    const display = document.getElementById("slider-calories-display");
-
-    if (!slider) return;
-
-    slider.addEventListener("input", (e) => {
-        const val = e.target.value;
-        if (display) display.innerText = val + " kcal/day";
-    });
-
-    slider.addEventListener("change", (e) => {
-        loadMetabolicForecast(e.target.value);
-    });
 }
 
 function renderWeightChart(trajectory, currentWeight, targetWeight) {
@@ -443,9 +804,7 @@ function renderWeightChart(trajectory, currentWeight, targetWeight) {
     const labels = ["Day 0", ...trajectory.filter((_, i) => i % 4 === 0).map(t => `Day ${t.day_offset}`)];
     const values = [currentWeight, ...trajectory.filter((_, i) => i % 4 === 0).map(t => t.projected_weight_kg)];
 
-    if (weightChart) {
-        weightChart.destroy();
-    }
+    if (weightChart) weightChart.destroy();
 
     weightChart = new Chart(ctx, {
         type: "line",
@@ -455,21 +814,21 @@ function renderWeightChart(trajectory, currentWeight, targetWeight) {
                 {
                     label: "TabPFN In-Context Forecast (kg)",
                     data: values,
-                    borderColor: "#10b981",
-                    backgroundColor: "rgba(16, 185, 129, 0.12)",
+                    borderColor: "#0f172a",
+                    backgroundColor: "rgba(15, 23, 42, 0.05)",
                     fill: true,
                     tension: 0.35,
-                    borderWidth: 3,
-                    pointBackgroundColor: "#10b981",
-                    pointRadius: 4
+                    borderWidth: 2.5,
+                    pointBackgroundColor: "#0f172a",
+                    pointRadius: 3
                 },
                 {
-                    label: "Target Goal (75kg)",
+                    label: "Goal (75kg)",
                     data: labels.map(() => targetWeight),
-                    borderColor: "rgba(244, 63, 94, 0.6)",
-                    borderDash: [5, 5],
+                    borderColor: "rgba(244, 63, 94, 0.5)",
+                    borderDash: [4, 4],
                     fill: false,
-                    borderWidth: 2,
+                    borderWidth: 1.5,
                     pointRadius: 0
                 }
             ]
@@ -478,46 +837,27 @@ function renderWeightChart(trajectory, currentWeight, targetWeight) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    labels: { color: "#334155", font: { family: "Inter", size: 12, weight: "600" } }
-                }
+                legend: { display: false }
             },
             scales: {
                 x: {
-                    grid: { color: "rgba(12, 107, 58, 0.08)" },
-                    ticks: { color: "#475569", font: { family: "Inter", size: 11 } }
+                    grid: { display: false },
+                    ticks: { color: "#94a3b8", font: { family: "Inter", size: 10 } }
                 },
                 y: {
-                    grid: { color: "rgba(12, 107, 58, 0.08)" },
-                    ticks: { color: "#475569", font: { family: "Inter", size: 11 } }
+                    grid: { color: "rgba(226, 232, 240, 0.6)" },
+                    ticks: { color: "#94a3b8", font: { family: "Inter", size: 10 } }
                 }
             }
         }
     });
 }
 
-function updateBudgetBar(consumed, budget) {
-    const fill = document.getElementById("budget-bar-fill");
-    const label = document.getElementById("budget-text-label");
-    const heroCal = document.getElementById("hero-cal-consumed");
-    const pct = Math.min(100, Math.round((consumed / budget) * 100));
-    const remaining = Math.max(0, Math.round(budget - consumed));
-
-    if (fill) fill.style.width = `${pct}%`;
-    if (label) {
-        if (consumed === 0) {
-            label.innerText = `Awaiting meal scan · ${budget} kcal daily target`;
-        } else {
-            label.innerText = `${Math.round(consumed)} kcal consumed of ${budget} kcal target (${remaining} kcal remaining)`;
-        }
-    }
-    if (heroCal) heroCal.innerText = Math.round(consumed);
-}
-
-// ElevenLabs Coach Voice Debrief
+// ElevenLabs Voice Coach Debrief
 async function playStudioCoachDebrief() {
     const btn = document.getElementById("studio-coach-btn");
     const transcriptBox = document.getElementById("studio-coach-transcript");
+    const profile = getStoredProfile() || DEFAULT_PROFILE;
 
     if (!btn) return;
     btn.innerText = "Synthesizing Debrief...";
@@ -528,12 +868,12 @@ async function playStudioCoachDebrief() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                friend_name: "Dave",
-                meal_name: currentPlateData.meal_name,
-                calories: currentPlateData.calories,
-                protein_g: currentPlateData.protein_g,
-                days_to_goal: currentPlateData.days_to_goal,
-                target_weight: currentPlateData.target_weight
+                friend_name: profile.name || "Dave",
+                meal_name: "Daily Overview",
+                calories: profile.target_calories,
+                protein_g: profile.target_protein,
+                days_to_goal: 22,
+                target_weight: profile.weight_kg
             })
         });
 
@@ -568,36 +908,37 @@ async function playStudioCoachDebrief() {
     }
 }
 
-// Log Plate to Local History
-function logPlateToHistory() {
-    const toast = document.getElementById("log-toast");
-    try {
-        const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
-        history.push({
-            date: new Date().toISOString(),
-            meal_name: currentPlateData.meal_name,
-            calories: currentPlateData.calories,
-            protein_g: currentPlateData.protein_g,
-            carbs_g: currentPlateData.carbs_g,
-            fat_g: currentPlateData.fat_g
-        });
-        localStorage.setItem("opencal_meal_history", JSON.stringify(history));
+// Toast Notification
+function showToast(msg) {
+    const toast = document.getElementById("app-toast");
+    const text = document.getElementById("toast-text");
+    if (!toast || !text) return;
 
-        if (toast) {
-            toast.style.display = "inline-flex";
-            toast.style.alignItems = "center";
-            toast.style.gap = "8px";
-            toast.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg><span>Successfully logged "${currentPlateData.meal_name}" (${Math.round(currentPlateData.calories)} kcal) to your private metabolic ledger!</span>`;
-            setTimeout(() => {
-                toast.style.display = "none";
-            }, 3500);
-        }
-    } catch (e) {
-        console.error("Storage error:", e);
-    }
+    text.innerText = msg;
+    toast.classList.remove("hidden");
+    setTimeout(() => toast.classList.add("hidden"), 3500);
 }
 
+function capitalize(s) {
+    if (!s) return "";
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+// Global Exported Handlers
+window.switchAppTab = switchAppTab;
+window.openOnboardingModal = openOnboardingModal;
+window.closeOnboardingModal = closeOnboardingModal;
+window.setWeightUnit = setWeightUnit;
+window.handleOnboardingSubmit = handleOnboardingSubmit;
+window.finishOnboardingAndEnterApp = finishOnboardingAndEnterApp;
+window.openScannerModal = openScannerModal;
+window.closeScannerModal = closeScannerModal;
+window.switchScannerMode = switchScannerMode;
 window.snapPhoto = snapPhoto;
-window.playStudioCoachDebrief = playStudioCoachDebrief;
-window.logPlateToHistory = logPlateToHistory;
 window.loadPreset = loadPreset;
+window.adjustServing = adjustServing;
+window.fixResultsAction = fixResultsAction;
+window.commitPlateToLog = commitPlateToLog;
+window.deleteMealItem = deleteMealItem;
+window.clearAllHistory = clearAllHistory;
+window.playStudioCoachDebrief = playStudioCoachDebrief;
