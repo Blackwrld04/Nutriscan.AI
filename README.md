@@ -18,7 +18,7 @@ NutriScan AI eliminates the "Calorie Guesswork Crisis", the dangerous "AI Vision
 
 **Scan your plate. Ground in USDA science. Forecast your dynamic metabolic trajectory.**
 
-[Live Web App](https://nutriscan-ai-fwn8.onrender.com) · [Plate Scanner Studio](https://nutriscan-ai-fwn8.onrender.com/scan) · [Watch Video Demo](https://nutriscan-ai-fwn8.onrender.com/static/video/nutriscan_demo.mp4) · [Interactive API Docs](https://nutriscan-ai-fwn8.onrender.com/docs) · [Explore Without an Account](#explore-without-an-account) · [Production Roadmap](#what-is-implemented)
+[Live Web App](https://nutriscan-ai-fwn8.onrender.com) · [Plate Scanner Studio](https://nutriscan-ai-fwn8.onrender.com/scan) · [Watch the demo](#watch-the-demo) · [Interactive API Docs](https://nutriscan-ai-fwn8.onrender.com/docs) · [Explore Without an Account](#explore-without-an-account) · [Production Roadmap](#what-is-implemented)
 
 **Sovereign Biological Nutrition — Deterministic Food Grounding, Zero Cloud Scraping, and Foundation Tabular Intelligence.**
 
@@ -48,7 +48,7 @@ FastAPI · Google Gemma 2 · Prior Labs TabPFN (Tabular Transformer) · USDA Foo
 ## Contents
 
 - [The Origin Story: Built for a Friend (Dave)](#the-origin-story-built-for-a-friend-dave)
-- [📱 Live Mobile Screen Recording Demo](#-live-mobile-screen-recording-demo)
+- [Watch the demo](#watch-the-demo)
 - [Why NutriScan AI exists](#why-nutriscan-ai-exists)
 - [How it works](#how-it-works)
 - [Zero-hallucination & biological privacy pipeline](#zero-hallucination--biological-privacy-pipeline)
@@ -127,25 +127,13 @@ Dave deleted his paid subscription app that afternoon. NutriScan.AI proved that 
 
 ---
 
-## 📱 Live Mobile Screen Recording Demo
+## Watch the demo
+
+A real-device walkthrough of the NutriScan.AI companion, demonstrating live camera scanning, deterministic USDA FoodData Central macronutrient grounding, TabPFN dynamic metabolic forecasting, and personalized ElevenLabs voice debriefing.
 
 https://github.com/Blackwrld04/Nutriscan.AI/raw/main/app/static/video/nutriscan_demo.mp4
 
-<div align="center">
-
-<video src="https://github.com/Blackwrld04/Nutriscan.AI/raw/main/app/static/video/nutriscan_demo.mp4" controls="controls" muted="muted" width="340" poster="https://raw.githubusercontent.com/Blackwrld04/Nutriscan.AI/main/app/static/img/demo_poster.jpg">
-  <a href="https://github.com/Blackwrld04/Nutriscan.AI/raw/main/app/static/video/nutriscan_demo.mp4">▶️ Watch / Download Mobile Demo (MP4)</a>
-</video>
-
-<p><em>Full 92-second real-device screen recording demonstrating the camera scanner, deterministic USDA grounding, TabPFN dynamic trajectory slider, and ElevenLabs voice debrief.</em></p>
-
-<p>
-  <a href="https://nutriscan-ai-fwn8.onrender.com/static/video/nutriscan_demo.mp4">
-    <b>▶️ Direct Stream / Download MP4 (Full HD 864x1920)</b>
-  </a>
-</p>
-
-</div>
+The walkthrough demonstrates an end-to-end user session: onboarding and metabolic profile configuration, live food plate capture, instant USDA macronutrient breakdown, adjusting daily caloric targets to simulate dynamic metabolic adaptation via TabPFN, and receiving an auditory debrief tailored to the user's logged intake.
 
 ---
 
