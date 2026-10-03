@@ -390,12 +390,6 @@ function updateHomeScreen() {
     const savedWater = parseInt(localStorage.getItem("opencal_water_intake") || "1750", 10);
     updateWaterDisplay(savedWater);
 
-    // Update Energy Deficit Indicator (Dynamic TDEE ~2,650 kcal)
-    const netDeficitEl = document.getElementById("home-net-deficit");
-    if (netDeficitEl) {
-        const netBalance = Math.round(consumedCals - 2650);
-        netDeficitEl.innerHTML = `${netBalance > 0 ? '+' : ''}${netBalance} <span class="text-xs font-semibold text-slate-400">kcal</span>`;
-    }
 
 
     // Render Recently Uploaded Meals List (Cal AI Screenshot 2 style)
