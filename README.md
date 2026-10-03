@@ -18,7 +18,7 @@ NutriScan AI eliminates the "Calorie Guesswork Crisis", the dangerous "AI Vision
 
 **Scan your plate. Ground in USDA science. Forecast your dynamic metabolic trajectory.**
 
-[Live Web App](https://nutriscan-ai.onrender.com) · [Plate Scanner Studio](/scan) · [Interactive API Docs](/docs) · [Explore Without an Account](#explore-without-an-account) · [Production Roadmap](#what-is-implemented)
+[Live Web App](https://nutriscan-ai-fwn8.onrender.com) · [Plate Scanner Studio](/scan) · [Interactive API Docs](/docs) · [Explore Without an Account](#explore-without-an-account) · [Production Roadmap](#what-is-implemented)
 
 **Sovereign Biological Nutrition — Deterministic Food Grounding, Zero Cloud Scraping, and Foundation Tabular Intelligence.**
 
@@ -106,11 +106,18 @@ We architected **NutriScan.AI** (initially prototyped as *OpenCal AI*) around fi
 
 ---
 
+### Act 3: From OpenCal AI to NutriScan.AI — The Design & Engineering Journey
+Over hundreds of pair-programming iterations, the project evolved from a raw terminal backend into a state-of-the-art web application:
+- **Design Inspiration**: We studied modern, high-converting visual showcases like `trustxx.netlify.app` and `nutrilens.site`, creating a signature **Emerald & Teal glassmorphic aesthetic**.
+- **Mobile-First Cal AI Studio**: We built a native-feeling mobile experience with an interactive calorie progress ring, 3 radial macro cards (drumstick for protein, wheat for carbs, avocado for fat), a daily hydration tracker (`+250ml` / `+500ml`), a 16:8 intermittent fasting tracker, and a week calendar strip.
+- **The Floating Action Button**: Designed a fixed camera FAB positioned above the bottom navigation bar for instantaneous 1-tap plate logging on mobile phones.
+- **Interactive Trajectory Studio**: Equipped with Chart.js to render TabPFN's 28-day Bayesian confidence envelope alongside an interactive calorie simulation slider (1,600 to 3,000 kcal/day).
+- **Responsive Widescreen Desktop Studio**: To ensure desktop users weren't trapped in a mobile phone column, we engineered a widescreen layout expanding to 1280px (`max-w-7xl`) with a 2-column analytics grid, desktop navigation header, and "Scan Plate" CTA—**without altering a single pixel of the mobile experience**.
 
 ---
 
-### Act 3: The Live Handoff & Dave's Unfiltered Reaction
-When we deployed the web application to **Render** (`https://nutriscan-ai.onrender.com`) and handed Dave the phone over a post-run lunch, his reaction was instantaneous:
+### Act 4: The Live Handoff & Dave's Unfiltered Reaction
+When we deployed the web application to **Render** (`https://nutriscan-ai-fwn8.onrender.com`) and handed Dave the phone over a post-run lunch, his reaction was instantaneous:
 
 > *"Are you serious? You built this in a weekend? The camera scanner picked up the quinoa and salmon instantly, and the calories match the USDA label to the gram. But the crazy part is the 28-Day Trajectory chart: when I dragged the slider to 2,100 kcal, it told me I'd reach 75.0 kg on Day 21. That's the exact pace I was hoping for. And the voice debrief on my way home literally sounded like my running coach!"*
 
@@ -398,9 +405,9 @@ NutriScan AI is engineered for immediate responsiveness with zero client-side la
 
 | Component | Platform / Network | URL / Reference |
 | :--- | :--- | :--- |
-| **Live Web Application** | Render (Production) | [https://nutriscan-ai.onrender.com](https://nutriscan-ai.onrender.com) |
-| **Autonomous Plate Studio** | Render (App Router) | [https://nutriscan-ai.onrender.com/scan](https://nutriscan-ai.onrender.com/scan) |
-| **Interactive API Documentation** | FastAPI Swagger | [https://nutriscan-ai.onrender.com/docs](https://nutriscan-ai.onrender.com/docs) |
+| **Live Web Application** | Render (Production) | [https://nutriscan-ai-fwn8.onrender.com](https://nutriscan-ai-fwn8.onrender.com) |
+| **Autonomous Plate Studio** | Render (App Router) | [https://nutriscan-ai-fwn8.onrender.com/scan](https://nutriscan-ai-fwn8.onrender.com/scan) |
+| **Interactive API Documentation** | FastAPI Swagger | [https://nutriscan-ai-fwn8.onrender.com/docs](https://nutriscan-ai-fwn8.onrender.com/docs) |
 | **Docker Container** | Docker Hub / Self-Hosted | `docker run -p 8000:8000 nutriscan-ai` |
 | **Source Code Repository** | GitHub | [Blackwrld04/Nutriscan.AI](https://github.com/Blackwrld04/Nutriscan.AI) |
 
