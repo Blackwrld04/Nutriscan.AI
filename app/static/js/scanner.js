@@ -1156,11 +1156,25 @@ function renderScanResult(data) {
             pill.className = "p-3 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-xs text-emerald-900 flex items-start gap-2";
             pill.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 flex-shrink-0 text-emerald-600"><polyline points="20 6 9 17 4 12"/></svg><span>${insight}</span>`;
             insightsBox.appendChild(pill);
+        });
     }
 }
 
 // TabPFN Metabolic Forecast & Chart
+let cachedTrajectoryData = null;
+let isForecastLoading = false;
+
 async function loadMetabolicForecast(caloriesTarget) {
+    const loader = document.getElementById("trajectory-chart-loader");
+    if (loader) {
+        loader.style.display = "flex";
+        loader.innerHTML = `
+            <div class="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin mb-2"></div>
+            <span class="text-xs font-semibold text-slate-500">Forecasting TabPFN Trajectory...</span>
+        `;
+    }
+    isForecastLoading = true;
+
     try {
         const response = await fetch(`/api/metabolic-forecast?friend_name=Dave&target_weight_kg=75.0&daily_calories_target=${caloriesTarget}`);
         if (!response.ok) throw new Error("Forecast request failed");
@@ -1176,10 +1190,31 @@ async function loadMetabolicForecast(caloriesTarget) {
         currentPlateData.days_to_goal = data.insights.projected_days_to_goal;
         currentPlateData.daily_budget = parseInt(caloriesTarget);
 
+        cachedTrajectoryData = {
+            trajectory: data.trajectory,
+            currentWeight: data.current_weight_kg,
+            targetWeight: data.target_weight_kg
+        };
+        window.cachedTrajectoryData = cachedTrajectoryData;
+
         // Render Chart.js Trajectory
         renderWeightChart(data.trajectory, data.current_weight_kg, data.target_weight_kg);
     } catch (err) {
         console.error("Error loading metabolic forecast:", err);
+        if (loader) {
+            loader.style.display = "flex";
+            loader.innerHTML = `
+                <div class="text-center p-3">
+                    <span class="text-xs text-rose-500 font-semibold block mb-2">Failed to load metabolic forecast</span>
+                    <button type="button" onclick="loadMetabolicForecast(${caloriesTarget})" class="text-[11px] px-3 py-1 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700 transition-colors">Retry</button>
+                </div>
+            `;
+        }
+    } finally {
+        isForecastLoading = false;
+        if (loader && !loader.querySelector("button")) {
+            loader.style.display = "none";
+        }
     }
 }
 
@@ -1202,6 +1237,14 @@ function initSlider() {
 function renderWeightChart(trajectory, currentWeight, targetWeight) {
     const ctx = document.getElementById("trajectoryChart");
     if (!ctx) return;
+
+    if (typeof Chart === "undefined") {
+        console.warn("Chart.js is not loaded yet");
+        return;
+    }
+
+    const loader = document.getElementById("trajectory-chart-loader");
+    if (loader) loader.style.display = "none";
 
     // Sample Day 0 and every 4 days up to Day 28 (8 intervals)
     const sampledDays = [4, 8, 12, 16, 20, 24, 28];
@@ -1324,7 +1367,12 @@ function renderWeightChart(trajectory, currentWeight, targetWeight) {
             }
         }
     });
+
+    window.weightChart = weightChart;
 }
+
+window.renderWeightChart = renderWeightChart;
+window.loadMetabolicForecast = loadMetabolicForecast;
 
 // ElevenLabs Coach Voice Debrief
 async function playStudioCoachDebrief() {

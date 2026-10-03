@@ -40,7 +40,8 @@
   </script>
 
   <!-- Chart.js for Interactive Trajectory Graph -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="/static/js/chart.umd.min.js"></script>
+  <script>if (typeof Chart === 'undefined') { document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"><\/script>'); }</script>
 
   <!-- Base Custom Tokens -->
   <link rel="stylesheet" href="/static/css/style.css">
@@ -671,8 +672,12 @@
           </div>
 
           <!-- Interactive Chart Box (Bar Chart) -->
-          <div class="relative w-full h-64 sm:h-72 bg-slate-50 rounded-xl p-3 border border-slate-100">
-            <canvas id="trajectoryChart"></canvas>
+          <div class="relative w-full h-64 sm:h-72 bg-slate-50 rounded-xl p-3 border border-slate-100 flex items-center justify-center overflow-hidden">
+            <div id="trajectory-chart-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/95 backdrop-blur-[2px] rounded-xl z-10 transition-opacity">
+              <div class="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin mb-2"></div>
+              <span class="text-xs font-semibold text-slate-500">Forecasting TabPFN Trajectory...</span>
+            </div>
+            <canvas id="trajectoryChart" class="w-full h-full"></canvas>
           </div>
 
           <!-- Calorie Target Slider Panel -->
@@ -1243,8 +1248,21 @@
         if (typeof updateHomeScreen === 'function') updateHomeScreen();
         if (typeof buildCalendarStrip === 'function') buildCalendarStrip();
       }
-      if (tabName === 'trajectory' && window.weightChart) {
-        setTimeout(() => window.weightChart.resize(), 50);
+      if (tabName === 'trajectory') {
+        setTimeout(() => {
+          if (window.weightChart) {
+            window.weightChart.resize();
+            window.weightChart.update();
+          } else if (window.cachedTrajectoryData && typeof window.renderWeightChart === 'function') {
+            window.renderWeightChart(
+              window.cachedTrajectoryData.trajectory,
+              window.cachedTrajectoryData.currentWeight,
+              window.cachedTrajectoryData.targetWeight
+            );
+          } else if (typeof window.loadMetabolicForecast === 'function') {
+            window.loadMetabolicForecast(2100);
+          }
+        }, 60);
       }
       if (tabName === 'history') {
         renderHistoryView();
@@ -1292,6 +1310,6 @@
   </script>
 
   <!-- Core Scanner & Home Logic -->
-  <script src="/static/js/scanner.js?v=2.5.0"></script>
+  <script src="/static/js/scanner.js?v=2.5.1"></script>
 </body>
 </html>
