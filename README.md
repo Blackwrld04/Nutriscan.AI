@@ -18,7 +18,7 @@ NutriScan AI eliminates the "Calorie Guesswork Crisis", the dangerous "AI Vision
 
 **Scan your plate. Ground in USDA science. Forecast your dynamic metabolic trajectory.**
 
-[Live Web App](https://nutriscan-ai-fwn8.onrender.com) · [Plate Scanner Studio](/scan) · [Interactive API Docs](/docs) · [Explore Without an Account](#explore-without-an-account) · [Production Roadmap](#what-is-implemented)
+[Live Web App](https://nutriscan-ai-fwn8.onrender.com) · [Plate Scanner Studio](https://nutriscan-ai-fwn8.onrender.com/scan) · [Interactive API Docs](https://nutriscan-ai-fwn8.onrender.com/docs) · [Explore Without an Account](#explore-without-an-account) · [Production Roadmap](#what-is-implemented)
 
 **Sovereign Biological Nutrition — Deterministic Food Grounding, Zero Cloud Scraping, and Foundation Tabular Intelligence.**
 
@@ -34,13 +34,13 @@ FastAPI · Google Gemma 2 · Prior Labs TabPFN (Tabular Transformer) · USDA Foo
 
 | Open | Look for | What it establishes |
 | :--- | :--- | :--- |
-| [Live Web App](/) | Glassmorphic Landing Showcase & Real-Time Feature Matrix | Full overview of the open-source architecture, privacy comparison, and interactive hardware preview |
-| [Autonomous Plate Scanner Studio](/scan) | Live Camera Viewport, Dropzone, and 1-Click Presets | Dedicated scanning studio with pan-seared salmon, grilled chicken, and sirloin steak demo plates |
-| [28-Day Metabolic Trajectory](/scan) | Interactive Chart.js graph & Caloric Target Slider | Real-time TabPFN projection comparing dynamic 3,152 kcal TDEE vs static 2,587 kcal formula |
-| [ElevenLabs Voice Coach](/scan) | Auditory Debrief card & Synchronized Transcript | Personalized audio coaching debrief explaining plate composition and trajectory milestones |
-| [Interactive Developer Docs](/docs) | Complete Swagger / OpenAPI interactive sandbox | Public developer documentation with instant schema validation and live execution |
-| [Live System Health (`/api/health`)](/api/health) | Vision model status, database items count, and uptime | Real-time health check endpoint for monitoring uptime across Gemma, TabPFN, and USDA engines |
-| [TabPFN Forecast API (`/api/metabolic-forecast`)](/api/metabolic-forecast?friend_name=Dave&target_weight_kg=75.0&daily_calories_target=2100) | TabPFN forward pass telemetry and 28-day JSON arrays | Direct access to the tabular in-context transformer forecast with upper/lower confidence bounds |
+| [Live Web App](https://nutriscan-ai-fwn8.onrender.com) | Glassmorphic Landing Showcase & Real-Time Feature Matrix | Full overview of the open-source architecture, privacy comparison, and interactive hardware preview |
+| [Autonomous Plate Scanner Studio](https://nutriscan-ai-fwn8.onrender.com/scan) | Live Camera Viewport, Dropzone, and 1-Click Presets | Dedicated scanning studio with pan-seared salmon, grilled chicken, and sirloin steak demo plates |
+| [28-Day Metabolic Trajectory](https://nutriscan-ai-fwn8.onrender.com/scan) | Interactive Chart.js graph & Caloric Target Slider | Real-time TabPFN projection comparing dynamic 3,152 kcal TDEE vs static 2,587 kcal formula |
+| [ElevenLabs Voice Coach](https://nutriscan-ai-fwn8.onrender.com/scan) | Auditory Debrief card & Synchronized Transcript | Personalized audio coaching debrief explaining plate composition and trajectory milestones |
+| [Interactive Developer Docs](https://nutriscan-ai-fwn8.onrender.com/docs) | Complete Swagger / OpenAPI interactive sandbox | Public developer documentation with instant schema validation and live execution |
+| [Live System Health (`/api/health`)](https://nutriscan-ai-fwn8.onrender.com/api/health) | Vision model status, database items count, and uptime | Real-time health check endpoint for monitoring uptime across Gemma, TabPFN, and USDA engines |
+| [TabPFN Forecast API (`/api/metabolic-forecast`)](https://nutriscan-ai-fwn8.onrender.com/api/metabolic-forecast?friend_name=Dave&target_weight_kg=75.0&daily_calories_target=2100) | TabPFN forward pass telemetry and 28-day JSON arrays | Direct access to the tabular in-context transformer forecast with upper/lower confidence bounds |
 
 ---
 
@@ -317,13 +317,13 @@ All API endpoints return structured JSON with deterministic HTTP status codes an
 
 | Method | Endpoint | Description | Auth / Rate Limit |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/analyze-plate` | Upload an image file for vision segmentation and USDA grounding | Multipart / Public |
-| `GET` | `/api/metabolic-forecast` | Compute 28-day TabPFN trajectory & dynamic TDEE for a caloric target | Public |
-| `POST` | `/api/coach-debrief` | Generate ElevenLabs personalized voice debrief & transcript | Public |
-| `GET` | `/api/health` | Comprehensive system health check and model connectivity telemetry | Public |
-| `GET` | `/` | Serve high-conversion landing page with interactive hero mockup | Public |
-| `GET` | `/scan` | Serve autonomous mobile plate scanner & trajectory studio | Public |
-| `GET` | `/docs` | Interactive Swagger / OpenAPI developer portal | Public |
+| `POST` | [`/api/analyze-plate`](https://nutriscan-ai-fwn8.onrender.com/api/analyze-plate) | Upload an image file for vision segmentation and USDA grounding | Multipart / Public |
+| `GET` | [`/api/metabolic-forecast`](https://nutriscan-ai-fwn8.onrender.com/api/metabolic-forecast?friend_name=Dave&target_weight_kg=75.0&daily_calories_target=2100) | Compute 28-day TabPFN trajectory & dynamic TDEE for a caloric target | Public |
+| `POST` | [`/api/coach-debrief`](https://nutriscan-ai-fwn8.onrender.com/api/coach-debrief) | Generate ElevenLabs personalized voice debrief & transcript | Public |
+| `GET` | [`/api/health`](https://nutriscan-ai-fwn8.onrender.com/api/health) | Comprehensive system health check and model connectivity telemetry | Public |
+| `GET` | [`/`](https://nutriscan-ai-fwn8.onrender.com/) | Serve high-conversion landing page with interactive hero mockup | Public |
+| `GET` | [`/scan`](https://nutriscan-ai-fwn8.onrender.com/scan) | Serve autonomous mobile plate scanner & trajectory studio | Public |
+| `GET` | [`/docs`](https://nutriscan-ai-fwn8.onrender.com/docs) | Interactive Swagger / OpenAPI developer portal | Public |
 
 ### cURL Examples
 
@@ -408,6 +408,7 @@ NutriScan AI is engineered for immediate responsiveness with zero client-side la
 | **Live Web Application** | Render (Production) | [https://nutriscan-ai-fwn8.onrender.com](https://nutriscan-ai-fwn8.onrender.com) |
 | **Autonomous Plate Studio** | Render (App Router) | [https://nutriscan-ai-fwn8.onrender.com/scan](https://nutriscan-ai-fwn8.onrender.com/scan) |
 | **Interactive API Documentation** | FastAPI Swagger | [https://nutriscan-ai-fwn8.onrender.com/docs](https://nutriscan-ai-fwn8.onrender.com/docs) |
+| **System Health Check API** | Render (Monitoring) | [https://nutriscan-ai-fwn8.onrender.com/api/health](https://nutriscan-ai-fwn8.onrender.com/api/health) |
 | **Docker Container** | Docker Hub / Self-Hosted | `docker run -p 8000:8000 nutriscan-ai` |
 | **Source Code Repository** | GitHub | [Blackwrld04/Nutriscan.AI](https://github.com/Blackwrld04/Nutriscan.AI) |
 
