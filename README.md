@@ -133,9 +133,9 @@ https://github.com/Blackwrld04/Nutriscan.AI/raw/main/app/static/video/nutriscan_
 
 <div align="center">
 
-<a href="https://nutriscan-ai-fwn8.onrender.com/static/video/nutriscan_demo.mp4">
-  <img width="340" alt="NutriScan AI Mobile Walkthrough Video Poster" src="https://raw.githubusercontent.com/Blackwrld04/Nutriscan.AI/main/app/static/img/demo_poster.jpg" />
-</a>
+<video src="https://github.com/Blackwrld04/Nutriscan.AI/raw/main/app/static/video/nutriscan_demo.mp4" controls="controls" muted="muted" width="340" poster="https://raw.githubusercontent.com/Blackwrld04/Nutriscan.AI/main/app/static/img/demo_poster.jpg">
+  <a href="https://github.com/Blackwrld04/Nutriscan.AI/raw/main/app/static/video/nutriscan_demo.mp4">▶️ Watch / Download Mobile Demo (MP4)</a>
+</video>
 
 <p><em>Full 92-second real-device screen recording demonstrating the camera scanner, deterministic USDA grounding, TabPFN dynamic trajectory slider, and ElevenLabs voice debrief.</em></p>
 
