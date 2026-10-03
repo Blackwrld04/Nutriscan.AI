@@ -397,14 +397,6 @@ function updateHomeScreen() {
         netDeficitEl.innerHTML = `${netBalance > 0 ? '+' : ''}${netBalance} <span class="text-xs font-semibold text-slate-400">kcal</span>`;
     }
 
-    // Update Micronutrients
-    const fiberEl = document.getElementById("home-fiber-val");
-    const fiberBar = document.getElementById("home-fiber-bar");
-    if (fiberEl) fiberEl.innerText = Math.round(consumedFiber || 24);
-    if (fiberBar) {
-        const fiberPct = Math.min(100, Math.round(((consumedFiber || 24) / 30) * 100));
-        fiberBar.style.width = `${fiberPct}%`;
-    }
 
     // Render Recently Uploaded Meals List (Cal AI Screenshot 2 style)
     const recentListEl = document.getElementById("home-recent-meals-list");
