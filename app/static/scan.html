@@ -417,8 +417,37 @@
 
           <!-- Week Calendar Strip (dynamically populated with current week) -->
           <div class="flex items-center justify-between bg-white p-2.5 rounded-2xl border border-slate-200/80 shadow-xs text-center" id="week-calendar-strip">
-            <!-- Populated by buildCalendarStrip() in scanner.js -->
           </div>
+          <script>
+            // Immediately build calendar strip inline so it's always visible
+            (function() {
+              var strip = document.getElementById("week-calendar-strip");
+              if (!strip) return;
+              var now = new Date();
+              var today = now.getDate();
+              var currentDay = now.getDay();
+              var dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+              var sunday = new Date(now);
+              sunday.setDate(now.getDate() - currentDay);
+              var html = "";
+              for (var i = 0; i < 7; i++) {
+                var d = new Date(sunday);
+                d.setDate(sunday.getDate() + i);
+                var dayNum = d.getDate();
+                var dayName = dayNames[d.getDay()];
+                var isToday = (dayNum === today && d.getMonth() === now.getMonth());
+                var labelCls = isToday ? 'text-[10px] font-bold text-emerald-700' : 'text-[10px] font-medium text-slate-400';
+                var circleCls = isToday
+                  ? 'w-8 h-8 rounded-full bg-gradient-to-br from-emerald-600 to-teal-600 text-white mx-auto flex items-center justify-center text-xs font-black shadow-xs mt-1'
+                  : 'w-8 h-8 rounded-full border border-slate-200 mx-auto flex items-center justify-center text-xs font-bold text-slate-700 mt-1';
+                html += '<button type="button" class="week-day-btn' + (isToday ? ' active' : '') + ' flex-1 py-1 rounded-xl transition-all" onclick="selectCalendarDay(' + dayNum + ')">'
+                  + '<div class="' + labelCls + '">' + dayName + '</div>'
+                  + '<div class="' + circleCls + '">' + dayNum + '</div>'
+                  + '</button>';
+              }
+              strip.innerHTML = html;
+            })();
+          </script>
 
           <!-- Hero Calories Eaten Card with Circular Progress Ring (Cal AI Screenshot 2) -->
           <div class="dashboard-hero-card bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs relative overflow-hidden flex items-center justify-between">
@@ -1215,6 +1244,7 @@
       // Special Tab Actions
       if (tabName === 'home') {
         if (typeof updateHomeScreen === 'function') updateHomeScreen();
+        if (typeof buildCalendarStrip === 'function') buildCalendarStrip();
       }
       if (tabName === 'trajectory' && window.weightChart) {
         setTimeout(() => window.weightChart.resize(), 50);
@@ -1265,6 +1295,6 @@
   </script>
 
   <!-- Core Scanner & Home Logic -->
-  <script src="/static/js/scanner.js?v=2.4.0"></script>
+  <script src="/static/js/scanner.js?v=2.5.0"></script>
 </body>
 </html>
