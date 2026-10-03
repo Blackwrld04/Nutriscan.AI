@@ -447,11 +447,13 @@ function renderWeightChart(trajectory, currentWeight, targetWeight) {
 function updateBudgetBar(consumed, budget) {
     const fill = document.getElementById("budget-bar-fill");
     const label = document.getElementById("budget-text-label");
+    const heroCal = document.getElementById("hero-cal-consumed");
     const pct = Math.min(100, Math.round((consumed / budget) * 100));
     const remaining = Math.max(0, Math.round(budget - consumed));
 
     if (fill) fill.style.width = `${pct}%`;
     if (label) label.innerText = `${Math.round(consumed)} kcal consumed of ${budget} kcal target (${remaining} kcal remaining)`;
+    if (heroCal) heroCal.innerText = Math.round(consumed);
 }
 
 // ElevenLabs Coach Voice Debrief
@@ -540,3 +542,4 @@ function logPlateToHistory() {
 window.snapPhoto = snapPhoto;
 window.playStudioCoachDebrief = playStudioCoachDebrief;
 window.logPlateToHistory = logPlateToHistory;
+window.loadPreset = loadPreset;
