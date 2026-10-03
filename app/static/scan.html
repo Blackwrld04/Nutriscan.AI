@@ -129,6 +129,20 @@
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Bulletproof generous padding for home dashboard cards */
+    .dashboard-hero-card {
+      padding: 1.5rem !important; /* 24px */
+    }
+    .dashboard-macro-card {
+      padding: 1.25rem 1rem !important; /* 20px top/bottom, 16px left/right */
+    }
+    .dashboard-water-card {
+      padding: 1.375rem 1.25rem !important; /* 22px top/bottom, 20px left/right */
+    }
+    .dashboard-fasting-card {
+      padding: 1.125rem 1.25rem !important; /* 18px top/bottom, 20px left/right */
+    }
   </style>
 </head>
 <body class="min-h-screen text-slate-800 antialiased pb-28 md:pb-12 bg-slate-50/50">
@@ -351,7 +365,7 @@
           </div>
         </header>
 
-        <div class="px-5 pt-3.5 space-y-4">
+        <div class="px-5 pt-4 space-y-4">
           
           <!-- Week Calendar Strip (Cal AI Screenshot 2) -->
           <div class="flex items-center justify-between bg-slate-50/90 p-2 rounded-2xl border border-slate-100 text-center" id="week-calendar-strip">
@@ -386,16 +400,18 @@
           </div>
 
           <!-- Hero Calories Eaten Card with Circular Progress Ring (Cal AI Screenshot 2) -->
-          <div class="bg-white rounded-[28px] p-5.5 border border-slate-200/90 shadow-sm relative overflow-hidden flex items-center justify-between">
-            <div>
-              <div class="flex items-baseline gap-1">
-                <span class="text-4xl font-black text-slate-900 tracking-tight" id="home-cal-consumed">955</span>
+          <div class="dashboard-hero-card bg-white rounded-[28px] p-6 sm:p-7 border border-slate-200/90 shadow-sm relative overflow-hidden flex items-center justify-between">
+            <div class="space-y-1">
+              <div class="flex items-baseline gap-1.5">
+                <span class="text-4xl font-black text-slate-900 tracking-tight leading-none" id="home-cal-consumed">955</span>
                 <span class="text-base font-semibold text-slate-400">/ <span id="home-cal-target">2,100</span></span>
               </div>
-              <div class="text-xs font-semibold text-slate-500 mt-0.5">Calories eaten</div>
-              <div class="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100/90 text-slate-700 text-[10px] font-bold" id="home-goal-badge">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span id="home-goal-label">Maintain Weight · 165 lbs</span>
+              <div class="text-xs font-semibold text-slate-500 pt-0.5">Calories eaten</div>
+              <div class="pt-2.5">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold" id="home-goal-badge">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span id="home-goal-label">Maintain Weight · 165 lbs</span>
+                </div>
               </div>
             </div>
 
@@ -414,14 +430,14 @@
           </div>
 
           <!-- 3 Macro Cards (Protein, Carbs, Fat - Cal AI Screenshot 2 Layout) -->
-          <div class="grid grid-cols-3 gap-2.5">
+          <div class="grid grid-cols-3 gap-3">
             <!-- Protein Card -->
-            <div class="bg-white rounded-3xl p-3.5 border border-slate-200/80 shadow-xs flex flex-col items-center justify-between text-center relative overflow-hidden group hover:border-slate-300 transition-all">
-              <div class="w-full text-left mb-2">
-                <div class="text-sm font-black text-slate-900 tracking-tight">
-                  <span id="home-prot-eaten">72</span><span class="text-[10px] text-slate-400 font-bold">/<span id="home-prot-target">150</span>g</span>
+            <div class="dashboard-macro-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs flex flex-col items-center justify-between text-center relative overflow-hidden group hover:border-slate-300 transition-all">
+              <div class="w-full text-left mb-2 pl-0.5">
+                <div class="text-sm font-black text-slate-900 tracking-tight leading-tight">
+                  <span id="home-prot-eaten">72</span><span class="text-[11px] text-slate-400 font-bold">/<span id="home-prot-target">150</span>g</span>
                 </div>
-                <div class="text-[10px] text-slate-400 font-semibold tracking-tight">Protein eaten</div>
+                <div class="text-[11px] text-slate-400 font-medium tracking-tight mt-0.5">Protein eaten</div>
               </div>
 
               <!-- Circular Ring with Iconic Food Glyph in Center -->
@@ -442,12 +458,12 @@
             </div>
 
             <!-- Carbs Card -->
-            <div class="bg-white rounded-3xl p-3.5 border border-slate-200/80 shadow-xs flex flex-col items-center justify-between text-center relative overflow-hidden group hover:border-slate-300 transition-all">
-              <div class="w-full text-left mb-2">
-                <div class="text-sm font-black text-slate-900 tracking-tight">
-                  <span id="home-carb-eaten">93</span><span class="text-[10px] text-slate-400 font-bold">/<span id="home-carb-target">220</span>g</span>
+            <div class="dashboard-macro-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs flex flex-col items-center justify-between text-center relative overflow-hidden group hover:border-slate-300 transition-all">
+              <div class="w-full text-left mb-2 pl-0.5">
+                <div class="text-sm font-black text-slate-900 tracking-tight leading-tight">
+                  <span id="home-carb-eaten">93</span><span class="text-[11px] text-slate-400 font-bold">/<span id="home-carb-target">220</span>g</span>
                 </div>
-                <div class="text-[10px] text-slate-400 font-semibold tracking-tight">Carbs eaten</div>
+                <div class="text-[11px] text-slate-400 font-medium tracking-tight mt-0.5">Carbs eaten</div>
               </div>
 
               <!-- Circular Ring with Iconic Wheat Glyph in Center -->
@@ -468,12 +484,12 @@
             </div>
 
             <!-- Fat Card -->
-            <div class="bg-white rounded-3xl p-3.5 border border-slate-200/80 shadow-xs flex flex-col items-center justify-between text-center relative overflow-hidden group hover:border-slate-300 transition-all">
-              <div class="w-full text-left mb-2">
-                <div class="text-sm font-black text-slate-900 tracking-tight">
-                  <span id="home-fat-eaten">28</span><span class="text-[10px] text-slate-400 font-bold">/<span id="home-fat-target">65</span>g</span>
+            <div class="dashboard-macro-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs flex flex-col items-center justify-between text-center relative overflow-hidden group hover:border-slate-300 transition-all">
+              <div class="w-full text-left mb-2 pl-0.5">
+                <div class="text-sm font-black text-slate-900 tracking-tight leading-tight">
+                  <span id="home-fat-eaten">28</span><span class="text-[11px] text-slate-400 font-bold">/<span id="home-fat-target">65</span>g</span>
                 </div>
-                <div class="text-[10px] text-slate-400 font-semibold tracking-tight">Fat eaten</div>
+                <div class="text-[11px] text-slate-400 font-medium tracking-tight mt-0.5">Fat eaten</div>
               </div>
 
               <!-- Circular Ring with Iconic Avocado/Oil Glyph in Center -->
@@ -495,51 +511,49 @@
           <!-- ============================================== -->
           <!-- HEALTH SECTION 1: WATER & HYDRATION TRACKER    -->
           <!-- ============================================== -->
-          <div class="bg-white rounded-3xl p-4.5 border border-slate-200/80 shadow-xs">
-            <div class="flex items-center justify-between mb-2.5">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+          <div class="dashboard-water-card bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
                     <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
                   </svg>
                 </div>
                 <div>
-                  <h4 class="text-xs font-black text-slate-900 tracking-tight">Water Intake</h4>
-                  <div class="text-[10px] text-slate-400 font-medium">Daily Hydration Target</div>
+                  <h4 class="text-xs font-black text-slate-900 tracking-tight leading-snug">Water Intake</h4>
+                  <div class="text-[11px] text-slate-400 font-medium">Daily Hydration Target</div>
                 </div>
               </div>
               <div class="text-right">
                 <span class="text-sm font-black text-slate-900" id="home-water-val">1,750</span>
-                <span class="text-[10px] text-slate-400 font-semibold">/ 2,500 ml</span>
+                <span class="text-[11px] text-slate-400 font-semibold">/ 2,500 ml</span>
               </div>
             </div>
 
             <!-- Water Progress Bar -->
-            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-3">
+            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-3.5">
               <div id="home-water-bar" class="h-full bg-gradient-to-r from-sky-400 to-blue-500 rounded-full transition-all duration-500" style="width: 70%;"></div>
             </div>
 
             <!-- Interactive Quick Water Buttons -->
-            <div class="flex items-center gap-2">
-              <button type="button" class="flex-1 py-2 px-3 rounded-xl bg-sky-50/70 hover:bg-sky-100 text-sky-700 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95" onclick="addWater(250)">
+            <div class="flex items-center gap-2.5">
+              <button type="button" class="flex-1 py-2.5 px-3 rounded-xl bg-sky-50/80 hover:bg-sky-100 text-sky-700 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95" onclick="addWater(250)">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <span>+250 ml <span class="text-[10px] opacity-75 font-normal">(1 cup)</span></span>
               </button>
-              <button type="button" class="flex-1 py-2 px-3 rounded-xl bg-sky-50/70 hover:bg-sky-100 text-sky-700 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95" onclick="addWater(500)">
+              <button type="button" class="flex-1 py-2.5 px-3 rounded-xl bg-sky-50/80 hover:bg-sky-100 text-sky-700 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95" onclick="addWater(500)">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <span>+500 ml <span class="text-[10px] opacity-75 font-normal">(1 bottle)</span></span>
               </button>
             </div>
           </div>
 
-
-
           <!-- ============================================== -->
           <!-- HEALTH SECTION 4: INTERMITTENT FASTING WINDOW  -->
           <!-- ============================================== -->
-          <div class="p-3.5 bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl text-white flex items-center justify-between shadow-xs">
+          <div class="dashboard-fasting-card p-4 sm:p-5 bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl text-white flex items-center justify-between shadow-xs">
             <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-amber-400">
+              <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-amber-400 shrink-0">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
                   <circle cx="12" cy="12" r="10"/>
                   <polyline points="12 6 12 12 16 14"/>
@@ -547,10 +561,10 @@
               </div>
               <div>
                 <div class="text-xs font-bold text-white tracking-tight">Fasting Window: 14h 25m</div>
-                <div class="text-[10px] text-slate-300">16:8 Protocol · Fat Oxidation Active</div>
+                <div class="text-[11px] text-slate-300">16:8 Protocol · Fat Oxidation Active</div>
               </div>
             </div>
-            <span class="text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full">
+            <span class="text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full shrink-0">
               On Track
             </span>
           </div>
