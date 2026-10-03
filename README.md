@@ -91,7 +91,7 @@ In October 2026, **Hacktoberfest broke with a decade-long tradition**. Instead o
 
 The kickoff prompt was simple yet profound: **"Build for a Friend"** — solve an authentic, painful, day-to-day problem for one specific person in your life, put open innovation at its core, hand it over, and document their unfiltered reaction.
 
-That person for us was **Dave**. 
+That person for me was **Dave**. 
 
 Dave is a close friend and undergraduate university student who set an earnest personal goal to reduce his weight from **82.4 kg down to a healthy, lean 75.0 kg (165.3 lbs)**. But managing weight loss as a busy college student came with relentless hurdles:
 1. **The $35/Month Student Budget Toll**: Commercial calorie scanning apps (like Cal AI and MyFitnessPal Premium) demanded $35/month ($400+/year) just to snap a photo of a lunch bowl or scan a barcode. For a university student juggling tuition, rent, textbooks, and groceries, paying $400/year to track basic nutrition felt predatory and impossible to sustain.
@@ -102,13 +102,13 @@ Dave is a close friend and undergraduate university student who set an earnest p
 ---
 
 ### Act 2: The Core Thesis: Vision Segments, USDA Computes, TabPFN Forecasts
-We sat down with Dave and formulated a non-negotiable architectural invariant:
+I sat down with Dave and formulated a non-negotiable architectural invariant:
 > **Large Language Models must NEVER do calorie math.**  
 > **Computer vision must ONLY segment food portions in grams.**  
 > **USDA tables must compute deterministic arithmetic.**  
 > **Tabular foundation models must forecast human metabolism.**
 
-We architected **NutriScan.AI** (initially prototyped as *OpenCal AI*) around five open-source AI pillars:
+I architected **NutriScan.AI** (initially prototyped as *OpenCal AI*) around five open-source AI pillars:
 1. **Google Gemma 2 Multimodal Vision**: Runs on open weights (locally via Ollama or hosted) to detect food items geometrically and estimate portion gram weights without cloud scraping.
 2. **100% Deterministic USDA Grounding**: Maps recognized foods against an offline slice of **USDA FoodData Central**. Calories, protein, carbs, and fats are calculated with audit-grade arithmetic—**zero generative hallucinations**.
 3. **Prior Labs' TabPFN (Tabular Prior-Data Fitted Network)**: The crown jewel of NutriScan.AI. Rather than forcing Dave onto a 1990 population average, TabPFN ingests Dave's rolling 30-day biological check-in dataset ([`dave_metabolic_log.csv`](app/data/dave_metabolic_log.csv) tracking daily calories, protein, carbs, fat, campus step count, sleep hours, and morning scale weight). In a single forward pass—without backpropagation loops—TabPFN discovered that Dave's true dynamic burn rate was **3,152 kcal/day**—nearly 600 kcal higher than static formulas predicted!
@@ -118,16 +118,16 @@ We architected **NutriScan.AI** (initially prototyped as *OpenCal AI*) around fi
 
 ### Act 3: From OpenCal AI to NutriScan.AI — The Design & Engineering Journey
 Over hundreds of pair-programming iterations, the project evolved from a raw terminal backend into a state-of-the-art web application:
-- **Design Inspiration**: We studied modern, high-converting visual showcases like `trustxx.netlify.app` and `nutrilens.site`, creating a signature **Emerald & Teal glassmorphic aesthetic**.
-- **Mobile-First Cal AI Studio**: We built a native-feeling mobile experience with an interactive calorie progress ring, 3 radial macro cards (drumstick for protein, wheat for carbs, avocado for fat), a daily hydration tracker (`+250ml` / `+500ml`), a 16:8 intermittent fasting tracker, and a week calendar strip.
+- **Design Inspiration**: I studied modern, high-converting visual showcases like `trustxx.netlify.app` and `nutrilens.site`, creating a signature **Emerald & Teal glassmorphic aesthetic**.
+- **Mobile-First Cal AI Studio**: I built a native-feeling mobile experience with an interactive calorie progress ring, 3 radial macro cards (drumstick for protein, wheat for carbs, avocado for fat), a daily hydration tracker (`+250ml` / `+500ml`), a 16:8 intermittent fasting tracker, and a week calendar strip.
 - **The Floating Action Button**: Designed a fixed camera FAB positioned above the bottom navigation bar for instantaneous 1-tap plate logging on mobile phones.
 - **Interactive Trajectory Studio**: Equipped with Chart.js to render TabPFN's 28-day Bayesian confidence envelope alongside an interactive calorie simulation slider (1,600 to 3,000 kcal/day).
-- **Responsive Widescreen Desktop Studio**: To ensure desktop users weren't trapped in a mobile phone column, we engineered a widescreen layout expanding to 1280px (`max-w-7xl`) with a 2-column analytics grid, desktop navigation header, and "Scan Plate" CTA—**without altering a single pixel of the mobile experience**.
+- **Responsive Widescreen Desktop Studio**: To ensure desktop users weren't trapped in a mobile phone column, I engineered a widescreen layout expanding to 1280px (`max-w-7xl`) with a 2-column analytics grid, desktop navigation header, and "Scan Plate" CTA—**without altering a single pixel of the mobile experience**.
 
 ---
 
 ### Act 4: The Live Handoff & Dave's Unfiltered Reaction
-When we deployed the web application to **Render** (`https://nutriscan-ai-fwn8.onrender.com`) and handed Dave the phone over a quick dining hall lunch, his reaction was instantaneous:
+When I deployed the web application to **Render** (`https://nutriscan-ai-fwn8.onrender.com`) and handed Dave the phone over a quick dining hall lunch, his reaction was instantaneous:
 
 > *"Are you serious? You built this in a weekend? The camera scanner picked up my cafeteria grilled chicken and rice bowl instantly, and the calories match the USDA label to the gram. But the crazy part is the 28-Day Trajectory chart: when I dragged the slider to 2,100 kcal, it told me I'd reach 75.0 kg on Day 21—fitting right before midterm week. And the voice debrief on my walk back to the dorm literally sounded like a personal fitness coach in my pocket!"*
 
