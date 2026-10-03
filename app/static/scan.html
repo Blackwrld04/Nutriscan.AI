@@ -75,21 +75,21 @@
       transition: all 0.15s ease;
     }
 
-    /* Active Indicator & Icon for Bottom Nav */
+    /* Active Indicator & Icon for Bottom Nav (Unified Emerald Theme) */
     .bottom-nav-item.active {
-      color: #0f172a !important; /* slate-900 */
+      color: #047857 !important; /* emerald-700 */
     }
     .bottom-nav-item.active .nav-label {
-      color: #0f172a !important;
+      color: #047857 !important;
       font-weight: 800 !important;
     }
     .bottom-nav-item.active .nav-indicator {
-      background-color: #0f172a !important;
+      background-color: #059669 !important; /* emerald-600 */
       width: 1.25rem !important;
     }
     .bottom-nav-item.active .nav-icon-wrap {
-      background-color: #f1f5f9 !important;
-      color: #0f172a !important;
+      background-color: #ecfdf5 !important; /* emerald-50 */
+      color: #047857 !important; /* emerald-700 */
     }
 
     /* Segmented Mode Tabs */
@@ -372,26 +372,27 @@
       <section id="view-home" class="app-view-section block animate-fadeIn relative pb-8">
         
         <!-- Home Header with Logo, Streak, and Settings Button (NOT in nav bar) -->
+        <!-- Home Header with Logo, Streak, and Settings Button (NOT in nav bar) -->
         <header class="pt-6 px-5 pb-3 flex items-center justify-between bg-white border-b border-slate-100 sticky top-0 z-30">
           <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-xs">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-xs">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
                 <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
                 <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
               </svg>
             </div>
-            <span class="text-lg font-black text-slate-900 tracking-tight">OpenCal<span class="text-slate-400 font-medium">.AI</span></span>
+            <span class="text-lg font-black text-slate-900 tracking-tight">OpenCal<span class="text-emerald-600 font-bold">.AI</span></span>
           </div>
 
           <div class="flex items-center gap-2">
-            <!-- Streak Flame Badge (Cal AI style: 🔥 21) -->
-            <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-amber-700 text-xs font-black shadow-2xs">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.5 3 2 4.5 4 6 2.5 1.9 4 4.5 4 8a8 8 0 1 1-16 0c0-3.5 1.5-6.1 4-8 2-1.5 3.5-3 4-6Z"/></svg>
-              <span>21</span>
+            <!-- Streak Flame Badge (Matching Trajectory / Coach emerald pill style) -->
+            <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-black shadow-2xs">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" class="text-emerald-600"><path d="M12 2c.5 3 2 4.5 4 6 2.5 1.9 4 4.5 4 8a8 8 0 1 1-16 0c0-3.5 1.5-6.1 4-8 2-1.5 3.5-3 4-6Z"/></svg>
+              <span>21 Days</span>
             </div>
 
             <!-- Settings Gear Button in Header (User specified: on home page, not nav bar) -->
-            <button type="button" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors" onclick="openSettingsModal()" title="Settings & Profile">
+            <button type="button" class="w-8 h-8 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 text-emerald-800 flex items-center justify-center transition-colors" onclick="openSettingsModal()" title="Settings & Profile">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="3"/>
                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
@@ -402,8 +403,20 @@
 
         <div class="px-5 pt-4 space-y-4">
           
-          <!-- Week Calendar Strip (Cal AI Screenshot 2) -->
-          <div class="flex items-center justify-between bg-slate-50/90 p-2 rounded-2xl border border-slate-100 text-center" id="week-calendar-strip">
+          <!-- Home Section Title matching Trajectory and Coach header style -->
+          <div class="flex items-center justify-between mb-1">
+            <div>
+              <div class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">Daily Nutrition</div>
+              <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Today's Overview</h1>
+            </div>
+            <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+              <span>Live Sync</span>
+            </span>
+          </div>
+
+          <!-- Week Calendar Strip (Cal AI Screenshot 2 matching Trajectory / Coach card styling) -->
+          <div class="flex items-center justify-between bg-white p-2.5 rounded-2xl border border-slate-200/80 shadow-xs text-center" id="week-calendar-strip">
             <button type="button" class="week-day-btn flex-1 py-1 rounded-xl transition-all" onclick="selectCalendarDay(10)">
               <div class="text-[10px] font-medium text-slate-400">Sun</div>
               <div class="w-8 h-8 rounded-full border border-rose-300 mx-auto flex items-center justify-center text-xs font-bold text-slate-700 mt-1">10</div>
@@ -417,8 +430,8 @@
               <div class="w-8 h-8 rounded-full border border-emerald-400 bg-emerald-50 mx-auto flex items-center justify-center text-xs font-bold text-emerald-800 mt-1">12</div>
             </button>
             <button type="button" class="week-day-btn active flex-1 py-1 rounded-xl transition-all" onclick="selectCalendarDay(13)">
-              <div class="text-[10px] font-bold text-slate-900">Wed</div>
-              <div class="w-8 h-8 rounded-full bg-slate-900 text-white mx-auto flex items-center justify-center text-xs font-black shadow-xs mt-1">13</div>
+              <div class="text-[10px] font-bold text-emerald-700">Wed</div>
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-600 to-teal-600 text-white mx-auto flex items-center justify-center text-xs font-black shadow-xs mt-1">13</div>
             </button>
             <button type="button" class="week-day-btn flex-1 py-1 rounded-xl transition-all" onclick="selectCalendarDay(14)">
               <div class="text-[10px] font-medium text-slate-400">Thu</div>
@@ -435,28 +448,28 @@
           </div>
 
           <!-- Hero Calories Eaten Card with Circular Progress Ring (Cal AI Screenshot 2) -->
-          <div class="dashboard-hero-card bg-white rounded-[28px] p-6 sm:p-7 border border-slate-200/90 shadow-sm relative overflow-hidden flex items-center justify-between">
+          <div class="dashboard-hero-card bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs relative overflow-hidden flex items-center justify-between">
             <div class="space-y-1">
               <div class="flex items-baseline gap-1.5">
                 <span class="text-4xl font-black text-slate-900 tracking-tight leading-none" id="home-cal-consumed">955</span>
-                <span class="text-base font-semibold text-slate-400">/ <span id="home-cal-target">2,100</span></span>
+                <span class="text-base font-semibold text-slate-400">/ <span id="home-cal-target" class="text-emerald-700 font-bold">2,100</span> kcal</span>
               </div>
               <div class="text-xs font-semibold text-slate-500 pt-0.5">Calories eaten</div>
               <div class="pt-2.5">
-                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold" id="home-goal-badge">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold" id="home-goal-badge">
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                   <span id="home-goal-label">Maintain Weight · 165 lbs (74.8 kg)</span>
                 </div>
               </div>
             </div>
 
-            <!-- Circular Flame Progress Ring (Cal AI) -->
+            <!-- Circular Flame Progress Ring (Styled with Emerald Palette) -->
             <div class="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
               <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="40" stroke="#f1f5f9" stroke-width="8.5" fill="none"/>
-                <circle id="home-ring-circle" cx="50" cy="50" r="40" stroke="#0f172a" stroke-width="8.5" stroke-linecap="round" fill="none" stroke-dasharray="251.2" stroke-dashoffset="137.0" class="transition-all duration-700 ease-out"/>
+                <circle cx="50" cy="50" r="40" stroke="#ecfdf5" stroke-width="8.5" fill="none"/>
+                <circle id="home-ring-circle" cx="50" cy="50" r="40" stroke="#059669" stroke-width="8.5" stroke-linecap="round" fill="none" stroke-dasharray="251.2" stroke-dashoffset="137.0" class="transition-all duration-700 ease-out"/>
               </svg>
-              <div class="absolute inset-0 flex items-center justify-center text-slate-900">
+              <div class="absolute inset-0 flex items-center justify-center text-emerald-600">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2c.5 3 2 4.5 4 6 2.5 1.9 4 4.5 4 8a8 8 0 1 1-16 0c0-3.5 1.5-6.1 4-8 2-1.5 3.5-3 4-6Z"/>
                 </svg>
@@ -546,10 +559,10 @@
           <!-- ============================================== -->
           <!-- HEALTH SECTION 1: WATER & HYDRATION TRACKER    -->
           <!-- ============================================== -->
-          <div class="dashboard-water-card bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs">
+          <div class="dashboard-water-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
+                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
                     <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
                   </svg>
@@ -565,18 +578,18 @@
               </div>
             </div>
 
-            <!-- Water Progress Bar -->
+            <!-- Water Progress Bar in Emerald / Teal Gradient -->
             <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-3.5">
-              <div id="home-water-bar" class="h-full bg-gradient-to-r from-sky-400 to-blue-500 rounded-full transition-all duration-500" style="width: 70%;"></div>
+              <div id="home-water-bar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500" style="width: 70%;"></div>
             </div>
 
             <!-- Interactive Quick Water Buttons -->
             <div class="flex items-center gap-2.5">
-              <button type="button" class="flex-1 py-2.5 px-3 rounded-xl bg-sky-50/80 hover:bg-sky-100 text-sky-700 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95" onclick="addWater(250)">
+              <button type="button" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-50/80 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/70 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95" onclick="addWater(250)">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <span>+250 ml <span class="text-[10px] opacity-75 font-normal">(1 cup)</span></span>
               </button>
-              <button type="button" class="flex-1 py-2.5 px-3 rounded-xl bg-sky-50/80 hover:bg-sky-100 text-sky-700 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95" onclick="addWater(500)">
+              <button type="button" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-50/80 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/70 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95" onclick="addWater(500)">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <span>+500 ml <span class="text-[10px] opacity-75 font-normal">(1 bottle)</span></span>
               </button>
@@ -586,20 +599,20 @@
           <!-- ============================================== -->
           <!-- HEALTH SECTION 4: INTERMITTENT FASTING WINDOW  -->
           <!-- ============================================== -->
-          <div class="dashboard-fasting-card p-4 sm:p-5 bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl text-white flex items-center justify-between shadow-xs">
+          <div class="dashboard-fasting-card p-4 sm:p-5 bg-white border border-slate-200/80 rounded-2xl flex items-center justify-between shadow-xs">
             <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-amber-400 shrink-0">
+              <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
                   <circle cx="12" cy="12" r="10"/>
                   <polyline points="12 6 12 12 16 14"/>
                 </svg>
               </div>
               <div>
-                <div class="text-xs font-bold text-white tracking-tight">Fasting Window: 14h 25m</div>
-                <div class="text-[11px] text-slate-300">16:8 Protocol · Fat Oxidation Active</div>
+                <div class="text-xs font-bold text-slate-900 tracking-tight">Fasting Window: 14h 25m</div>
+                <div class="text-[11px] text-slate-500">16:8 Protocol · Fat Oxidation Active</div>
               </div>
             </div>
-            <span class="text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full shrink-0">
+            <span class="text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full shrink-0">
               On Track
             </span>
           </div>
@@ -610,7 +623,7 @@
           <div class="mt-6">
             <div class="flex items-center justify-between mb-3">
               <h3 class="text-sm font-black text-slate-900 tracking-tight">Recently uploaded</h3>
-              <button type="button" class="text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors" onclick="switchMainTab('history')">View all</button>
+              <button type="button" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors" onclick="switchMainTab('history')">View all</button>
             </div>
 
             <!-- Dynamic Meals List -->
@@ -618,7 +631,7 @@
 
             <!-- Empty State -->
             <div id="home-empty-meals" class="bg-slate-50 rounded-2xl p-6 text-center border border-dashed border-slate-200">
-              <div class="w-12 h-12 rounded-full bg-white shadow-xs mx-auto flex items-center justify-center text-slate-400 mb-2">
+              <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 shadow-xs mx-auto flex items-center justify-center mb-2">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
               </div>
               <p class="text-xs font-bold text-slate-700">No meals logged yet today</p>
@@ -766,7 +779,7 @@
             <div class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">Nutrition Log</div>
             <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Scan History</h1>
           </div>
-          <button class="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 px-3.5 py-1.5 rounded-full shadow-sm transition-all" onclick="openScannerModal()">
+          <button class="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 px-3.5 py-1.5 rounded-full shadow-sm transition-all" onclick="openScannerModal()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             <span>Scan Plate</span>
           </button>
@@ -789,10 +802,10 @@
               Every time you snap or verify a meal plate, your USDA receipt and macro breakdown will appear here.
             </p>
             <div class="flex justify-center gap-2">
-              <button class="px-4 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm transition-all" onclick="openScannerModal()">
+              <button class="px-4 py-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-sm transition-all" onclick="openScannerModal()">
                 Scan Plate Now
               </button>
-              <button class="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all" onclick="openScannerModal(); loadPreset('salmon');">
+              <button class="px-4 py-2 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 text-xs font-bold transition-all" onclick="openScannerModal(); loadPreset('salmon');">
                 Load Sample Meal
               </button>
             </div>
@@ -805,15 +818,15 @@
     <!-- 4. Fixed Mobile Bottom Navigation Bar (Home, Trajectory, Coach, History) -->
     <!-- Notice: NO Settings button in the nav bar as explicitly requested by user -->
     <nav id="app-bottom-nav" class="fixed md:sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-6 py-2.5 flex items-center justify-around z-50 shadow-lg md:rounded-b-[36px]">
-      <button class="bottom-nav-item active flex flex-col items-center gap-0.5 text-slate-900 transition-colors" data-nav="home" onclick="switchMainTab('home')">
+      <button class="bottom-nav-item active flex flex-col items-center gap-0.5 text-emerald-700 transition-colors" data-nav="home" onclick="switchMainTab('home')">
         <div class="nav-icon-wrap p-1 rounded-full">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
             <polyline points="9 22 9 12 15 12 15 22"/>
           </svg>
         </div>
-        <span class="nav-label text-[10px] font-bold tracking-tight text-slate-900">Home</span>
-        <span class="nav-indicator w-5 h-0.5 bg-slate-900 rounded-full transition-all"></span>
+        <span class="nav-label text-[10px] font-extrabold tracking-tight text-emerald-700">Home</span>
+        <span class="nav-indicator w-5 h-0.5 bg-emerald-600 rounded-full transition-all"></span>
       </button>
 
       <button class="bottom-nav-item flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-700 transition-colors" data-nav="trajectory" onclick="switchMainTab('trajectory')">
@@ -856,7 +869,7 @@
 
   <!-- Floating Scan Button (FAB) Pinned to Viewport at Right Bottom Corner Above Bottom Nav -->
   <div id="home-fab-container" class="fixed pointer-events-none" style="z-index: 45; bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px)); right: max(1.25rem, calc((100vw - 42rem) / 2 + 1.25rem));">
-    <button type="button" id="home-floating-scan-btn" class="pointer-events-auto w-14 h-14 bg-slate-950 hover:bg-slate-800 text-white rounded-full shadow-[0_10px_25px_-3px_rgba(15,23,42,0.5)] flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all border-2 border-white/20 ring-4 ring-white/80 group" onclick="openScannerModal()" title="Scan Food Plate">
+    <button type="button" id="home-floating-scan-btn" class="pointer-events-auto w-14 h-14 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-full shadow-[0_10px_25px_-3px_rgba(5,150,105,0.45)] flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all border-2 border-white ring-4 ring-emerald-100 group" onclick="openScannerModal()" title="Scan Food Plate">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:rotate-90">
         <line x1="12" y1="5" x2="12" y2="19"/>
         <line x1="5" y1="12" x2="19" y2="12"/>
@@ -1123,7 +1136,7 @@
     <div class="w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl space-y-4 animate-fadeIn">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-800 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
           </div>
           <h3 class="font-extrabold text-slate-900 text-base">Settings & Profile</h3>
@@ -1143,21 +1156,21 @@
         </div>
         <div class="p-3 bg-slate-50 rounded-2xl flex items-center justify-between">
           <span class="text-slate-500 font-medium">Current Goal</span>
-          <span class="font-bold text-slate-900" id="settings-goal-val">Maintain</span>
+          <span class="font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 rounded-full" id="settings-goal-val">Maintain</span>
         </div>
         <div class="p-3 bg-slate-50 rounded-2xl flex items-center justify-between">
           <span class="text-slate-500 font-medium">Daily Target</span>
-          <span class="font-black text-slate-900" id="settings-cals-val">2,100 kcal</span>
+          <span class="font-black text-emerald-700" id="settings-cals-val">2,100 kcal</span>
         </div>
       </div>
 
       <!-- Re-run Onboarding Button -->
-      <button type="button" class="w-full py-3 px-4 rounded-2xl border border-slate-200 text-xs font-bold text-slate-800 hover:bg-slate-50 transition-all flex items-center justify-center gap-2" onclick="openOnboardingFromSettings()">
+      <button type="button" class="w-full py-3 px-4 rounded-2xl border border-slate-200 text-xs font-bold text-slate-800 hover:bg-emerald-50 hover:border-emerald-200/80 hover:text-emerald-800 transition-all flex items-center justify-center gap-2" onclick="openOnboardingFromSettings()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         <span>Edit Onboarding Profile</span>
       </button>
 
-      <button type="button" class="w-full bg-slate-950 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-full text-xs transition-all shadow-md" onclick="closeSettingsModal()">
+      <button type="button" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-3 px-4 rounded-full text-xs transition-all shadow-md" onclick="closeSettingsModal()">
         Done
       </button>
     </div>
@@ -1183,9 +1196,9 @@
         // Toggle active/inactive text color on button
         if (isActive) {
           el.classList.remove('text-slate-400');
-          el.classList.add('text-slate-900');
+          el.classList.add('text-emerald-700');
         } else {
-          el.classList.remove('text-slate-900');
+          el.classList.remove('text-emerald-700', 'text-slate-900');
           el.classList.add('text-slate-400');
         }
 
@@ -1194,9 +1207,9 @@
         if (label) {
           if (isActive) {
             label.classList.remove('text-slate-400', 'font-medium');
-            label.classList.add('text-slate-900', 'font-bold');
+            label.classList.add('text-emerald-700', 'font-extrabold');
           } else {
-            label.classList.remove('text-slate-900', 'font-bold');
+            label.classList.remove('text-emerald-700', 'text-slate-900', 'font-bold', 'font-extrabold');
             label.classList.add('text-slate-400', 'font-medium');
           }
         }
@@ -1204,7 +1217,7 @@
         const indicator = el.querySelector('.nav-indicator');
         if (indicator) {
           indicator.className = isActive 
-            ? 'nav-indicator w-5 h-0.5 bg-slate-900 rounded-full transition-all'
+            ? 'nav-indicator w-5 h-0.5 bg-emerald-600 rounded-full transition-all'
             : 'nav-indicator w-0 h-0.5 bg-transparent rounded-full transition-all';
         }
       });
@@ -1260,7 +1273,7 @@
                 <h4 class="font-bold text-slate-900 text-xs">${item.meal_name}</h4>
                 <div class="text-[10px] text-slate-400 mt-0.5">${new Date(item.date).toLocaleDateString(undefined, {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'})}</div>
               </div>
-              <span class="text-xs font-black text-slate-900 bg-slate-100 px-2.5 py-1 rounded-full">${Math.round(item.calories)} kcal</span>
+              <span class="text-xs font-black text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full">${Math.round(item.calories)} kcal</span>
             </div>
             <div class="flex items-center gap-3 mt-2.5 pt-2 border-t border-slate-100 text-[11px] text-slate-600 font-medium">
               <span><strong class="text-rose-600 font-bold">${Math.round(item.protein_g)}g</strong> Protein</span>
@@ -1279,6 +1292,6 @@
   </script>
 
   <!-- Core Scanner & Home Logic -->
-  <script src="/static/js/scanner.js?v=2.2.2"></script>
+  <script src="/static/js/scanner.js?v=2.3.0"></script>
 </body>
 </html>

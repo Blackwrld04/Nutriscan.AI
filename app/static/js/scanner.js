@@ -299,10 +299,10 @@ function selectSex(sex) {
 
     if (maleBtn && femaleBtn) {
         if (sex === "male") {
-            maleBtn.className = "onboard-sex-btn py-3 px-4 rounded-2xl border-2 border-slate-900 bg-slate-900 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs";
+            maleBtn.className = "onboard-sex-btn py-3 px-4 rounded-2xl border-2 border-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs";
             femaleBtn.className = "onboard-sex-btn py-3 px-4 rounded-2xl border border-slate-200 bg-slate-50 text-slate-700 font-bold text-xs flex items-center justify-center gap-2 transition-all hover:border-slate-400";
         } else {
-            femaleBtn.className = "onboard-sex-btn py-3 px-4 rounded-2xl border-2 border-slate-900 bg-slate-900 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs";
+            femaleBtn.className = "onboard-sex-btn py-3 px-4 rounded-2xl border-2 border-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs";
             maleBtn.className = "onboard-sex-btn py-3 px-4 rounded-2xl border border-slate-200 bg-slate-50 text-slate-700 font-bold text-xs flex items-center justify-center gap-2 transition-all hover:border-slate-400";
         }
     }
@@ -314,9 +314,9 @@ function selectGoal(goal) {
         const isMatch = btn.dataset.goal === goal;
         const radio = btn.querySelector(".goal-radio");
         if (isMatch) {
-            btn.className = "onboard-goal-btn active w-full p-3.5 rounded-2xl border-2 border-slate-900 bg-white shadow-xs flex items-center justify-between text-left transition-all";
+            btn.className = "onboard-goal-btn active w-full p-3.5 rounded-2xl border-2 border-emerald-600 bg-emerald-50/30 shadow-xs flex items-center justify-between text-left transition-all";
             if (radio) {
-                radio.className = "goal-radio w-5 h-5 rounded-full border-2 border-slate-900 bg-slate-900 flex items-center justify-center";
+                radio.className = "goal-radio w-5 h-5 rounded-full border-2 border-emerald-600 bg-emerald-600 flex items-center justify-center";
                 radio.innerHTML = '<div class="w-2 h-2 rounded-full bg-white"></div>';
             }
         } else {
@@ -334,7 +334,7 @@ function selectActivity(act) {
     document.querySelectorAll(".onboard-activity-btn").forEach(btn => {
         const isMatch = btn.dataset.act === act;
         if (isMatch) {
-            btn.className = "onboard-activity-btn active flex-1 py-2.5 rounded-xl text-xs font-bold text-slate-900 bg-white shadow-xs transition-all";
+            btn.className = "onboard-activity-btn active flex-1 py-2.5 rounded-xl text-xs font-bold text-emerald-800 bg-white shadow-xs transition-all";
         } else {
             btn.className = "onboard-activity-btn flex-1 py-2.5 rounded-xl text-xs font-semibold text-slate-600 transition-all";
         }
@@ -452,8 +452,8 @@ function selectCalendarDay(day) {
         const isTarget = dayCircle.innerText.trim() === day.toString();
         if (isTarget) {
             btn.classList.add("active");
-            dayCircle.className = "w-8 h-8 rounded-full bg-slate-900 text-white mx-auto flex items-center justify-center text-xs font-black shadow-xs mt-1";
-            if (dayLabel) dayLabel.className = "text-[10px] font-bold text-slate-900";
+            dayCircle.className = "w-8 h-8 rounded-full bg-gradient-to-br from-emerald-600 to-teal-600 text-white mx-auto flex items-center justify-center text-xs font-black shadow-xs mt-1";
+            if (dayLabel) dayLabel.className = "text-[10px] font-bold text-emerald-700";
         } else {
             btn.classList.remove("active");
             if (dayLabel) dayLabel.className = "text-[10px] font-medium text-slate-400";
@@ -556,7 +556,7 @@ function updateHomeScreen() {
 
 
 
-    // Render Recently Uploaded Meals List (Cal AI Screenshot 2 style)
+    // Render Recently Uploaded Meals List (Cal AI Screenshot 2 style with unified emerald theme)
     const recentListEl = document.getElementById("home-recent-meals-list");
     const emptyMealsEl = document.getElementById("home-empty-meals");
 
@@ -573,7 +573,7 @@ function updateHomeScreen() {
                 return `
                 <div class="bg-white rounded-2xl p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow flex items-center justify-between">
                   <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-slate-100/90 border border-slate-200/60 flex items-center justify-center text-slate-800 flex-shrink-0 shadow-2xs">
+                    <div class="w-11 h-11 rounded-2xl bg-emerald-50 border border-emerald-200/60 flex items-center justify-center text-emerald-700 flex-shrink-0 shadow-2xs">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/>
                         <path d="M19 12a7 7 0 0 0-14 0"/>
@@ -593,8 +593,8 @@ function updateHomeScreen() {
                     </div>
                   </div>
                   <div class="text-right flex-shrink-0">
-                    <span class="text-xs font-black text-slate-900 bg-slate-100 px-2.5 py-1 rounded-full inline-flex items-center gap-1">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" class="text-amber-500"><path d="M12 2c.5 3 2 4.5 4 6 2.5 1.9 4 4.5 4 8a8 8 0 1 1-16 0c0-3.5 1.5-6.1 4-8 2-1.5 3.5-3 4-6Z"/></svg>
+                    <span class="text-xs font-black text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full inline-flex items-center gap-1">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" class="text-emerald-600"><path d="M12 2c.5 3 2 4.5 4 6 2.5 1.9 4 4.5 4 8a8 8 0 1 1-16 0c0-3.5 1.5-6.1 4-8 2-1.5 3.5-3 4-6Z"/></svg>
                       ${Math.round(meal.calories)}
                     </span>
                     <div class="text-[9px] text-slate-400 mt-1 font-medium">Calories</div>
