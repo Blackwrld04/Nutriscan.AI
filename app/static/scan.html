@@ -67,14 +67,6 @@
       color: #059669;
     }
 
-    /* Quick Access Pills Active State */
-    .quick-access-pill.active {
-      background-color: #ffffff;
-      color: #065f46;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      font-weight: 700;
-    }
-
     /* Segmented Mode Tabs */
     .studio-tab-btn.active {
       background: #ffffff;
@@ -184,32 +176,6 @@
             </svg>
             <span>Overview</span>
           </a>
-        </div>
-      </div>
-
-      <!-- Quick Access Segmented Navigation Chips (TrustX Style) -->
-      <div class="relative z-10 mt-6">
-        <div class="flex items-center justify-between text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
-          <span>Quick Access</span>
-          <span class="text-[11px] font-normal text-emerald-200 capitalize">Built for Dave</span>
-        </div>
-        <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-          <button class="quick-access-pill active flex items-center gap-1.5 text-xs font-medium text-white/90 bg-white/15 hover:bg-white/25 rounded-full px-4 py-2 transition-all backdrop-blur-sm whitespace-nowrap" data-nav="scan" onclick="switchMainTab('scan')">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            <span>Scan Plate</span>
-          </button>
-          <button class="quick-access-pill flex items-center gap-1.5 text-xs font-medium text-white/90 bg-white/15 hover:bg-white/25 rounded-full px-4 py-2 transition-all backdrop-blur-sm whitespace-nowrap" data-nav="trajectory" onclick="switchMainTab('trajectory')">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            <span>28d Trajectory</span>
-          </button>
-          <button class="quick-access-pill flex items-center gap-1.5 text-xs font-medium text-white/90 bg-white/15 hover:bg-white/25 rounded-full px-4 py-2 transition-all backdrop-blur-sm whitespace-nowrap" data-nav="coach" onclick="switchMainTab('coach')">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-            <span>Voice Coach</span>
-          </button>
-          <button class="quick-access-pill flex items-center gap-1.5 text-xs font-medium text-white/90 bg-white/15 hover:bg-white/25 rounded-full px-4 py-2 transition-all backdrop-blur-sm whitespace-nowrap" data-nav="history" onclick="switchMainTab('history')">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span>History</span>
-          </button>
         </div>
       </div>
     </header>
@@ -713,11 +679,6 @@
             ? 'nav-indicator w-4 h-0.5 bg-emerald-600 rounded-full transition-all'
             : 'nav-indicator w-0 h-0.5 bg-transparent rounded-full transition-all';
         }
-      });
-
-      // Update Quick Access Top Pills
-      document.querySelectorAll('.quick-access-pill').forEach(el => {
-        el.classList.toggle('active', el.dataset.nav === tabName);
       });
 
       // Switch Main View Panels
