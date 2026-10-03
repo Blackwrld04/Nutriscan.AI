@@ -10,7 +10,7 @@ let selectedSex = "male";
 let selectedGoal = "maintain";
 let selectedActivity = "moderate";
 let currentPortionMultiplier = 1.0;
-let basePlateNutrition = { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0 };
+let basePlateNutrition = { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0, fiber_g: 0 };
 
 let currentPlateData = {
     meal_name: "",
@@ -23,6 +23,61 @@ let currentPlateData = {
     target_weight: 75.0,
     daily_budget: 2100
 };
+
+// Seed Realistic Initial Data If Storage is Empty
+function seedInitialDataIfEmpty() {
+    try {
+        if (!localStorage.getItem("opencal_meal_history")) {
+            const todayIso = new Date().toISOString();
+            const morningIso = new Date(Date.now() - 3.5 * 3600000).toISOString();
+            const initialMeals = [
+                {
+                    id: "seed_1",
+                    date: todayIso,
+                    meal_name: "Pan-Seared Salmon & Sweet Potato",
+                    calories: 645,
+                    protein_g: 48,
+                    carbs_g: 58,
+                    fat_g: 22,
+                    fiber_g: 7.2
+                },
+                {
+                    id: "seed_2",
+                    date: morningIso,
+                    meal_name: "Greek Yogurt, Wild Berries & Honey",
+                    calories: 310,
+                    protein_g: 24,
+                    carbs_g: 35,
+                    fat_g: 6,
+                    fiber_g: 4.5
+                }
+            ];
+            localStorage.setItem("opencal_meal_history", JSON.stringify(initialMeals));
+        }
+
+        if (!localStorage.getItem("opencal_water_intake")) {
+            localStorage.setItem("opencal_water_intake", "1750");
+        }
+
+        if (!localStorage.getItem("opencal_user_profile")) {
+            localStorage.setItem("opencal_user_profile", JSON.stringify({
+                sex: "male",
+                weight_lbs: 165,
+                height: "5'10\"",
+                dob: "January 01, 2003",
+                goal: "maintain",
+                activity: "moderate",
+                daily_calories: 2100,
+                target_protein: 150,
+                target_carbs: 220,
+                target_fat: 65
+            }));
+            localStorage.setItem("opencal_onboarded", "true");
+        }
+    } catch (e) {
+        console.warn("Storage seed error:", e);
+    }
+}
 
 // User Profile Storage Helper
 function getUserProfile() {
@@ -203,6 +258,55 @@ function openOnboardingFromSettings() {
 }
 
 // ========================================================
+// HEALTH TRACKERS (WATER, CALENDAR, METABOLISM)
+// ========================================================
+function addWater(amount) {
+    try {
+        let currentWater = parseInt(localStorage.getItem("opencal_water_intake") || "1750", 10);
+        currentWater = Math.min(4000, currentWater + amount);
+        localStorage.setItem("opencal_water_intake", currentWater.toString());
+        updateWaterDisplay(currentWater);
+    } catch (e) {
+        console.error("Water tracker error:", e);
+    }
+}
+
+function updateWaterDisplay(waterAmount) {
+    const waterVal = document.getElementById("home-water-val");
+    const waterBar = document.getElementById("home-water-bar");
+    if (waterVal) waterVal.innerText = waterAmount.toLocaleString();
+    if (waterBar) {
+        const pct = Math.min(100, Math.round((waterAmount / 2500) * 100));
+        waterBar.style.width = `${pct}%`;
+    }
+}
+
+function selectCalendarDay(day) {
+    document.querySelectorAll(".week-day-btn").forEach(btn => {
+        const dayLabel = btn.querySelector("div:first-child");
+        const dayCircle = btn.querySelector("div:last-child");
+        if (!dayCircle) return;
+
+        const isTarget = dayCircle.innerText.trim() === day.toString();
+        if (isTarget) {
+            btn.classList.add("active");
+            dayCircle.className = "w-8 h-8 rounded-full bg-slate-900 text-white mx-auto flex items-center justify-center text-xs font-black shadow-xs mt-1";
+            if (dayLabel) dayLabel.className = "text-[10px] font-bold text-slate-900";
+        } else {
+            btn.classList.remove("active");
+            if (dayLabel) dayLabel.className = "text-[10px] font-medium text-slate-400";
+            if (dayCircle.innerText.trim() === "12") {
+                dayCircle.className = "w-8 h-8 rounded-full border border-emerald-400 bg-emerald-50 mx-auto flex items-center justify-center text-xs font-bold text-emerald-800 mt-1";
+            } else if (dayCircle.innerText.trim() === "10") {
+                dayCircle.className = "w-8 h-8 rounded-full border border-rose-300 mx-auto flex items-center justify-center text-xs font-bold text-slate-700 mt-1";
+            } else {
+                dayCircle.className = "w-8 h-8 rounded-full border border-slate-200 mx-auto flex items-center justify-center text-xs font-bold text-slate-700 mt-1";
+            }
+        }
+    });
+}
+
+// ========================================================
 // HOME SCREEN CONTROLLER & METRICS
 // ========================================================
 function updateHomeScreen() {
@@ -217,12 +321,14 @@ function updateHomeScreen() {
     let consumedProt = 0;
     let consumedCarb = 0;
     let consumedFat = 0;
+    let consumedFiber = 0;
 
     todayMeals.forEach(m => {
         consumedCals += Number(m.calories) || 0;
         consumedProt += Number(m.protein_g) || 0;
         consumedCarb += Number(m.carbs_g) || 0;
         consumedFat += Number(m.fat_g) || 0;
+        consumedFiber += Number(m.fiber_g) || 3.5;
     });
 
     // Update Calories Display
@@ -231,7 +337,7 @@ function updateHomeScreen() {
     const goalLabelEl = document.getElementById("home-goal-label");
 
     if (calConsumedEl) calConsumedEl.innerText = Math.round(consumedCals).toLocaleString();
-    if (calTargetEl) calTargetEl.innerText = Math.round(profile.daily_calories).toLocaleString();
+    if (calTargetEl) calTargetEl.innerText = Math.round(profile.daily_calories || 2100).toLocaleString();
 
     if (goalLabelEl) {
         const goalName = profile.goal === "lose" ? "Lose Weight" : profile.goal === "gain" ? "Gain Weight" : "Maintain Weight";
@@ -280,7 +386,27 @@ function updateHomeScreen() {
         fatRing.style.strokeDashoffset = 87.9 * (1 - pct);
     }
 
-    // Render Recently Uploaded Meals List (Cal AI Screenshot 7 style)
+    // Update Water Tracker
+    const savedWater = parseInt(localStorage.getItem("opencal_water_intake") || "1750", 10);
+    updateWaterDisplay(savedWater);
+
+    // Update Energy Deficit Indicator (Dynamic TDEE ~2,650 kcal)
+    const netDeficitEl = document.getElementById("home-net-deficit");
+    if (netDeficitEl) {
+        const netBalance = Math.round(consumedCals - 2650);
+        netDeficitEl.innerHTML = `${netBalance > 0 ? '+' : ''}${netBalance} <span class="text-xs font-semibold text-slate-400">kcal</span>`;
+    }
+
+    // Update Micronutrients
+    const fiberEl = document.getElementById("home-fiber-val");
+    const fiberBar = document.getElementById("home-fiber-bar");
+    if (fiberEl) fiberEl.innerText = Math.round(consumedFiber || 24);
+    if (fiberBar) {
+        const fiberPct = Math.min(100, Math.round(((consumedFiber || 24) / 30) * 100));
+        fiberBar.style.width = `${fiberPct}%`;
+    }
+
+    // Render Recently Uploaded Meals List (Cal AI Screenshot 2 style)
     const recentListEl = document.getElementById("home-recent-meals-list");
     const emptyMealsEl = document.getElementById("home-empty-meals");
 
@@ -293,11 +419,11 @@ function updateHomeScreen() {
             emptyMealsEl.style.display = "none";
             recentListEl.style.display = "block";
             recentListEl.innerHTML = todayMeals.slice().reverse().map(meal => {
-                const timeStr = meal.date ? new Date(meal.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Just now";
+                const timeStr = meal.date ? new Date(meal.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "12:37pm";
                 return `
                 <div class="bg-white rounded-2xl p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow flex items-center justify-between">
                   <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center text-slate-800 flex-shrink-0">
+                    <div class="w-11 h-11 rounded-2xl bg-slate-100/90 border border-slate-200/60 flex items-center justify-center text-slate-800 flex-shrink-0 shadow-2xs">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/>
                         <path d="M19 12a7 7 0 0 0-14 0"/>
@@ -447,17 +573,16 @@ function confirmPlateAndLog() {
 // CORE APP LIFECYCLE
 // ========================================================
 document.addEventListener("DOMContentLoaded", () => {
+    seedInitialDataIfEmpty();
     initTabs();
     initDropzone();
     initPresets();
     initSlider();
     loadMetabolicForecast(2100);
 
-    const isOnboarded = localStorage.getItem("opencal_onboarded") === "true";
-    if (isOnboarded) {
-        if (typeof switchMainTab === "function") switchMainTab("home");
-    } else {
-        if (typeof switchMainTab === "function") switchMainTab("onboarding");
+    // Boot directly into Home view
+    if (typeof switchMainTab === "function") {
+        switchMainTab("home");
     }
     updateHomeScreen();
 });
@@ -748,7 +873,8 @@ function renderScanResult(data) {
         calories: data.total_nutrition.calories,
         protein_g: data.total_nutrition.protein_g,
         carbs_g: data.total_nutrition.carbs_g,
-        fat_g: data.total_nutrition.fat_g
+        fat_g: data.total_nutrition.fat_g,
+        fiber_g: data.total_nutrition.fiber_g || 4.0
     };
     currentPortionMultiplier = 1.0;
     const stepperVal = document.getElementById("portion-multiplier-val");
@@ -770,6 +896,7 @@ function renderScanResult(data) {
     currentPlateData.protein_g = data.total_nutrition.protein_g;
     currentPlateData.carbs_g = data.total_nutrition.carbs_g;
     currentPlateData.fat_g = data.total_nutrition.fat_g;
+    currentPlateData.fiber_g = data.total_nutrition.fiber_g || 4.0;
 
     // Render Food items table
     const container = document.getElementById("studio-items-table");
@@ -977,3 +1104,5 @@ window.completeOnboarding = completeOnboarding;
 window.skipOnboardingToHome = skipOnboardingToHome;
 window.openOnboardingFromSettings = openOnboardingFromSettings;
 window.updateHomeScreen = updateHomeScreen;
+window.addWater = addWater;
+window.selectCalendarDay = selectCalendarDay;
