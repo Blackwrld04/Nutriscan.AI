@@ -24,41 +24,34 @@ let currentPlateData = {
     daily_budget: 2100
 };
 
-// Seed Realistic Initial Data If Storage is Empty
-function seedInitialDataIfEmpty() {
+// Initialize Storage and Purge Legacy Mock Data
+function initStorageAndCleanMockData() {
     try {
-        if (!localStorage.getItem("opencal_meal_history")) {
-            const todayIso = new Date().toISOString();
-            const morningIso = new Date(Date.now() - 3.5 * 3600000).toISOString();
-            const initialMeals = [
-                {
-                    id: "seed_1",
-                    date: todayIso,
-                    meal_name: "Pan-Seared Salmon & Sweet Potato",
-                    calories: 645,
-                    protein_g: 48,
-                    carbs_g: 58,
-                    fat_g: 22,
-                    fiber_g: 7.2
-                },
-                {
-                    id: "seed_2",
-                    date: morningIso,
-                    meal_name: "Greek Yogurt, Wild Berries & Honey",
-                    calories: 310,
-                    protein_g: 24,
-                    carbs_g: 35,
-                    fat_g: 6,
-                    fiber_g: 4.5
-                }
-            ];
-            localStorage.setItem("opencal_meal_history", JSON.stringify(initialMeals));
+        // Clean out any legacy mock seed meals from localStorage
+        const savedHistory = localStorage.getItem("opencal_meal_history");
+        if (savedHistory) {
+            try {
+                const parsed = JSON.parse(savedHistory);
+                const cleaned = parsed.filter(item => item.id !== "seed_1" && item.id !== "seed_2");
+                localStorage.setItem("opencal_meal_history", JSON.stringify(cleaned));
+            } catch (err) {
+                localStorage.setItem("opencal_meal_history", "[]");
+            }
+        } else {
+            localStorage.setItem("opencal_meal_history", "[]");
         }
 
-        if (!localStorage.getItem("opencal_water_intake")) {
-            localStorage.setItem("opencal_water_intake", "1750");
+        // Daily water intake: starts at 0 for each new day
+        const todayStr = new Date().toISOString().split("T")[0];
+        const storedWaterDate = localStorage.getItem("opencal_water_date");
+        if (storedWaterDate !== todayStr) {
+            localStorage.setItem("opencal_water_date", todayStr);
+            localStorage.setItem("opencal_water_intake", "0");
+        } else if (!localStorage.getItem("opencal_water_intake")) {
+            localStorage.setItem("opencal_water_intake", "0");
         }
 
+        // User profile configuration
         if (!localStorage.getItem("opencal_user_profile")) {
             localStorage.setItem("opencal_user_profile", JSON.stringify({
                 sex: "male",
@@ -75,7 +68,7 @@ function seedInitialDataIfEmpty() {
             localStorage.setItem("opencal_onboarded", "true");
         }
     } catch (e) {
-        console.warn("Storage seed error:", e);
+        console.warn("Storage init error:", e);
     }
 }
 
@@ -422,10 +415,19 @@ function openOnboardingFromSettings() {
 // ========================================================
 // HEALTH TRACKERS (WATER, CALENDAR, METABOLISM)
 // ========================================================
+// ========================================================
+// HEALTH TRACKERS (WATER, CALENDAR, METABOLISM, FASTING)
+// ========================================================
 function addWater(amount) {
     try {
-        let currentWater = parseInt(localStorage.getItem("opencal_water_intake") || "1750", 10);
-        currentWater = Math.min(4000, currentWater + amount);
+        const todayStr = new Date().toISOString().split("T")[0];
+        const storedDate = localStorage.getItem("opencal_water_date");
+        let currentWater = 0;
+        if (storedDate === todayStr) {
+            currentWater = parseInt(localStorage.getItem("opencal_water_intake") || "0", 10);
+        }
+        currentWater = Math.min(5000, currentWater + amount);
+        localStorage.setItem("opencal_water_date", todayStr);
         localStorage.setItem("opencal_water_intake", currentWater.toString());
         updateWaterDisplay(currentWater);
     } catch (e) {
@@ -436,12 +438,153 @@ function addWater(amount) {
 function updateWaterDisplay(waterAmount) {
     const waterVal = document.getElementById("home-water-val");
     const waterBar = document.getElementById("home-water-bar");
-    if (waterVal) waterVal.innerText = waterAmount.toLocaleString();
+    const val = Number(waterAmount) || 0;
+    if (waterVal) waterVal.innerText = val.toLocaleString();
     if (waterBar) {
-        const pct = Math.min(100, Math.round((waterAmount / 2500) * 100));
+        const pct = Math.min(100, Math.round((val / 2500) * 100));
         waterBar.style.width = `${pct}%`;
     }
 }
+
+// Dynamic Streak Counting
+function calculateStreak() {
+    try {
+        const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
+        if (!history || history.length === 0) return 0;
+
+        const loggedDates = new Set();
+        history.forEach(m => {
+            if (m.date) {
+                const d = new Date(m.date);
+                if (!isNaN(d.getTime())) {
+                    loggedDates.add(d.toISOString().split("T")[0]);
+                }
+            }
+        });
+
+        if (loggedDates.size === 0) return 0;
+
+        const today = new Date();
+        const todayStr = today.toISOString().split("T")[0];
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split("T")[0];
+
+        let cursorDate = null;
+        if (loggedDates.has(todayStr)) {
+            cursorDate = new Date(today);
+        } else if (loggedDates.has(yesterdayStr)) {
+            cursorDate = new Date(yesterday);
+        } else {
+            return 0; // Streak broken or no meals logged yet
+        }
+
+        let streak = 0;
+        while (true) {
+            const checkStr = cursorDate.toISOString().split("T")[0];
+            if (loggedDates.has(checkStr)) {
+                streak++;
+                cursorDate.setDate(cursorDate.getDate() - 1);
+            } else {
+                break;
+            }
+        }
+        return streak;
+    } catch (e) {
+        return 0;
+    }
+}
+
+// Dynamic Intermittent Fasting Calculation
+function updateFastingDisplay() {
+    const titleEl = document.getElementById("home-fasting-title");
+    const subEl = document.getElementById("home-fasting-sub");
+    const badgeEl = document.getElementById("home-fasting-badge");
+    if (!titleEl) return;
+
+    try {
+        const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
+        if (!history || history.length === 0) {
+            titleEl.innerText = "Fasting Window: Ready";
+            if (subEl) subEl.innerText = "16:8 Protocol · Fast starts after your last meal";
+            if (badgeEl) {
+                badgeEl.innerText = "Ready";
+                badgeEl.className = "text-[10px] font-extrabold bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-full shrink-0";
+            }
+            return;
+        }
+
+        let latestTimestamp = 0;
+        history.forEach(m => {
+            if (m.date) {
+                const t = new Date(m.date).getTime();
+                if (!isNaN(t) && t > latestTimestamp) {
+                    latestTimestamp = t;
+                }
+            }
+        });
+
+        if (latestTimestamp === 0) {
+            titleEl.innerText = "Fasting Window: Ready";
+            if (subEl) subEl.innerText = "16:8 Protocol · Active Tracking";
+            if (badgeEl) {
+                badgeEl.innerText = "Ready";
+                badgeEl.className = "text-[10px] font-extrabold bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-full shrink-0";
+            }
+            return;
+        }
+
+        const elapsedMs = Math.max(0, Date.now() - latestTimestamp);
+        const totalMinutes = Math.floor(elapsedMs / 60000);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+
+        titleEl.innerText = `Fasting Window: ${hours}h ${minutes}m`;
+
+        if (hours >= 16) {
+            if (subEl) subEl.innerText = "16:8 Protocol · 16h Target Achieved";
+            if (badgeEl) {
+                badgeEl.innerText = "Goal Met";
+                badgeEl.className = "text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full shrink-0";
+            }
+        } else if (hours >= 12) {
+            if (subEl) subEl.innerText = "16:8 Protocol · Fat Oxidation Active";
+            if (badgeEl) {
+                badgeEl.innerText = "On Track";
+                badgeEl.className = "text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full shrink-0";
+            }
+        } else if (hours >= 4) {
+            if (subEl) subEl.innerText = "16:8 Protocol · Digestive Rest";
+            if (badgeEl) {
+                badgeEl.innerText = "In Progress";
+                badgeEl.className = "text-[10px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-full shrink-0";
+            }
+        } else {
+            if (subEl) subEl.innerText = "Postprandial Phase · Digesting Last Meal";
+            if (badgeEl) {
+                badgeEl.innerText = "Digesting";
+                badgeEl.className = "text-[10px] font-extrabold bg-blue-100 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full shrink-0";
+            }
+        }
+    } catch (e) {
+        console.warn("Fasting window calc error:", e);
+    }
+}
+
+function deleteMeal(mealId) {
+    try {
+        const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
+        const filtered = history.filter(m => m.id !== mealId);
+        localStorage.setItem("opencal_meal_history", JSON.stringify(filtered));
+        updateHomeScreen();
+        if (typeof renderHistoryView === "function") {
+            renderHistoryView();
+        }
+    } catch (e) {
+        console.error("Error deleting meal:", e);
+    }
+}
+window.deleteMeal = deleteMeal;
 
 function buildCalendarStrip() {
     const strip = document.getElementById("week-calendar-strip");
@@ -512,7 +655,6 @@ function selectCalendarDay(day) {
         } else {
             btn.classList.remove("active");
             if (dayLabel) dayLabel.className = "text-[10px] font-medium text-slate-400";
-            // Check if this date had logs
             const dateStr = btn.dataset.date || "";
             const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
             const hasLogs = history.some(m => m.date && m.date.startsWith(dateStr));
@@ -607,13 +749,28 @@ function updateHomeScreen() {
         fatRing.style.strokeDashoffset = 87.9 * (1 - pct);
     }
 
-    // Update Water Tracker
-    const savedWater = parseInt(localStorage.getItem("opencal_water_intake") || "1750", 10);
-    updateWaterDisplay(savedWater);
+    // Update Water Tracker from today's real logged amount
+    const storedWaterDate = localStorage.getItem("opencal_water_date");
+    let currentWater = 0;
+    if (storedWaterDate === todayStr) {
+        currentWater = parseInt(localStorage.getItem("opencal_water_intake") || "0", 10);
+    } else {
+        localStorage.setItem("opencal_water_date", todayStr);
+        localStorage.setItem("opencal_water_intake", "0");
+    }
+    updateWaterDisplay(currentWater);
 
+    // Update Dynamic Streak
+    const streak = calculateStreak();
+    const streakBadge = document.getElementById("streak-badge-count");
+    if (streakBadge) {
+        streakBadge.innerText = `${streak} Day${streak === 1 ? "" : "s"}`;
+    }
 
+    // Update Fasting Window
+    updateFastingDisplay();
 
-    // Render Recently Uploaded Meals List (Cal AI Screenshot 2 style with unified emerald theme)
+    // Render Recently Uploaded Meals List
     const recentListEl = document.getElementById("home-recent-meals-list");
     const emptyMealsEl = document.getElementById("home-empty-meals");
 
@@ -626,9 +783,9 @@ function updateHomeScreen() {
             emptyMealsEl.style.display = "none";
             recentListEl.style.display = "block";
             recentListEl.innerHTML = todayMeals.slice().reverse().map(meal => {
-                const timeStr = meal.date ? new Date(meal.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "12:37pm";
+                const timeStr = meal.date ? new Date(meal.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Just now";
                 return `
-                <div class="bg-white rounded-2xl p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow flex items-center justify-between">
+                <div class="bg-white rounded-2xl p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition-shadow flex items-center justify-between group">
                   <div class="flex items-center gap-3">
                     <div class="w-11 h-11 rounded-2xl bg-emerald-50 border border-emerald-200/60 flex items-center justify-center text-emerald-700 flex-shrink-0 shadow-2xs">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -649,12 +806,17 @@ function updateHomeScreen() {
                       </div>
                     </div>
                   </div>
-                  <div class="text-right flex-shrink-0">
-                    <span class="text-xs font-black text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full inline-flex items-center gap-1">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" class="text-emerald-600"><path d="M12 2c.5 3 2 4.5 4 6 2.5 1.9 4 4.5 4 8a8 8 0 1 1-16 0c0-3.5 1.5-6.1 4-8 2-1.5 3.5-3 4-6Z"/></svg>
-                      ${Math.round(meal.calories)}
-                    </span>
-                    <div class="text-[9px] text-slate-400 mt-1 font-medium">Calories</div>
+                  <div class="flex items-center gap-2.5">
+                    <div class="text-right flex-shrink-0">
+                      <span class="text-xs font-black text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full inline-flex items-center gap-1">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" class="text-emerald-600"><path d="M12 2c.5 3 2 4.5 4 6 2.5 1.9 4 4.5 4 8a8 8 0 1 1-16 0c0-3.5 1.5-6.1 4-8 2-1.5 3.5-3 4-6Z"/></svg>
+                        ${Math.round(meal.calories)}
+                      </span>
+                      <div class="text-[9px] text-slate-400 mt-1 font-medium">Calories</div>
+                    </div>
+                    <button type="button" onclick="deleteMeal('${meal.id}')" class="opacity-40 hover:opacity-100 text-slate-400 hover:text-rose-600 p-1 transition-all" title="Remove meal">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
                   </div>
                 </div>
                 `;
@@ -755,6 +917,11 @@ function adjustPortion(delta) {
 
 function confirmPlateAndLog() {
     try {
+        if (!currentPlateData.meal_name || currentPlateData.meal_name === "Ready to scan food plate" || currentPlateData.meal_name.includes("Analyzing") || (currentPlateData.calories === 0 && currentPlateData.protein_g === 0)) {
+            alert("Please take a photo or upload an image to scan your food plate first.");
+            return;
+        }
+
         const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
         const entry = {
             id: "meal_" + Date.now(),
@@ -790,7 +957,7 @@ function confirmPlateAndLog() {
 // ========================================================
 document.addEventListener("DOMContentLoaded", () => {
     resetScannerState();
-    seedInitialDataIfEmpty();
+    initStorageAndCleanMockData();
     initTabs();
     initDropzone();
     initPresets();
@@ -868,16 +1035,34 @@ function stopCamera() {
     }
 }
 
-let simulatedPresetIndex = 0;
-const SIMULATED_PRESETS = ["chicken", "steak", "salmon"];
+function showScanError(errorMessage) {
+    showScanResultsContainer();
+    const titleEl = document.getElementById("studio-plate-title");
+    if (titleEl) {
+        titleEl.innerHTML = `<span class="text-rose-600 font-bold flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Scan Failed: ${errorMessage}</span>`;
+    }
+    const statusText = document.getElementById("scanner-status-text");
+    if (statusText) {
+        statusText.innerHTML = `
+            <div class="text-rose-600 flex items-center justify-center gap-2 mt-1">
+                <span>Please ensure the food image is clear and under 15MB.</span>
+                <button type="button" onclick="retakePhoto()" class="px-2.5 py-0.5 bg-slate-900 text-white rounded-md text-[10px] font-bold">Try Again</button>
+            </div>
+        `;
+    }
+    const tableContainer = document.getElementById("studio-items-table");
+    if (tableContainer) {
+        tableContainer.innerHTML = '<div class="py-3 text-center text-slate-400 text-xs">No food items detected. Please retake photo with good lighting.</div>';
+    }
+}
 
 function snapPhoto() {
     const video = document.getElementById("camera-video");
+    const statusMsg = document.getElementById("camera-status-msg");
     if (!video || !cameraStream) {
-        // If camera stream is unavailable, cycle through presets so it never stays stuck on the previous meal
-        const nextPreset = SIMULATED_PRESETS[simulatedPresetIndex % SIMULATED_PRESETS.length];
-        simulatedPresetIndex++;
-        loadPreset(nextPreset);
+        if (statusMsg) statusMsg.innerText = "Camera not active. Please tap below to upload an image from your gallery.";
+        const fileInput = document.getElementById("studio-file-input");
+        if (fileInput) fileInput.click();
         return;
     }
 
@@ -954,7 +1139,8 @@ async function handlePlateUpload(file) {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+            const errJson = await response.json().catch(() => ({}));
+            throw new Error(errJson.detail || `Server returned ${response.status}`);
         }
 
         const data = await response.json();
@@ -964,10 +1150,8 @@ async function handlePlateUpload(file) {
             resetStepper();
         }, 300);
     } catch (err) {
-        console.warn("API request fallback to preset:", err);
-        const fallbackPreset = SIMULATED_PRESETS[simulatedPresetIndex % SIMULATED_PRESETS.length];
-        simulatedPresetIndex++;
-        loadPreset(fallbackPreset);
+        console.error("Plate analysis API error:", err);
+        showScanError(err.message || "Failed to analyze meal plate.");
     }
 }
 
@@ -1176,7 +1360,12 @@ async function loadMetabolicForecast(caloriesTarget) {
     isForecastLoading = true;
 
     try {
-        const response = await fetch(`/api/metabolic-forecast?friend_name=Dave&target_weight_kg=75.0&daily_calories_target=${caloriesTarget}`);
+        const profile = getUserProfile();
+        const weightLbs = Number(profile.weight_lbs) || 165;
+        const targetKg = +(weightLbs * 0.45359237).toFixed(1);
+        const targetCals = caloriesTarget || profile.daily_calories || 2100;
+
+        const response = await fetch(`/api/metabolic-forecast?friend_name=Dave&target_weight_kg=${targetKg}&daily_calories_target=${targetCals}`);
         if (!response.ok) throw new Error("Forecast request failed");
         const data = await response.json();
 
@@ -1384,22 +1573,50 @@ async function playStudioCoachDebrief() {
     const transcriptBox = document.getElementById("studio-coach-transcript");
 
     if (!btn) return;
-    btn.innerText = "Synthesizing Debrief...";
+    const originalBtnContent = btn.innerHTML;
+    btn.innerHTML = `<svg class="animate-spin w-4 h-4 text-white inline-block mr-1.5" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"/><path fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" class="opacity-75"/></svg><span>Synthesizing Debrief...</span>`;
     btn.disabled = true;
 
     try {
+        const profile = getUserProfile();
+        const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
+        let mealName = currentPlateData.meal_name;
+        let cals = currentPlateData.calories;
+        let prot = currentPlateData.protein_g;
+
+        // If no active scanned plate, debrief on latest logged meal or profile goals
+        if (!mealName || mealName === "Ready to scan food plate" || mealName.includes("Analyzing")) {
+            if (history.length > 0) {
+                const latest = history[history.length - 1];
+                mealName = latest.meal_name;
+                cals = latest.calories;
+                prot = latest.protein_g;
+            } else {
+                mealName = "Daily Metabolic Nutrition";
+                cals = profile.daily_calories || 2100;
+                prot = profile.target_protein || 150;
+            }
+        }
+
+        const weightLbs = Number(profile.weight_lbs) || 165;
+        const weightKg = +(weightLbs * 0.45359237).toFixed(1);
+
         const response = await fetch("/api/coach-debrief", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 friend_name: "Dave",
-                meal_name: currentPlateData.meal_name,
-                calories: currentPlateData.calories,
-                protein_g: currentPlateData.protein_g,
-                days_to_goal: currentPlateData.days_to_goal,
-                target_weight: currentPlateData.target_weight
+                meal_name: mealName,
+                calories: Number(cals) || 600,
+                protein_g: Number(prot) || 45,
+                days_to_goal: currentPlateData.days_to_goal || 22,
+                target_weight: weightKg
             })
         });
+
+        if (!response.ok) {
+            throw new Error(`Coach debrief error (${response.status})`);
+        }
 
         const data = await response.json();
         if (transcriptBox) {
@@ -1410,24 +1627,24 @@ async function playStudioCoachDebrief() {
         if (data.audio_base64) {
             const audio = new Audio("data:audio/mp3;base64," + data.audio_base64);
             audio.play();
-            btn.innerText = "Playing Audio Coach...";
+            btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" class="inline-block mr-1.5"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg><span>Playing Audio Coach...</span>`;
             audio.onended = () => {
-                btn.innerText = "▶ Play Daily Voice Debrief";
+                btn.innerHTML = originalBtnContent;
                 btn.disabled = false;
             };
         } else if ("speechSynthesis" in window) {
             const utterance = new SpeechSynthesisUtterance(data.text);
             utterance.rate = 1.05;
             window.speechSynthesis.speak(utterance);
-            btn.innerText = "Speaking (Browser Speech)...";
+            btn.innerHTML = `<span>Speaking (Browser Speech)...</span>`;
             utterance.onend = () => {
-                btn.innerText = "▶ Play Daily Voice Debrief";
+                btn.innerHTML = originalBtnContent;
                 btn.disabled = false;
             };
         }
     } catch (err) {
         console.error("Coach error:", err);
-        btn.innerText = "▶ Play Daily Voice Debrief";
+        btn.innerHTML = originalBtnContent;
         btn.disabled = false;
     }
 }

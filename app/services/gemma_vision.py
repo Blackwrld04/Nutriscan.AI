@@ -74,10 +74,12 @@ class GemmaVisionService:
         
         # Priority list of models supported by the API key with instant multimodal vision
         models_to_try = [
-            "gemini-flash-lite-latest",
-            "gemini-3.1-flash-lite",
-            "gemini-3.7-flash",
             "gemini-flash-latest",
+            "gemini-2.0-flash",
+            "gemini-2.5-flash",
+            "gemini-2.5-flash-lite",
+            "gemini-flash-lite-latest",
+            "gemini-2.5-pro",
         ]
         
         for model in models_to_try:

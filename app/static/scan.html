@@ -280,7 +280,7 @@
         <!-- Streak Flame Badge -->
         <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-black shadow-2xs">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" class="text-emerald-600"><path d="M12 2c.5 3 2 4.5 4 6 2.5 1.9 4 4.5 4 8a8 8 0 1 1-16 0c0-3.5 1.5-6.1 4-8 2-1.5 3.5-3 4-6Z"/></svg>
-          <span>21 Days</span>
+          <span id="streak-badge-count">0 Days</span>
         </div>
 
         <!-- Settings Gear Button in Header -->
@@ -528,7 +528,7 @@
           <div class="desktop-area-hero dashboard-hero-card bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs relative overflow-hidden flex items-center justify-between">
             <div class="space-y-1">
               <div class="flex items-baseline gap-1.5">
-                <span class="text-4xl font-black text-slate-900 tracking-tight leading-none" id="home-cal-consumed">955</span>
+                <span class="text-4xl font-black text-slate-900 tracking-tight leading-none" id="home-cal-consumed">0</span>
                 <span class="text-base font-semibold text-slate-400">/ <span id="home-cal-target" class="text-emerald-700 font-bold">2,100</span> kcal</span>
               </div>
               <div class="text-xs font-semibold text-slate-500 pt-0.5">Calories eaten</div>
@@ -544,7 +544,7 @@
             <div class="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
               <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="40" stroke="#ecfdf5" stroke-width="8.5" fill="none"/>
-                <circle id="home-ring-circle" cx="50" cy="50" r="40" stroke="#059669" stroke-width="8.5" stroke-linecap="round" fill="none" stroke-dasharray="251.2" stroke-dashoffset="137.0" class="transition-all duration-700 ease-out"/>
+                <circle id="home-ring-circle" cx="50" cy="50" r="40" stroke="#059669" stroke-width="8.5" stroke-linecap="round" fill="none" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="transition-all duration-700 ease-out"/>
               </svg>
               <div class="absolute inset-0 flex items-center justify-center text-emerald-600">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -560,7 +560,7 @@
             <div class="dashboard-macro-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs flex flex-col items-center justify-between text-center relative overflow-hidden group hover:border-slate-300 transition-all">
               <div class="w-full text-left mb-2 pl-0.5">
                 <div class="text-sm font-black text-slate-900 tracking-tight leading-tight">
-                  <span id="home-prot-eaten">72</span><span class="text-[11px] text-slate-400 font-bold">/<span id="home-prot-target">150</span>g</span>
+                  <span id="home-prot-eaten">0</span><span class="text-[11px] text-slate-400 font-bold">/<span id="home-prot-target">150</span>g</span>
                 </div>
                 <div class="text-[11px] text-slate-400 font-medium tracking-tight mt-0.5">Protein eaten</div>
               </div>
@@ -569,7 +569,7 @@
               <div class="relative w-14 h-14 flex items-center justify-center my-1">
                 <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
                   <circle cx="18" cy="18" r="14" stroke="#f1f5f9" stroke-width="3.6" fill="none"/>
-                  <circle id="home-prot-ring" cx="18" cy="18" r="14" stroke="#f43f5e" stroke-width="3.6" stroke-linecap="round" fill="none" stroke-dasharray="87.9" stroke-dashoffset="45.7" class="transition-all duration-700"/>
+                  <circle id="home-prot-ring" cx="18" cy="18" r="14" stroke="#f43f5e" stroke-width="3.6" stroke-linecap="round" fill="none" stroke-dasharray="87.9" stroke-dashoffset="87.9" class="transition-all duration-700"/>
                 </svg>
                 <div class="absolute inset-0 flex items-center justify-center text-rose-500">
                   <!-- Drumstick icon -->
@@ -586,7 +586,7 @@
             <div class="dashboard-macro-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs flex flex-col items-center justify-between text-center relative overflow-hidden group hover:border-slate-300 transition-all">
               <div class="w-full text-left mb-2 pl-0.5">
                 <div class="text-sm font-black text-slate-900 tracking-tight leading-tight">
-                  <span id="home-carb-eaten">93</span><span class="text-[11px] text-slate-400 font-bold">/<span id="home-carb-target">220</span>g</span>
+                  <span id="home-carb-eaten">0</span><span class="text-[11px] text-slate-400 font-bold">/<span id="home-carb-target">220</span>g</span>
                 </div>
                 <div class="text-[11px] text-slate-400 font-medium tracking-tight mt-0.5">Carbs eaten</div>
               </div>
@@ -595,7 +595,7 @@
               <div class="relative w-14 h-14 flex items-center justify-center my-1">
                 <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
                   <circle cx="18" cy="18" r="14" stroke="#f1f5f9" stroke-width="3.6" fill="none"/>
-                  <circle id="home-carb-ring" cx="18" cy="18" r="14" stroke="#f59e0b" stroke-width="3.6" stroke-linecap="round" fill="none" stroke-dasharray="87.9" stroke-dashoffset="50.7" class="transition-all duration-700"/>
+                  <circle id="home-carb-ring" cx="18" cy="18" r="14" stroke="#f59e0b" stroke-width="3.6" stroke-linecap="round" fill="none" stroke-dasharray="87.9" stroke-dashoffset="87.9" class="transition-all duration-700"/>
                 </svg>
                 <div class="absolute inset-0 flex items-center justify-center text-amber-500">
                   <!-- Wheat icon -->
@@ -612,7 +612,7 @@
             <div class="dashboard-macro-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs flex flex-col items-center justify-between text-center relative overflow-hidden group hover:border-slate-300 transition-all">
               <div class="w-full text-left mb-2 pl-0.5">
                 <div class="text-sm font-black text-slate-900 tracking-tight leading-tight">
-                  <span id="home-fat-eaten">28</span><span class="text-[11px] text-slate-400 font-bold">/<span id="home-fat-target">65</span>g</span>
+                  <span id="home-fat-eaten">0</span><span class="text-[11px] text-slate-400 font-bold">/<span id="home-fat-target">65</span>g</span>
                 </div>
                 <div class="text-[11px] text-slate-400 font-medium tracking-tight mt-0.5">Fat eaten</div>
               </div>
@@ -621,7 +621,7 @@
               <div class="relative w-14 h-14 flex items-center justify-center my-1">
                 <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
                   <circle cx="18" cy="18" r="14" stroke="#f1f5f9" stroke-width="3.6" fill="none"/>
-                  <circle id="home-fat-ring" cx="18" cy="18" r="14" stroke="#0ea5e9" stroke-width="3.6" stroke-linecap="round" fill="none" stroke-dasharray="87.9" stroke-dashoffset="50.0" class="transition-all duration-700"/>
+                  <circle id="home-fat-ring" cx="18" cy="18" r="14" stroke="#0ea5e9" stroke-width="3.6" stroke-linecap="round" fill="none" stroke-dasharray="87.9" stroke-dashoffset="87.9" class="transition-all duration-700"/>
                 </svg>
                 <div class="absolute inset-0 flex items-center justify-center text-sky-500">
                   <!-- Avocado/Fat icon -->
@@ -650,14 +650,14 @@
                 </div>
               </div>
               <div class="text-right">
-                <span class="text-sm font-black text-slate-900" id="home-water-val">1,750</span>
+                <span class="text-sm font-black text-slate-900" id="home-water-val">0</span>
                 <span class="text-[11px] text-slate-400 font-semibold">/ 2,500 ml</span>
               </div>
             </div>
 
             <!-- Water Progress Bar in Emerald / Teal Gradient -->
             <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-3.5">
-              <div id="home-water-bar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500" style="width: 70%;"></div>
+              <div id="home-water-bar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500" style="width: 0%;"></div>
             </div>
 
             <!-- Interactive Quick Water Buttons -->
@@ -685,12 +685,12 @@
                 </svg>
               </div>
               <div>
-                <div class="text-xs font-bold text-slate-900 tracking-tight">Fasting Window: 14h 25m</div>
-                <div class="text-[11px] text-slate-500">16:8 Protocol · Fat Oxidation Active</div>
+                <div class="text-xs font-bold text-slate-900 tracking-tight" id="home-fasting-title">Fasting Window: Ready</div>
+                <div class="text-[11px] text-slate-500" id="home-fasting-sub">16:8 Protocol · Active Tracking</div>
               </div>
             </div>
-            <span class="text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full shrink-0">
-              On Track
+            <span class="text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full shrink-0" id="home-fasting-badge">
+              Ready
             </span>
           </div>
 
@@ -1477,6 +1477,6 @@
   </script>
 
   <!-- Core Scanner & Home Logic -->
-  <script src="/static/js/scanner.js?v=2.5.1"></script>
+  <script src="/static/js/scanner.js?v=2.6.0"></script>
 </body>
 </html>

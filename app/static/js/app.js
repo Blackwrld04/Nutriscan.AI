@@ -65,9 +65,9 @@ function initPresets() {
 function loadPresetMeal(type) {
     showAnalyzingState(true);
     setTimeout(() => {
-        let mockResult;
+        let presetResult;
         if (type === "salmon") {
-            mockResult = {
+            presetResult = {
                 meal_name: "Pan-Seared Salmon & Sweet Potato Fuel Plate",
                 total_nutrition: { calories: 645.0, protein_g: 48.2, carbs_g: 58.5, fat_g: 22.4, fiber_g: 7.2 },
                 health_insights: [
@@ -83,7 +83,7 @@ function loadPresetMeal(type) {
                 inference_source: "Gemma 2 Multimodal + USDA Grounding"
             };
         } else if (type === "chicken") {
-            mockResult = {
+            presetResult = {
                 meal_name: "Lean Chicken Breast & Jasmine Rice Macro Plate",
                 total_nutrition: { calories: 512.0, protein_g: 58.6, carbs_g: 46.2, fat_g: 6.8, fiber_g: 3.0 },
                 health_insights: [
@@ -98,7 +98,7 @@ function loadPresetMeal(type) {
                 inference_source: "Gemma 2 Multimodal + USDA Grounding"
             };
         } else {
-            mockResult = {
+            presetResult = {
                 meal_name: "Steak, Avocado & Brown Rice Power Plate",
                 total_nutrition: { calories: 735.0, protein_g: 52.4, carbs_g: 42.0, fat_g: 38.6, fiber_g: 8.5 },
                 health_insights: [
@@ -113,7 +113,7 @@ function loadPresetMeal(type) {
                 inference_source: "Gemma 2 Multimodal + USDA Grounding"
             };
         }
-        renderPlateResults(mockResult);
+        renderPlateResults(presetResult);
         showAnalyzingState(false);
     }, 600);
 }
@@ -137,8 +137,9 @@ async function handleFileUpload(file) {
         const data = await response.json();
         renderPlateResults(data);
     } catch (err) {
-        console.warn("API fallback to visual preset engine:", err);
-        loadPresetMeal("salmon");
+        console.error("API error during plate analysis:", err);
+        const statusEl = document.getElementById("scan-status");
+        if (statusEl) statusEl.innerText = "Error analyzing plate. Please retry.";
     } finally {
         showAnalyzingState(false);
     }
