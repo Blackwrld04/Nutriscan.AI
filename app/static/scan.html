@@ -579,13 +579,15 @@
 
         </div>
 
-        <!-- Floating Scan Button (FAB) on Home Page (Cal AI Screenshot 2) -->
-        <button type="button" class="fixed bottom-20 z-40 w-14 h-14 bg-slate-950 hover:bg-slate-800 text-white rounded-full shadow-[0_10px_25px_-5px_rgba(15,23,42,0.4)] flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all border border-slate-700/50 group" style="right: max(1.5rem, calc((100vw - 42rem) / 2 + 1.5rem));" onclick="openScannerModal()" title="Scan Food Plate">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:rotate-90">
-            <line x1="12" y1="5" x2="12" y2="19"/>
-            <line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-        </button>
+        <!-- Floating Scan Button (FAB) at Right Bottom Corner Above Nav Tab -->
+        <div id="home-fab-container" class="fixed z-50 pointer-events-none" style="bottom: calc(4.25rem + env(safe-area-inset-bottom, 0px)); right: max(1.25rem, calc((100vw - 42rem) / 2 + 1.25rem));">
+          <button type="button" id="home-floating-scan-btn" class="pointer-events-auto w-14 h-14 bg-slate-950 hover:bg-slate-800 text-white rounded-full shadow-[0_10px_25px_-3px_rgba(15,23,42,0.5)] flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all border-2 border-white/20 ring-4 ring-white/80 group" onclick="openScannerModal()" title="Scan Food Plate">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:rotate-90">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </button>
+        </div>
       </section>
 
       <!-- ========================================== -->
@@ -1147,6 +1149,12 @@
           el.classList.remove('block');
         }
       });
+
+      // FAB visibility control: show floating scan button only on home tab
+      const fabContainer = document.getElementById('home-fab-container');
+      if (fabContainer) {
+        fabContainer.style.display = (tabName === 'home') ? 'block' : 'none';
+      }
 
       // Special Tab Actions
       if (tabName === 'home') {
