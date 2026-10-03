@@ -84,7 +84,7 @@ FastAPI · Google Gemma 2 · Prior Labs TabPFN (Tabular Transformer) · USDA Foo
 
 ## 📖 The Origin Story: Built for a Friend (Dave)
 
-> *"Wait, this actually predicted my Friday weigh-in drop before MyFitnessPal even updated my TDEE!"* — **Dave, Marathon Runner & Desk Worker**
+> *"Wait, this actually predicted my Friday weigh-in drop before MyFitnessPal even updated my TDEE!"* — **Dave, University Student**
 
 ### Act 1: The Hacktoberfest 2026 Challenge & Dave's Dilemma
 In October 2026, **Hacktoberfest broke with a decade-long tradition**. Instead of counting 4 pull requests on random open-source repositories, the organizers launched five consecutive DEV challenges centered exclusively around **building real, impactful applications powered by open-source AI**.
@@ -93,11 +93,11 @@ The kickoff prompt was simple yet profound: **"Build for a Friend"** — solve a
 
 That person for us was **Dave**. 
 
-Dave is a close gym partner and dedicated amateur athlete who was preparing for his first competitive 10K road race. He was trying to cut down from **82.4 kg to a lean race weight of 75.0 kg (165.3 lbs)** while working 9-to-5 desk shifts as a software engineer. Every single day, Dave ran headfirst into a wall of frustration:
-1. **The $35/Month Subscription Toll**: Commercial calorie scanning apps (like Cal AI) demanded steep, recurring monthly fees just to snap a photo of a lunch bowl. For someone budgeting for race entry fees and running gear, paying $400/year to track chicken and rice felt abusive.
-2. **The "Static Math" Fallacy & Persistent Plateaus**: Dave used popular apps like MyFitnessPal and generic online calculators. They all relied on 1990s static equations (Mifflin-St Jeor), telling him his daily expenditure (TDEE) was roughly **2,587 kcal**. But on days when Dave logged 12,000 steps plus speed intervals, standard formulas broke down completely. Dave suffered from chronic fatigue, brain fog, water retention, and sudden weight plateaus because static formulas **cannot model metabolic adaptation, NEAT shifts, or personalized macro responses**.
-3. **The Biological Surveillance Dilemma**: Dave hated uploading intimate photos of his home-cooked meals and personal scale telemetry to closed corporate clouds where user data is monetized or scraped for advertising.
-4. **The Generative AI Calorie Trap**: When Dave tried newer "AI vision" apps, they prompted LLMs to guess calories directly. Large language models cannot do arithmetic; they hallucinated numbers off by ±35%, turning Dave's dietary plan into pure guesswork.
+Dave is a close friend and undergraduate university student who set an earnest personal goal to reduce his weight from **82.4 kg down to a healthy, lean 75.0 kg (165.3 lbs)**. But managing weight loss as a busy college student came with relentless hurdles:
+1. **The $35/Month Student Budget Toll**: Commercial calorie scanning apps (like Cal AI and MyFitnessPal Premium) demanded $35/month ($400+/year) just to snap a photo of a lunch bowl or scan a barcode. For a university student juggling tuition, rent, textbooks, and groceries, paying $400/year to track basic nutrition felt predatory and impossible to sustain.
+2. **Dining Hall & Dorm Kitchen Chaos**: Between campus dining hall mystery meals, quick dorm-room cooking on hotplates, and rushing between lecture halls, Dave had no fast, accurate way to identify portion weights or know what was really in his food.
+3. **The "Static Math" Fallacy & Campus Metabolism**: Dave walked 10,000 to 14,000 steps every single day across campus between lecture halls, endured late-night library study sessions, and worked out at the campus recreation center. Standard 1990s static calculators (Mifflin-St Jeor) claimed his maintenance expenditure was only **2,587 kcal/day**. But in reality, his active campus commute and fluctuating student schedule burned over **3,150 kcal/day**. Following textbook static formulas left Dave chronically fatigued, battling brain fog during exams, and hitting sudden weight plateaus due to unmodeled metabolic adaptation.
+4. **The Biological Surveillance & Generative AI Calorie Trap**: When Dave tried free "AI calorie" apps, they prompted LLMs to guess calories directly, hallucinating numbers off by ±35%. Furthermore, Dave hated the idea of uploading intimate photos of his dorm meals and personal scale weigh-ins to closed corporate clouds that scrape and monetize student health records.
 
 ---
 
@@ -111,17 +111,27 @@ We sat down with Dave and formulated a non-negotiable architectural invariant:
 We architected **NutriScan.AI** (initially prototyped as *OpenCal AI*) around five open-source AI pillars:
 1. **Google Gemma 2 Multimodal Vision**: Runs on open weights (locally via Ollama or hosted) to detect food items geometrically and estimate portion gram weights without cloud scraping.
 2. **100% Deterministic USDA Grounding**: Maps recognized foods against an offline slice of **USDA FoodData Central**. Calories, protein, carbs, and fats are calculated with audit-grade arithmetic—**zero generative hallucinations**.
-3. **Prior Labs' TabPFN (Tabular Prior-Data Fitted Network)**: The crown jewel of NutriScan.AI. Rather than forcing Dave onto a 1990 population average, TabPFN ingests Dave's rolling 30-day biological check-in dataset ([`dave_metabolic_log.csv`](app/data/dave_metabolic_log.csv) tracking calories in, protein, carbs, fat, daily steps, sleep duration, and morning scale weight). In a single forward pass—without backpropagation loops—TabPFN discovered that Dave's true dynamic burn rate was **3,152 kcal/day**—nearly 600 kcal higher than static formulas predicted!
-4. **ElevenLabs Auditory Voice Coach**: To keep Dave motivated during his morning commute, an AI voice coach (`Rachel`) delivers an empathetic 30-second audio debrief analyzing his plate composition and celebrating milestone achievements.
+3. **Prior Labs' TabPFN (Tabular Prior-Data Fitted Network)**: The crown jewel of NutriScan.AI. Rather than forcing Dave onto a 1990 population average, TabPFN ingests Dave's rolling 30-day biological check-in dataset ([`dave_metabolic_log.csv`](app/data/dave_metabolic_log.csv) tracking daily calories, protein, carbs, fat, campus step count, sleep hours, and morning scale weight). In a single forward pass—without backpropagation loops—TabPFN discovered that Dave's true dynamic burn rate was **3,152 kcal/day**—nearly 600 kcal higher than static formulas predicted!
+4. **ElevenLabs Auditory Voice Coach**: To keep Dave motivated on his walk across campus, an AI voice coach (`Rachel`) delivers an empathetic 30-second audio debrief analyzing his plate composition and celebrating milestone achievements.
 5. **Sentry Full-Trace Observability**: Every pipeline stage—from Gemma's visual tokens to TabPFN confidence intervals and ElevenLabs audio buffers—is instrumented with distributed tracing.
 
 
-### Act 3: The Live Handoff & Dave's Unfiltered Reaction
-When we deployed the web application to **Render** (`https://nutriscan-ai-fwn8.onrender.com`) and handed Dave the phone over a post-run lunch, his reaction was instantaneous:
+### Act 3: From OpenCal AI to NutriScan.AI — The Design & Engineering Journey
+Over hundreds of pair-programming iterations, the project evolved from a raw terminal backend into a state-of-the-art web application:
+- **Design Inspiration**: We studied modern, high-converting visual showcases like `trustxx.netlify.app` and `nutrilens.site`, creating a signature **Emerald & Teal glassmorphic aesthetic**.
+- **Mobile-First Cal AI Studio**: We built a native-feeling mobile experience with an interactive calorie progress ring, 3 radial macro cards (drumstick for protein, wheat for carbs, avocado for fat), a daily hydration tracker (`+250ml` / `+500ml`), a 16:8 intermittent fasting tracker, and a week calendar strip.
+- **The Floating Action Button**: Designed a fixed camera FAB positioned above the bottom navigation bar for instantaneous 1-tap plate logging on mobile phones.
+- **Interactive Trajectory Studio**: Equipped with Chart.js to render TabPFN's 28-day Bayesian confidence envelope alongside an interactive calorie simulation slider (1,600 to 3,000 kcal/day).
+- **Responsive Widescreen Desktop Studio**: To ensure desktop users weren't trapped in a mobile phone column, we engineered a widescreen layout expanding to 1280px (`max-w-7xl`) with a 2-column analytics grid, desktop navigation header, and "Scan Plate" CTA—**without altering a single pixel of the mobile experience**.
 
-> *"Are you serious? You built this in a weekend? The camera scanner picked up the quinoa and salmon instantly, and the calories match the USDA label to the gram. But the crazy part is the 28-Day Trajectory chart: when I dragged the slider to 2,100 kcal, it told me I'd reach 75.0 kg on Day 21. That's the exact pace I was hoping for. And the voice debrief on my way home literally sounded like my running coach!"*
+---
 
-Dave deleted his paid subscription app that afternoon. NutriScan.AI proved that open-source AI, foundation tabular modeling, and deterministic nutrition science could completely outclass proprietary $35/month paywalled tools while preserving 100% data sovereignty.
+### Act 4: The Live Handoff & Dave's Unfiltered Reaction
+When we deployed the web application to **Render** (`https://nutriscan-ai-fwn8.onrender.com`) and handed Dave the phone over a quick dining hall lunch, his reaction was instantaneous:
+
+> *"Are you serious? You built this in a weekend? The camera scanner picked up my cafeteria grilled chicken and rice bowl instantly, and the calories match the USDA label to the gram. But the crazy part is the 28-Day Trajectory chart: when I dragged the slider to 2,100 kcal, it told me I'd reach 75.0 kg on Day 21—fitting right before midterm week. And the voice debrief on my walk back to the dorm literally sounded like a personal fitness coach in my pocket!"*
+
+Dave deleted his paid subscription app that afternoon. NutriScan.AI proved that open-source AI, foundation tabular modeling, and deterministic nutrition science could completely outclass proprietary $35/month paywalled tools while preserving 100% data sovereignty for students.
 
 ---
 
