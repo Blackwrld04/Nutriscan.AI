@@ -962,56 +962,123 @@ function renderWeightChart(trajectory, currentWeight, targetWeight) {
     const ctx = document.getElementById("trajectoryChart");
     if (!ctx) return;
 
-    const labels = ["Day 0", ...trajectory.filter((_, i) => i % 4 === 0).map(t => `Day ${t.day_offset}`)];
-    const values = [currentWeight, ...trajectory.filter((_, i) => i % 4 === 0).map(t => t.projected_weight_kg)];
+    // Sample Day 0 and every 4 days up to Day 28 (8 intervals)
+    const sampledDays = [4, 8, 12, 16, 20, 24, 28];
+    const labels = ["Day 0"];
+    const values = [Number(currentWeight)];
+
+    sampledDays.forEach(day => {
+        const item = trajectory.find(t => t.day_offset === day);
+        if (item) {
+            labels.push(`Day ${day}`);
+            values.push(Number(item.projected_weight_kg));
+        } else {
+            // Fallback for custom array structures
+            const fallbackIdx = day - 1;
+            if (trajectory[fallbackIdx]) {
+                labels.push(`Day ${day}`);
+                values.push(Number(trajectory[fallbackIdx].projected_weight_kg));
+            }
+        }
+    });
+
+    const allWeights = [...values, Number(targetWeight)];
+    const minWeight = Math.min(...allWeights);
+    const maxWeight = Math.max(...allWeights);
+    // Dynamic Y-axis scale to emphasize progress without flattening bars
+    const yMin = Math.max(0, Math.floor(minWeight - 1.5));
+    const yMax = Math.ceil(maxWeight + 1.0);
 
     if (weightChart) {
         weightChart.destroy();
     }
 
     weightChart = new Chart(ctx, {
-        type: "line",
+        type: "bar",
         data: {
             labels: labels,
             datasets: [
                 {
-                    label: "TabPFN In-Context Forecast (kg)",
+                    type: "bar",
+                    label: "Projected Weight (kg)",
                     data: values,
-                    borderColor: "#10b981",
-                    backgroundColor: "rgba(16, 185, 129, 0.12)",
-                    fill: true,
-                    tension: 0.35,
-                    borderWidth: 3,
-                    pointBackgroundColor: "#10b981",
-                    pointRadius: 4
+                    backgroundColor: values.map((val, idx) => {
+                        return idx === 0 ? "rgba(100, 116, 139, 0.85)" : "rgba(16, 185, 129, 0.85)";
+                    }),
+                    hoverBackgroundColor: values.map((val, idx) => {
+                        return idx === 0 ? "#475569" : "#059669";
+                    }),
+                    borderRadius: 8,
+                    borderSkipped: false,
+                    maxBarThickness: 34,
+                    order: 2
                 },
                 {
-                    label: "Target Goal (75kg)",
-                    data: labels.map(() => targetWeight),
-                    borderColor: "rgba(244, 63, 94, 0.6)",
-                    borderDash: [5, 5],
-                    fill: false,
+                    type: "line",
+                    label: `Target Goal (${targetWeight} kg)`,
+                    data: labels.map(() => Number(targetWeight)),
+                    borderColor: "rgba(244, 63, 94, 0.85)",
+                    backgroundColor: "transparent",
                     borderWidth: 2,
-                    pointRadius: 0
+                    borderDash: [5, 5],
+                    pointRadius: 3,
+                    pointBackgroundColor: "#f43f5e",
+                    pointBorderColor: "#ffffff",
+                    pointBorderWidth: 1.5,
+                    fill: false,
+                    order: 1
                 }
             ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+                mode: "index",
+                intersect: false
+            },
             plugins: {
                 legend: {
-                    labels: { color: "#334155", font: { family: "Inter", size: 12, weight: "600" } }
+                    position: "top",
+                    labels: {
+                        color: "#334155",
+                        font: { family: "Inter", size: 11, weight: "600" },
+                        boxWidth: 14,
+                        padding: 12
+                    }
+                },
+                tooltip: {
+                    backgroundColor: "rgba(15, 23, 42, 0.95)",
+                    titleFont: { family: "Inter", size: 12, weight: "bold" },
+                    bodyFont: { family: "Inter", size: 11 },
+                    padding: 10,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.dataset.label}: ${Number(context.parsed.y).toFixed(1)} kg`;
+                        }
+                    }
                 }
             },
             scales: {
                 x: {
-                    grid: { color: "rgba(12, 107, 58, 0.08)" },
-                    ticks: { color: "#475569", font: { family: "Inter", size: 11 } }
+                    grid: { display: false },
+                    ticks: {
+                        color: "#64748b",
+                        font: { family: "Inter", size: 11, weight: "600" }
+                    }
                 },
                 y: {
-                    grid: { color: "rgba(12, 107, 58, 0.08)" },
-                    ticks: { color: "#475569", font: { family: "Inter", size: 11 } }
+                    min: yMin,
+                    max: yMax,
+                    grid: { color: "rgba(148, 163, 184, 0.12)" },
+                    ticks: {
+                        color: "#64748b",
+                        font: { family: "Inter", size: 11 },
+                        callback: function(val) {
+                            return val + " kg";
+                        }
+                    }
                 }
             }
         }
