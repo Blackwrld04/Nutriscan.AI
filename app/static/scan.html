@@ -195,13 +195,13 @@
           <!-- Top Bar: Progress Indicator & Logo -->
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
-              <div class="w-7 h-7 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+              <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center font-bold text-xs shadow-xs">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
                   <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
                 </svg>
               </div>
-              <span class="font-extrabold text-slate-900 tracking-tight text-base">OpenCal<span class="text-slate-400 font-normal">.AI</span></span>
+              <span class="font-extrabold text-slate-900 tracking-tight text-base">OpenCal<span class="text-emerald-600 font-bold">.AI</span></span>
             </div>
             <button type="button" class="text-xs font-semibold text-slate-400 hover:text-slate-700 transition-colors" onclick="skipOnboardingToHome()">
               Skip
@@ -210,7 +210,7 @@
 
           <!-- Progress Bar (Dark Pill like Cal AI) -->
           <div class="w-full bg-slate-100 h-1.5 rounded-full mb-6 overflow-hidden">
-            <div class="bg-slate-900 h-full w-full rounded-full transition-all"></div>
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-500 h-full w-full rounded-full transition-all"></div>
           </div>
 
           <div class="mb-5">
@@ -224,7 +224,7 @@
             <div>
               <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Biological Sex</label>
               <div class="grid grid-cols-2 gap-2.5">
-                <button type="button" id="sex-male-btn" class="onboard-sex-btn py-3 px-4 rounded-2xl border-2 border-slate-900 bg-slate-900 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs" data-sex="male" onclick="selectSex('male')">
+                <button type="button" id="sex-male-btn" class="onboard-sex-btn py-3 px-4 rounded-2xl border-2 border-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs" data-sex="male" onclick="selectSex('male')">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="10" cy="14" r="5"/><path d="M19 5l-5.4 5.4"/><path d="M19 5h-5"/><path d="M19 5v5"/></svg>
                   <span>Male</span>
                 </button>
@@ -314,7 +314,7 @@
                 </button>
 
                 <!-- Maintain (Active by default) -->
-                <button type="button" class="onboard-goal-btn active w-full p-3.5 rounded-2xl border-2 border-slate-900 bg-white shadow-xs flex items-center justify-between text-left transition-all" data-goal="maintain" onclick="selectGoal('maintain')">
+                <button type="button" class="onboard-goal-btn active w-full p-3.5 rounded-2xl border-2 border-emerald-600 bg-emerald-50/30 shadow-xs flex items-center justify-between text-left transition-all" data-goal="maintain" onclick="selectGoal('maintain')">
                   <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -324,7 +324,7 @@
                       <div class="text-[10px] text-slate-400">Steady metabolic equilibrium</div>
                     </div>
                   </div>
-                  <div class="goal-radio w-5 h-5 rounded-full border-2 border-slate-900 bg-slate-900 flex items-center justify-center">
+                  <div class="goal-radio w-5 h-5 rounded-full border-2 border-emerald-600 bg-emerald-600 flex items-center justify-center">
                     <div class="w-2 h-2 rounded-full bg-white"></div>
                   </div>
                 </button>
@@ -350,14 +350,14 @@
               <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Daily Activity</label>
               <div class="flex p-1 bg-slate-100 rounded-2xl border border-slate-200/60">
                 <button type="button" class="onboard-activity-btn flex-1 py-2.5 rounded-xl text-xs font-semibold text-slate-600 transition-all" data-act="sedentary" onclick="selectActivity('sedentary')">Sedentary</button>
-                <button type="button" class="onboard-activity-btn active flex-1 py-2.5 rounded-xl text-xs font-bold text-slate-900 bg-white shadow-xs transition-all" data-act="moderate" onclick="selectActivity('moderate')">Moderate</button>
+                <button type="button" class="onboard-activity-btn active flex-1 py-2.5 rounded-xl text-xs font-bold text-emerald-800 bg-white shadow-xs transition-all" data-act="moderate" onclick="selectActivity('moderate')">Moderate</button>
                 <button type="button" class="onboard-activity-btn flex-1 py-2.5 rounded-xl text-xs font-semibold text-slate-600 transition-all" data-act="high" onclick="selectActivity('high')">High</button>
               </div>
             </div>
 
             <!-- Bottom CTA Button -->
             <div class="pt-3">
-              <button type="submit" class="w-full bg-slate-950 hover:bg-slate-800 text-white font-bold py-4 px-6 rounded-full shadow-lg shadow-slate-950/20 text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+              <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-4 px-6 rounded-full shadow-lg shadow-emerald-700/20 text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
                 <span>Continue</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
@@ -415,36 +415,9 @@
             </span>
           </div>
 
-          <!-- Week Calendar Strip (Cal AI Screenshot 2 matching Trajectory / Coach card styling) -->
+          <!-- Week Calendar Strip (dynamically populated with current week) -->
           <div class="flex items-center justify-between bg-white p-2.5 rounded-2xl border border-slate-200/80 shadow-xs text-center" id="week-calendar-strip">
-            <button type="button" class="week-day-btn flex-1 py-1 rounded-xl transition-all" onclick="selectCalendarDay(10)">
-              <div class="text-[10px] font-medium text-slate-400">Sun</div>
-              <div class="w-8 h-8 rounded-full border border-rose-300 mx-auto flex items-center justify-center text-xs font-bold text-slate-700 mt-1">10</div>
-            </button>
-            <button type="button" class="week-day-btn flex-1 py-1 rounded-xl transition-all" onclick="selectCalendarDay(11)">
-              <div class="text-[10px] font-medium text-slate-400">Mon</div>
-              <div class="w-8 h-8 rounded-full border border-slate-200 mx-auto flex items-center justify-center text-xs font-bold text-slate-700 mt-1">11</div>
-            </button>
-            <button type="button" class="week-day-btn flex-1 py-1 rounded-xl transition-all" onclick="selectCalendarDay(12)">
-              <div class="text-[10px] font-medium text-slate-400">Tue</div>
-              <div class="w-8 h-8 rounded-full border border-emerald-400 bg-emerald-50 mx-auto flex items-center justify-center text-xs font-bold text-emerald-800 mt-1">12</div>
-            </button>
-            <button type="button" class="week-day-btn active flex-1 py-1 rounded-xl transition-all" onclick="selectCalendarDay(13)">
-              <div class="text-[10px] font-bold text-emerald-700">Wed</div>
-              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-600 to-teal-600 text-white mx-auto flex items-center justify-center text-xs font-black shadow-xs mt-1">13</div>
-            </button>
-            <button type="button" class="week-day-btn flex-1 py-1 rounded-xl transition-all" onclick="selectCalendarDay(14)">
-              <div class="text-[10px] font-medium text-slate-400">Thu</div>
-              <div class="w-8 h-8 rounded-full mx-auto flex items-center justify-center text-xs font-semibold text-slate-500 mt-1">14</div>
-            </button>
-            <button type="button" class="week-day-btn flex-1 py-1 rounded-xl transition-all" onclick="selectCalendarDay(15)">
-              <div class="text-[10px] font-medium text-slate-400">Fri</div>
-              <div class="w-8 h-8 rounded-full mx-auto flex items-center justify-center text-xs font-semibold text-slate-500 mt-1">15</div>
-            </button>
-            <button type="button" class="week-day-btn flex-1 py-1 rounded-xl transition-all" onclick="selectCalendarDay(16)">
-              <div class="text-[10px] font-medium text-slate-400">Sat</div>
-              <div class="w-8 h-8 rounded-full mx-auto flex items-center justify-center text-xs font-semibold text-slate-500 mt-1">16</div>
-            </button>
+            <!-- Populated by buildCalendarStrip() in scanner.js -->
           </div>
 
           <!-- Hero Calories Eaten Card with Circular Progress Ring (Cal AI Screenshot 2) -->
@@ -1292,6 +1265,6 @@
   </script>
 
   <!-- Core Scanner & Home Logic -->
-  <script src="/static/js/scanner.js?v=2.3.0"></script>
+  <script src="/static/js/scanner.js?v=2.4.0"></script>
 </body>
 </html>

@@ -443,6 +443,61 @@ function updateWaterDisplay(waterAmount) {
     }
 }
 
+function buildCalendarStrip() {
+    const strip = document.getElementById("week-calendar-strip");
+    if (!strip) return;
+
+    const now = new Date();
+    const today = now.getDate();
+    const currentDay = now.getDay(); // 0=Sun, 6=Sat
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    // Find Sunday of the current week
+    const sunday = new Date(now);
+    sunday.setDate(now.getDate() - currentDay);
+
+    // Check which days have logged meals
+    const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
+    const loggedDates = new Set();
+    history.forEach(m => {
+        if (m.date) loggedDates.add(m.date.split("T")[0]);
+    });
+
+    let html = "";
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(sunday);
+        d.setDate(sunday.getDate() + i);
+        const dayNum = d.getDate();
+        const dayName = dayNames[d.getDay()];
+        const dateStr = d.toISOString().split("T")[0];
+        const isToday = dayNum === today && d.getMonth() === now.getMonth();
+        const isPast = d < new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const isFuture = !isToday && !isPast;
+        const hasLogs = loggedDates.has(dateStr);
+
+        let labelClass, circleClass;
+        if (isToday) {
+            labelClass = 'text-[10px] font-bold text-emerald-700';
+            circleClass = 'w-8 h-8 rounded-full bg-gradient-to-br from-emerald-600 to-teal-600 text-white mx-auto flex items-center justify-center text-xs font-black shadow-xs mt-1';
+        } else if (isPast && hasLogs) {
+            labelClass = 'text-[10px] font-medium text-slate-400';
+            circleClass = 'w-8 h-8 rounded-full border border-emerald-400 bg-emerald-50 mx-auto flex items-center justify-center text-xs font-bold text-emerald-800 mt-1';
+        } else if (isFuture) {
+            labelClass = 'text-[10px] font-medium text-slate-300';
+            circleClass = 'w-8 h-8 rounded-full mx-auto flex items-center justify-center text-xs font-semibold text-slate-400 mt-1';
+        } else {
+            labelClass = 'text-[10px] font-medium text-slate-400';
+            circleClass = 'w-8 h-8 rounded-full border border-slate-200 mx-auto flex items-center justify-center text-xs font-bold text-slate-700 mt-1';
+        }
+
+        html += `<button type="button" class="week-day-btn${isToday ? ' active' : ''} flex-1 py-1 rounded-xl transition-all" data-date="${dateStr}" onclick="selectCalendarDay(${dayNum})">
+            <div class="${labelClass}">${dayName}</div>
+            <div class="${circleClass}">${dayNum}</div>
+        </button>`;
+    }
+    strip.innerHTML = html;
+}
+
 function selectCalendarDay(day) {
     document.querySelectorAll(".week-day-btn").forEach(btn => {
         const dayLabel = btn.querySelector("div:first-child");
@@ -457,10 +512,12 @@ function selectCalendarDay(day) {
         } else {
             btn.classList.remove("active");
             if (dayLabel) dayLabel.className = "text-[10px] font-medium text-slate-400";
-            if (dayCircle.innerText.trim() === "12") {
+            // Check if this date had logs
+            const dateStr = btn.dataset.date || "";
+            const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
+            const hasLogs = history.some(m => m.date && m.date.startsWith(dateStr));
+            if (hasLogs) {
                 dayCircle.className = "w-8 h-8 rounded-full border border-emerald-400 bg-emerald-50 mx-auto flex items-center justify-center text-xs font-bold text-emerald-800 mt-1";
-            } else if (dayCircle.innerText.trim() === "10") {
-                dayCircle.className = "w-8 h-8 rounded-full border border-rose-300 mx-auto flex items-center justify-center text-xs font-bold text-slate-700 mt-1";
             } else {
                 dayCircle.className = "w-8 h-8 rounded-full border border-slate-200 mx-auto flex items-center justify-center text-xs font-bold text-slate-700 mt-1";
             }
@@ -739,6 +796,9 @@ document.addEventListener("DOMContentLoaded", () => {
     initPresets();
     initSlider();
     loadMetabolicForecast(2100);
+
+    // Build the calendar strip with real current-week dates
+    buildCalendarStrip();
 
     // Boot directly into Home view
     if (typeof switchMainTab === "function") {
@@ -1341,6 +1401,7 @@ window.openOnboardingFromSettings = openOnboardingFromSettings;
 window.updateHomeScreen = updateHomeScreen;
 window.addWater = addWater;
 window.selectCalendarDay = selectCalendarDay;
+window.buildCalendarStrip = buildCalendarStrip;
 
 function updateOnboardKg(val) {
     const kgEl = document.getElementById("onboard-weight-kg");
