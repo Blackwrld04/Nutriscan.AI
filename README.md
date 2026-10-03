@@ -18,7 +18,7 @@ NutriScan AI eliminates the "Calorie Guesswork Crisis", the dangerous "AI Vision
 
 **Scan your plate. Ground in USDA science. Forecast your dynamic metabolic trajectory.**
 
-[Live Web App](https://nutriscan-ai-fwn8.onrender.com) · [Plate Scanner Studio](https://nutriscan-ai-fwn8.onrender.com/scan) · [Interactive API Docs](https://nutriscan-ai-fwn8.onrender.com/docs) · [Explore Without an Account](#explore-without-an-account) · [Production Roadmap](#what-is-implemented)
+[Live Web App](https://nutriscan-ai-fwn8.onrender.com) · [Plate Scanner Studio](https://nutriscan-ai-fwn8.onrender.com/scan) · [Watch Video Demo](https://nutriscan-ai-fwn8.onrender.com/static/video/nutriscan_demo.mp4) · [Interactive API Docs](https://nutriscan-ai-fwn8.onrender.com/docs) · [Explore Without an Account](#explore-without-an-account) · [Production Roadmap](#what-is-implemented)
 
 **Sovereign Biological Nutrition — Deterministic Food Grounding, Zero Cloud Scraping, and Foundation Tabular Intelligence.**
 
@@ -38,6 +38,7 @@ FastAPI · Google Gemma 2 · Prior Labs TabPFN (Tabular Transformer) · USDA Foo
 | [Autonomous Plate Scanner Studio](https://nutriscan-ai-fwn8.onrender.com/scan) | Live Camera Viewport, Dropzone, and 1-Click Presets | Dedicated scanning studio with pan-seared salmon, grilled chicken, and sirloin steak demo plates |
 | [28-Day Metabolic Trajectory](https://nutriscan-ai-fwn8.onrender.com/scan) | Interactive Chart.js graph & Caloric Target Slider | Real-time TabPFN projection comparing dynamic 3,152 kcal TDEE vs static 2,587 kcal formula |
 | [ElevenLabs Voice Coach](https://nutriscan-ai-fwn8.onrender.com/scan) | Auditory Debrief card & Synchronized Transcript | Personalized audio coaching debrief explaining plate composition and trajectory milestones |
+| [Live Screen Recording Demo](https://nutriscan-ai-fwn8.onrender.com/static/video/nutriscan_demo.mp4) | Full Real-Device Video Walkthrough (1m 32s) | Complete live recording showing plate scanning, USDA grounding, dynamic trajectory adjustments, and voice debrief |
 | [Interactive Developer Docs](https://nutriscan-ai-fwn8.onrender.com/docs) | Complete Swagger / OpenAPI interactive sandbox | Public developer documentation with instant schema validation and live execution |
 | [Live System Health (`/api/health`)](https://nutriscan-ai-fwn8.onrender.com/api/health) | Vision model status, database items count, and uptime | Real-time health check endpoint for monitoring uptime across Gemma, TabPFN, and USDA engines |
 | [TabPFN Forecast API (`/api/metabolic-forecast`)](https://nutriscan-ai-fwn8.onrender.com/api/metabolic-forecast?friend_name=Dave&target_weight_kg=75.0&daily_calories_target=2100) | TabPFN forward pass telemetry and 28-day JSON arrays | Direct access to the tabular in-context transformer forecast with upper/lower confidence bounds |
@@ -47,6 +48,7 @@ FastAPI · Google Gemma 2 · Prior Labs TabPFN (Tabular Transformer) · USDA Foo
 ## Contents
 
 - [The Origin Story: Built for a Friend (Dave)](#the-origin-story-built-for-a-friend-dave)
+- [📱 Live Mobile Screen Recording Demo](#-live-mobile-screen-recording-demo)
 - [Why NutriScan AI exists](#why-nutriscan-ai-exists)
 - [How it works](#how-it-works)
 - [Zero-hallucination & biological privacy pipeline](#zero-hallucination--biological-privacy-pipeline)
@@ -122,6 +124,28 @@ When we deployed the web application to **Render** (`https://nutriscan-ai-fwn8.o
 > *"Are you serious? You built this in a weekend? The camera scanner picked up the quinoa and salmon instantly, and the calories match the USDA label to the gram. But the crazy part is the 28-Day Trajectory chart: when I dragged the slider to 2,100 kcal, it told me I'd reach 75.0 kg on Day 21. That's the exact pace I was hoping for. And the voice debrief on my way home literally sounded like my running coach!"*
 
 Dave deleted his paid subscription app that afternoon. NutriScan.AI proved that open-source AI, foundation tabular modeling, and deterministic nutrition science could completely outclass proprietary $35/month paywalled tools while preserving 100% data sovereignty.
+
+---
+
+## 📱 Live Mobile Screen Recording Demo
+
+https://github.com/Blackwrld04/Nutriscan.AI/raw/main/app/static/video/nutriscan_demo.mp4
+
+<div align="center">
+
+<a href="https://nutriscan-ai-fwn8.onrender.com/static/video/nutriscan_demo.mp4">
+  <img width="340" alt="NutriScan AI Mobile Walkthrough Video Poster" src="https://raw.githubusercontent.com/Blackwrld04/Nutriscan.AI/main/app/static/img/demo_poster.jpg" />
+</a>
+
+<p><em>Full 92-second real-device screen recording demonstrating the camera scanner, deterministic USDA grounding, TabPFN dynamic trajectory slider, and ElevenLabs voice debrief.</em></p>
+
+<p>
+  <a href="https://nutriscan-ai-fwn8.onrender.com/static/video/nutriscan_demo.mp4">
+    <b>▶️ Direct Stream / Download MP4 (Full HD 864x1920)</b>
+  </a>
+</p>
+
+</div>
 
 ---
 
@@ -409,6 +433,7 @@ NutriScan AI is engineered for immediate responsiveness with zero client-side la
 | **Autonomous Plate Studio** | Render (App Router) | [https://nutriscan-ai-fwn8.onrender.com/scan](https://nutriscan-ai-fwn8.onrender.com/scan) |
 | **Interactive API Documentation** | FastAPI Swagger | [https://nutriscan-ai-fwn8.onrender.com/docs](https://nutriscan-ai-fwn8.onrender.com/docs) |
 | **System Health Check API** | Render (Monitoring) | [https://nutriscan-ai-fwn8.onrender.com/api/health](https://nutriscan-ai-fwn8.onrender.com/api/health) |
+| **Live Screen Recording Walkthrough** | Web-Optimized MP4 (1080p) | [https://nutriscan-ai-fwn8.onrender.com/static/video/nutriscan_demo.mp4](https://nutriscan-ai-fwn8.onrender.com/static/video/nutriscan_demo.mp4) |
 | **Docker Container** | Docker Hub / Self-Hosted | `docker run -p 8000:8000 nutriscan-ai` |
 | **Source Code Repository** | GitHub | [Blackwrld04/Nutriscan.AI](https://github.com/Blackwrld04/Nutriscan.AI) |
 
@@ -529,6 +554,8 @@ PYTHONPATH=. pytest tests/test_tabpfn_pipeline.py -v
 | [`app/static/js/scanner.js`](app/static/js/scanner.js) | Full client-side state machine: camera, presets, Chart.js lifecycle, and storage |
 | [`app/static/js/chart.umd.min.js`](app/static/js/chart.umd.min.js) | Standalone local Chart.js bundle for zero-dependency trajectory visualization |
 | [`app/static/img/nutriscan_app_mockup.png`](app/static/img/nutriscan_app_mockup.png) | High-resolution mobile application screenshot embedded in landing hero mockup |
+| [`app/static/img/demo_poster.jpg`](app/static/img/demo_poster.jpg) | High-resolution poster frame extracted from mobile screen recording |
+| [`app/static/video/nutriscan_demo.mp4`](app/static/video/nutriscan_demo.mp4) | 92-second web-optimized HD mobile screen recording demonstrating live plate scanning & trajectory |
 | [`tests/test_api_endpoints.py`](tests/test_api_endpoints.py) | Integration test suite verifying all HTTP endpoints and responses |
 | [`tests/test_nutrition_grounding.py`](tests/test_nutrition_grounding.py) | Unit tests verifying USDA database lookup, portion scaling, and macro math |
 | [`tests/test_tabpfn_pipeline.py`](tests/test_tabpfn_pipeline.py) | Tests verifying TabPFN data loading, dynamic TDEE, and forward trajectory |
