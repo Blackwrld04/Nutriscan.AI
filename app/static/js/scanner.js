@@ -7,16 +7,35 @@ let weightChart = null;
 let cameraStream = null;
 
 let currentPlateData = {
-    meal_name: "Pan-Seared Salmon & Sweet Potato Fuel Plate",
-    calories: 645,
-    protein_g: 48.2,
-    carbs_g: 58.5,
-    fat_g: 22.4,
-    fiber_g: 7.2,
+    meal_name: "",
+    calories: 0,
+    protein_g: 0,
+    carbs_g: 0,
+    fat_g: 0,
+    fiber_g: 0,
     days_to_goal: 22,
     target_weight: 75.0,
     daily_budget: 2100
 };
+
+function getLoggedCaloriesTotal() {
+    try {
+        const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
+        return history.reduce((sum, item) => sum + (Number(item.calories) || 0), 0);
+    } catch {
+        return 0;
+    }
+}
+
+function showScanResultsContainer() {
+    const container = document.getElementById("scan-results-container");
+    if (container) {
+        container.classList.remove("hidden");
+        setTimeout(() => {
+            container.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     initTabs();
@@ -101,9 +120,11 @@ function snapPhoto() {
         if (!blob) return;
         const file = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
         
-        // Show image preview
+        showScanResultsContainer();
         const previewImg = document.getElementById("plate-preview-img");
         if (previewImg) previewImg.src = URL.createObjectURL(blob);
+        const caption = document.getElementById("plate-preview-caption");
+        if (caption) caption.innerText = "Camera Snapshot Captured";
 
         handlePlateUpload(file);
     }, "image/jpeg", 0.92);
@@ -143,14 +164,19 @@ function initDropzone() {
 }
 
 function processSelectedFile(file) {
+    showScanResultsContainer();
     const previewImg = document.getElementById("plate-preview-img");
     if (previewImg) {
         previewImg.src = URL.createObjectURL(file);
     }
+    const caption = document.getElementById("plate-preview-caption");
+    if (caption) caption.innerText = file.name || "Uploaded Plate Photo";
+
     handlePlateUpload(file);
 }
 
 async function handlePlateUpload(file) {
+    showScanResultsContainer();
     setScanningProgress(1); // Gemma vision
     const formData = new FormData();
     formData.append("file", file);
@@ -191,6 +217,22 @@ function initPresets() {
 }
 
 function loadPreset(type) {
+    showScanResultsContainer();
+
+    const previewImg = document.getElementById("plate-preview-img");
+    const caption = document.getElementById("plate-preview-caption");
+
+    if (type === "chicken") {
+        if (previewImg) previewImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%23d97706' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3C/svg%3E";
+        if (caption) caption.innerText = "Preset: Grilled Chicken Breast";
+    } else if (type === "steak") {
+        if (previewImg) previewImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%23e11d48' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Cpath d='M8 12h8'/%3E%3C/svg%3E";
+        if (caption) caption.innerText = "Preset: Sirloin Steak Plate";
+    } else {
+        if (previewImg) previewImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Cpath d='M19 12a7 7 0 0 0-14 0'/%3E%3Ccircle cx='12' cy='5' r='1'/%3E%3C/svg%3E";
+        if (caption) caption.innerText = "Preset: Pan-Seared Salmon";
+    }
+
     setScanningProgress(1);
     setTimeout(() => setScanningProgress(2), 300);
 
@@ -289,11 +331,19 @@ function resetStepper() {
 
 // Render Results
 function renderScanResult(data) {
-    document.getElementById("studio-plate-title").innerText = data.meal_name;
-    document.getElementById("macro-calories").innerText = Math.round(data.total_nutrition.calories);
-    document.getElementById("macro-protein").innerText = Math.round(data.total_nutrition.protein_g) + "g";
-    document.getElementById("macro-carbs").innerText = Math.round(data.total_nutrition.carbs_g) + "g";
-    document.getElementById("macro-fat").innerText = Math.round(data.total_nutrition.fat_g) + "g";
+    showScanResultsContainer();
+    const titleEl = document.getElementById("studio-plate-title");
+    if (titleEl) titleEl.innerText = data.meal_name;
+
+    const calEl = document.getElementById("macro-calories");
+    const protEl = document.getElementById("macro-protein");
+    const carbEl = document.getElementById("macro-carbs");
+    const fatEl = document.getElementById("macro-fat");
+
+    if (calEl) calEl.innerText = Math.round(data.total_nutrition.calories);
+    if (protEl) protEl.innerText = Math.round(data.total_nutrition.protein_g) + "g";
+    if (carbEl) carbEl.innerText = Math.round(data.total_nutrition.carbs_g) + "g";
+    if (fatEl) fatEl.innerText = Math.round(data.total_nutrition.fat_g) + "g";
 
     // Update global state
     currentPlateData.meal_name = data.meal_name;
@@ -302,7 +352,8 @@ function renderScanResult(data) {
     currentPlateData.carbs_g = data.total_nutrition.carbs_g;
     currentPlateData.fat_g = data.total_nutrition.fat_g;
 
-    updateBudgetBar(data.total_nutrition.calories, currentPlateData.daily_budget);
+    const loggedTotal = getLoggedCaloriesTotal();
+    updateBudgetBar(loggedTotal + data.total_nutrition.calories, currentPlateData.daily_budget);
 
     // Render Food items table
     const container = document.getElementById("studio-items-table");
@@ -310,15 +361,15 @@ function renderScanResult(data) {
         container.innerHTML = "";
         data.items.forEach(item => {
             const row = document.createElement("div");
-            row.className = "item-row";
+            row.className = "py-2.5 flex items-center justify-between";
             row.innerHTML = `
                 <div>
-                    <div class="item-left-name">${item.name}</div>
-                    <div class="item-left-sub">${item.weight_g}g • ${item.food_group} (USDA Grounded)</div>
+                    <div class="font-bold text-slate-800">${item.name}</div>
+                    <div class="text-[10px] text-slate-400">${item.weight_g}g • ${item.food_group} (USDA Grounded)</div>
                 </div>
-                <div>
-                    <div class="item-right-cal">${Math.round(item.nutrition.calories)} kcal</div>
-                    <div class="item-right-macros">${Math.round(item.nutrition.protein_g)}g P / ${Math.round(item.nutrition.carbs_g)}g C / ${Math.round(item.nutrition.fat_g)}g F</div>
+                <div class="text-right">
+                    <div class="font-black text-slate-800">${Math.round(item.nutrition.calories)} kcal</div>
+                    <div class="text-[10px] text-slate-500">${Math.round(item.nutrition.protein_g)}g P / ${Math.round(item.nutrition.carbs_g)}g C / ${Math.round(item.nutrition.fat_g)}g F</div>
                 </div>
             `;
             container.appendChild(row);
@@ -331,8 +382,8 @@ function renderScanResult(data) {
         insightsBox.innerHTML = "";
         data.health_insights.forEach(insight => {
             const pill = document.createElement("div");
-            pill.className = "insight-pill";
-            pill.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>${insight}</span>`;
+            pill.className = "p-3 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-xs text-emerald-900 flex items-start gap-2";
+            pill.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 flex-shrink-0 text-emerald-600"><polyline points="20 6 9 17 4 12"/></svg><span>${insight}</span>`;
             insightsBox.appendChild(pill);
         });
     }
@@ -359,7 +410,8 @@ async function loadMetabolicForecast(caloriesTarget) {
         currentPlateData.days_to_goal = data.insights.projected_days_to_goal;
         currentPlateData.daily_budget = parseInt(caloriesTarget);
 
-        updateBudgetBar(currentPlateData.calories, currentPlateData.daily_budget);
+        const initialConsumed = getLoggedCaloriesTotal();
+        updateBudgetBar(initialConsumed, currentPlateData.daily_budget);
 
         // Render Chart.js Trajectory
         renderWeightChart(data.trajectory, data.current_weight_kg, data.target_weight_kg);
@@ -452,7 +504,13 @@ function updateBudgetBar(consumed, budget) {
     const remaining = Math.max(0, Math.round(budget - consumed));
 
     if (fill) fill.style.width = `${pct}%`;
-    if (label) label.innerText = `${Math.round(consumed)} kcal consumed of ${budget} kcal target (${remaining} kcal remaining)`;
+    if (label) {
+        if (consumed === 0) {
+            label.innerText = `Awaiting meal scan · ${budget} kcal daily target`;
+        } else {
+            label.innerText = `${Math.round(consumed)} kcal consumed of ${budget} kcal target (${remaining} kcal remaining)`;
+        }
+    }
     if (heroCal) heroCal.innerText = Math.round(consumed);
 }
 
