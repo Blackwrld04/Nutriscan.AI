@@ -503,7 +503,9 @@ function updateHomeScreen() {
 
     if (goalLabelEl) {
         const goalName = profile.goal === "lose" ? "Lose Weight" : profile.goal === "gain" ? "Gain Weight" : "Maintain Weight";
-        goalLabelEl.innerText = `${goalName} · ${profile.weight_lbs} lbs`;
+        const weightLbs = Number(profile.weight_lbs) || 165;
+        const weightKg = (weightLbs * 0.45359237).toFixed(1);
+        goalLabelEl.innerText = `${goalName} · ${weightLbs} lbs (${weightKg} kg)`;
     }
 
     // Hero Circular SVG Flame Ring (circumference = 2 * pi * 40 ≈ 251.2)
@@ -659,7 +661,9 @@ function populateSettingsModal() {
     const calsEl = document.getElementById("settings-cals-val");
 
     if (sexEl) sexEl.innerText = profile.sex === "female" ? "Female" : "Male";
-    if (bodyEl) bodyEl.innerText = `${profile.weight_lbs} lbs · ${profile.height}`;
+    const weightLbs = Number(profile.weight_lbs) || 165;
+    const weightKg = (weightLbs * 0.45359237).toFixed(1);
+    if (bodyEl) bodyEl.innerText = `${weightLbs} lbs (${weightKg} kg) · ${profile.height}`;
     if (goalEl) {
         const goalMap = { lose: "Lose Weight", maintain: "Maintain", gain: "Gain Weight / Muscle" };
         goalEl.innerText = goalMap[profile.goal] || "Maintain";
@@ -1337,3 +1341,16 @@ window.openOnboardingFromSettings = openOnboardingFromSettings;
 window.updateHomeScreen = updateHomeScreen;
 window.addWater = addWater;
 window.selectCalendarDay = selectCalendarDay;
+
+function updateOnboardKg(val) {
+    const kgEl = document.getElementById("onboard-weight-kg");
+    if (kgEl) {
+        const num = parseFloat(val);
+        if (!isNaN(num) && num > 0) {
+            kgEl.innerText = `≈ ${(num * 0.45359237).toFixed(1)} kg`;
+        } else {
+            kgEl.innerText = "";
+        }
+    }
+}
+window.updateOnboardKg = updateOnboardKg;
