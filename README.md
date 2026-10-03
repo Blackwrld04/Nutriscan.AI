@@ -131,7 +131,7 @@ Dave deleted his paid subscription app that afternoon. NutriScan.AI proved that 
 
 A real-device walkthrough of the NutriScan.AI companion, demonstrating live camera scanning, deterministic USDA FoodData Central macronutrient grounding, TabPFN dynamic metabolic forecasting, and personalized ElevenLabs voice debriefing.
 
-https://github.com/Blackwrld04/Nutriscan.AI/raw/main/app/static/video/nutriscan_demo.mp4
+https://github.com/user-attachments/assets/00fd8620-69ec-42ae-8bef-5e0c47a6debe
 
 The walkthrough demonstrates an end-to-end user session: onboarding and metabolic profile configuration, live food plate capture, instant USDA macronutrient breakdown, adjusting daily caloric targets to simulate dynamic metabolic adaptation via TabPFN, and receiving an auditory debrief tailored to the user's logged intake.
 
