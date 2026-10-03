@@ -106,7 +106,7 @@ async def analyze_plate(file: UploadFile = File(...)):
 
 @app.get("/api/metabolic-forecast", response_model=MetabolicForecastResponse)
 async def get_metabolic_forecast(
-    friend_name: str = "Dave",
+    friend_name: str = "Friend",
     target_weight_kg: float = 75.0,
     daily_calories_target: float = 2100.0,
     days_ahead: int = 28
@@ -126,30 +126,51 @@ async def get_metabolic_forecast(
 
 
 class CoachDebriefRequest(BaseModel):
-    friend_name: str = "Dave"
-    meal_name: str = "Grilled Salmon Quinoa Bowl"
+    friend_name: str = "Friend"
+    meal_name: str = "Nutritious Plate"
     calories: float = 620.0
     protein_g: float = 45.0
     days_to_goal: int = 22
     target_weight: float = 75.0
+    target_calories: float = 2100.0
+    target_protein: float = 140.0
+    total_calories_today: float = 0.0
+    total_protein_today: float = 0.0
+    total_carbs_today: float = 0.0
+    total_fat_today: float = 0.0
+    tdee: float = 2480.0
+    goal: str = "maintain"
+    question_type: str = "daily_debrief"
+    custom_question: Optional[str] = None
 
 
 @app.post("/api/coach-debrief")
 async def generate_coach_debrief(req: CoachDebriefRequest):
     """
     Endpoint 3: ElevenLabs Audio Coach Debrief
-    Synthesizes a personalized voice debrief for the friend.
+    Synthesizes a personalized voice debrief for the user.
     """
-    with trace_span("gen_ai.voice", "ElevenLabs Daily Coach Briefing", {"friend": req.friend_name}):
+    with trace_span("gen_ai.voice", "ElevenLabs Daily Coach Briefing", {"friend": req.friend_name, "question": req.question_type}):
         script = coach_service.compose_coach_script(
             friend_name=req.friend_name,
             meal_name=req.meal_name,
             calories=req.calories,
             protein_g=req.protein_g,
             days_to_goal=req.days_to_goal,
-            target_weight=req.target_weight
+            target_weight=req.target_weight,
+            target_calories=req.target_calories,
+            target_protein=req.target_protein,
+            total_calories_today=req.total_calories_today,
+            total_protein_today=req.total_protein_today,
+            total_carbs_today=req.total_carbs_today,
+            total_fat_today=req.total_fat_today,
+            tdee=req.tdee,
+            goal=req.goal,
+            question_type=req.question_type,
+            custom_question=req.custom_question
         )
         speech_result = coach_service.generate_speech(script)
+        speech_result["question_type"] = req.question_type
         return speech_result
 
 

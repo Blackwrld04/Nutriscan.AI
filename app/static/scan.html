@@ -371,6 +371,17 @@
 
           <form id="onboarding-form" onsubmit="event.preventDefault(); completeOnboarding();" class="space-y-4">
             
+            <!-- 0. User Name -->
+            <div>
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Your Name or Nickname</label>
+              <div class="relative">
+                <input type="text" id="onboard-name" placeholder="What should the AI coach call you? (e.g. Alex)" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900 focus:outline-none focus:border-emerald-600 focus:bg-white transition-colors" required>
+                <div class="absolute right-3.5 top-3.5 text-slate-400">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+              </div>
+            </div>
+
             <!-- 1. Biological Sex -->
             <div>
               <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Biological Sex</label>
@@ -527,8 +538,8 @@
           <!-- Home Section Title matching Trajectory and Coach header style -->
           <div class="desktop-area-title flex items-center justify-between mb-1">
             <div>
-              <div class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">Daily Nutrition</div>
-              <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Today's Overview</h1>
+              <div class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider" id="home-greeting-label">Daily Nutrition</div>
+              <h1 class="text-xl font-extrabold text-slate-900 tracking-tight" id="home-overview-title">Today's Overview</h1>
             </div>
           </div>
 
@@ -916,11 +927,11 @@
 
           <!-- Voice Trigger Button -->
           <div class="mt-5">
-            <button class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-3.5 px-6 rounded-full shadow-lg shadow-emerald-700/20 text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98]" id="studio-coach-btn" onclick="playStudioCoachDebrief()">
+            <button class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-3.5 px-6 rounded-full shadow-lg shadow-emerald-700/20 text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98]" id="studio-coach-btn" onclick="askCoachQuestion('daily_debrief')">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                 <polygon points="5 3 19 12 5 21 5 3"/>
               </svg>
-              <span>Play Daily Voice Debrief</span>
+              <span id="studio-coach-btn-text">Play Daily Voice Debrief</span>
             </button>
           </div>
 
@@ -930,32 +941,64 @@
               Suggested Questions &amp; Discussion
             </div>
             <div class="space-y-2">
-              <button class="w-full p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left text-xs text-slate-700 flex items-center justify-between transition-all" onclick="playStudioCoachDebrief()">
-                <div class="flex items-center gap-2">
-                  <span class="text-emerald-600 font-bold">?</span>
-                  <span>How does today's meal affect my goal timeline?</span>
+              <button type="button" class="w-full p-3 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left text-xs text-slate-700 flex items-center justify-between transition-all group cursor-pointer" onclick="askCoachQuestion('timeline')">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs group-hover:bg-emerald-600 group-hover:text-white transition-colors">⏱️</span>
+                  <div>
+                    <div class="font-bold text-slate-800">How does today's meal affect my goal timeline?</div>
+                    <div class="text-[10px] text-slate-400">Grounded in today's logged calories vs target days to goal</div>
+                  </div>
                 </div>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-400 group-hover:text-emerald-600 transition-colors"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
-              <button class="w-full p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left text-xs text-slate-700 flex items-center justify-between transition-all" onclick="playStudioCoachDebrief()">
-                <div class="flex items-center gap-2">
-                  <span class="text-emerald-600 font-bold">?</span>
-                  <span>What is my dynamic TDEE burn rate today?</span>
+              <button type="button" class="w-full p-3 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left text-xs text-slate-700 flex items-center justify-between transition-all group cursor-pointer" onclick="askCoachQuestion('tdee')">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs group-hover:bg-emerald-600 group-hover:text-white transition-colors">🔥</span>
+                  <div>
+                    <div class="font-bold text-slate-800">What is my dynamic TDEE burn rate today?</div>
+                    <div class="text-[10px] text-slate-400">TabPFN in-context neural burn rate &amp; caloric balance</div>
+                  </div>
                 </div>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-400 group-hover:text-emerald-600 transition-colors"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
-              <button class="w-full p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left text-xs text-slate-700 flex items-center justify-between transition-all" onclick="playStudioCoachDebrief()">
-                <div class="flex items-center gap-2">
-                  <span class="text-emerald-600 font-bold">?</span>
-                  <span>Should I increase protein for my evening meal?</span>
+              <button type="button" class="w-full p-3 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left text-xs text-slate-700 flex items-center justify-between transition-all group cursor-pointer" onclick="askCoachQuestion('protein')">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs group-hover:bg-emerald-600 group-hover:text-white transition-colors">🥩</span>
+                  <div>
+                    <div class="font-bold text-slate-800">Should I increase protein for my evening meal?</div>
+                    <div class="text-[10px] text-slate-400">Compares logged protein vs your personalized macro target</div>
+                  </div>
                 </div>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-400 group-hover:text-emerald-600 transition-colors"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
             </div>
           </div>
 
-          <!-- Transcript Quote Box -->
-          <div class="transcript-quote-box text-left mt-5 text-xs text-slate-600 bg-emerald-50/50 p-4 rounded-xl border border-emerald-200/80 italic leading-relaxed" id="studio-coach-transcript" style="display: none;"></div>
+          <!-- Custom Question Input Box -->
+          <div class="mt-5 text-left">
+            <label for="custom-coach-input" class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">
+              Or Ask Your Own Question
+            </label>
+            <div class="flex gap-2">
+              <input type="text" id="custom-coach-input" placeholder="e.g. Can I fit a Greek yogurt snack tonight?" class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-slate-800" onkeydown="if(event.key === 'Enter') submitCustomCoachQuestion()">
+              <button type="button" onclick="submitCustomCoachQuestion()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-700 text-white text-xs font-bold transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer">
+                <span>Ask</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Active Response / Transcript Box -->
+          <div class="text-left mt-5 bg-emerald-50/70 p-4 rounded-xl border border-emerald-200/80 space-y-2" id="studio-coach-transcript-card" style="display: none;">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-[10px] font-extrabold text-emerald-800 uppercase tracking-wider" id="studio-coach-question-label">Metabolic Debrief</span>
+              </div>
+              <span class="text-[10px] text-emerald-700 font-semibold" id="studio-coach-voice-source">ElevenLabs Neural Voice</span>
+            </div>
+            <div class="transcript-quote-box text-xs text-slate-700 italic leading-relaxed" id="studio-coach-transcript"></div>
+          </div>
         </div>
       </section>
 
@@ -1336,6 +1379,10 @@
 
       <!-- Current Profile Details -->
       <div class="space-y-2 text-xs">
+        <div class="p-3 bg-slate-50 rounded-2xl flex items-center justify-between">
+          <span class="text-slate-500 font-medium">Name / Nickname</span>
+          <span class="font-bold text-slate-900" id="settings-name-val">Friend</span>
+        </div>
         <div class="p-3 bg-slate-50 rounded-2xl flex items-center justify-between">
           <span class="text-slate-500 font-medium">Biological Sex</span>
           <span class="font-bold text-slate-900" id="settings-sex-val">Male</span>

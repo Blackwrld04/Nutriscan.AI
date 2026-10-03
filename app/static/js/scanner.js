@@ -64,11 +64,18 @@ function initStorageAndCleanMockData() {
 function getUserProfile() {
     try {
         const saved = localStorage.getItem("opencal_user_profile");
-        if (saved) return JSON.parse(saved);
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (!parsed.name || typeof parsed.name !== "string" || !parsed.name.trim()) {
+                parsed.name = "Friend";
+            }
+            return parsed;
+        }
     } catch (e) {
         console.warn("Error parsing user profile:", e);
     }
     return {
+        name: "Friend",
         sex: "male",
         weight_lbs: 165,
         height: "5'10\"",
@@ -323,6 +330,8 @@ function selectActivity(act) {
 }
 
 function completeOnboarding() {
+    const nameInput = document.getElementById("onboard-name");
+    const nameVal = (nameInput && nameInput.value.trim()) ? nameInput.value.trim() : "Friend";
     const weightVal = parseFloat(document.getElementById("onboard-weight")?.value || "165");
     const heightVal = document.getElementById("onboard-height")?.value || "5'10\"";
     const dobM = document.getElementById("onboard-dob-month")?.value || "January";
@@ -384,6 +393,7 @@ function completeOnboarding() {
     carbs = Math.max(80, Math.min(500, carbs));
 
     const profile = {
+        name: nameVal,
         sex: selectedSex,
         weight_lbs: weightVal,
         height: heightVal,
@@ -408,6 +418,7 @@ function completeOnboarding() {
 
 function skipOnboardingToHome() {
     const defaultProfile = {
+        name: "Friend",
         sex: "male",
         weight_lbs: 165,
         height: "5'10\"",
@@ -461,6 +472,10 @@ function populateDobOptions() {
 function populateOnboardingFieldsFromProfile() {
     const profile = getUserProfile();
     if (!profile) return;
+    const nameInput = document.getElementById("onboard-name");
+    if (nameInput) {
+        nameInput.value = (profile.name && profile.name !== "Friend") ? profile.name : "";
+    }
     if (profile.sex) selectSex(profile.sex);
     if (profile.goal) selectGoal(profile.goal);
     if (profile.activity) selectActivity(profile.activity);
@@ -780,6 +795,11 @@ function updateHomeScreen() {
     const calConsumedEl = document.getElementById("home-cal-consumed");
     const calTargetEl = document.getElementById("home-cal-target");
     const goalLabelEl = document.getElementById("home-goal-label");
+    const homeGreetingEl = document.getElementById("home-greeting-label");
+
+    if (homeGreetingEl) {
+        homeGreetingEl.innerText = `Daily Nutrition · ${profile.name || "Friend"}`;
+    }
 
     if (calConsumedEl) calConsumedEl.innerText = Math.round(consumedCals).toLocaleString();
     if (calTargetEl) calTargetEl.innerText = Math.round(profile.daily_calories || 2100).toLocaleString();
@@ -958,11 +978,13 @@ function closeSettingsModal() {
 
 function populateSettingsModal() {
     const profile = getUserProfile();
+    const nameEl = document.getElementById("settings-name-val");
     const sexEl = document.getElementById("settings-sex-val");
     const bodyEl = document.getElementById("settings-body-val");
     const goalEl = document.getElementById("settings-goal-val");
     const calsEl = document.getElementById("settings-cals-val");
 
+    if (nameEl) nameEl.innerText = profile.name || "Friend";
     if (sexEl) sexEl.innerText = profile.sex === "female" ? "Female" : "Male";
     const weightLbs = Number(profile.weight_lbs) || 165;
     const weightKg = (weightLbs * 0.45359237).toFixed(1);
@@ -1457,8 +1479,9 @@ async function loadMetabolicForecast(caloriesTarget) {
         const weightLbs = Number(profile.weight_lbs) || 165;
         const targetKg = +(weightLbs * 0.45359237).toFixed(1);
         const targetCals = caloriesTarget || profile.daily_calories || 2100;
+        const userName = encodeURIComponent(profile.name || "Friend");
 
-        const response = await fetch(`/api/metabolic-forecast?friend_name=Dave&target_weight_kg=${targetKg}&daily_calories_target=${targetCals}`);
+        const response = await fetch(`/api/metabolic-forecast?friend_name=${userName}&target_weight_kg=${targetKg}&daily_calories_target=${targetCals}`);
         if (!response.ok) throw new Error("Forecast request failed");
         const data = await response.json();
 
@@ -1474,6 +1497,7 @@ async function loadMetabolicForecast(caloriesTarget) {
         if (staticDesktopEl) staticDesktopEl.innerText = data.insights.static_formula_tdee_kcal + " kcal";
 
         currentPlateData.days_to_goal = data.insights.projected_days_to_goal;
+        currentPlateData.predicted_tdee = data.insights.dynamic_tdee_kcal;
         currentPlateData.daily_budget = parseInt(caloriesTarget);
 
         cachedTrajectoryData = {
@@ -1660,51 +1684,113 @@ function renderWeightChart(trajectory, currentWeight, targetWeight) {
 window.renderWeightChart = renderWeightChart;
 window.loadMetabolicForecast = loadMetabolicForecast;
 
-// ElevenLabs Coach Voice Debrief
-async function playStudioCoachDebrief() {
+// ElevenLabs Coach Voice Debrief & Dynamic Analysis Answering
+async function askCoachQuestion(questionType = "daily_debrief", customQuestion = "") {
     const btn = document.getElementById("studio-coach-btn");
+    const btnText = document.getElementById("studio-coach-btn-text");
+    const transcriptCard = document.getElementById("studio-coach-transcript-card");
     const transcriptBox = document.getElementById("studio-coach-transcript");
+    const labelEl = document.getElementById("studio-coach-question-label");
+    const sourceEl = document.getElementById("studio-coach-voice-source");
 
-    if (!btn) return;
-    const originalBtnContent = btn.innerHTML;
-    btn.innerHTML = `<svg class="animate-spin w-4 h-4 text-white inline-block mr-1.5" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"/><path fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" class="opacity-75"/></svg><span>Synthesizing Debrief...</span>`;
-    btn.disabled = true;
+    const originalBtnText = btnText ? btnText.innerText : "Play Daily Voice Debrief";
+    if (btn) {
+        btn.disabled = true;
+        if (btnText) btnText.innerText = "Consulting Voice Coach...";
+    }
+
+    // Friendly Question Header Label
+    const labelMap = {
+        timeline: "Goal Timeline Trajectory",
+        tdee: "Dynamic TDEE Burn Rate",
+        protein: "Macronutrient & Protein Target",
+        custom: customQuestion ? `Q: "${customQuestion.slice(0, 32)}${customQuestion.length > 32 ? "..." : ""}"` : "Custom Question",
+        daily_debrief: "Daily Metabolic Debrief"
+    };
+
+    if (labelEl) labelEl.innerText = labelMap[questionType] || "Metabolic Debrief";
+    if (transcriptCard) transcriptCard.style.display = "block";
+    if (transcriptBox) transcriptBox.innerHTML = '<span class="text-slate-400">Synthesizing personalized coach debrief from nutrition telemetry...</span>';
 
     try {
         const profile = getUserProfile();
         const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
-        let mealName = currentPlateData.meal_name;
-        let cals = currentPlateData.calories;
-        let prot = currentPlateData.protein_g;
+        const todayStr = new Date().toISOString().split("T")[0];
+        const todayMeals = history.filter(item => item.date && item.date.startsWith(todayStr));
 
-        // If no active scanned plate, debrief on latest logged meal or profile goals
+        // Compute actual logged daily totals from today's analysis
+        let totalCalsToday = 0;
+        let totalProtToday = 0;
+        let totalCarbsToday = 0;
+        let totalFatToday = 0;
+        todayMeals.forEach(m => {
+            totalCalsToday += Number(m.calories) || 0;
+            totalProtToday += Number(m.protein_g) || 0;
+            totalCarbsToday += Number(m.carbs_g) || 0;
+            totalFatToday += Number(m.fat_g) || 0;
+        });
+
+        // Determine plate/meal context
+        let mealName = currentPlateData.meal_name;
+        let mealCals = Number(currentPlateData.calories) || 0;
+        let mealProt = Number(currentPlateData.protein_g) || 0;
+
+        // If no active scanned plate, debrief on latest logged meal or daily totals
         if (!mealName || mealName === "Ready to scan food plate" || mealName.includes("Analyzing")) {
-            if (history.length > 0) {
+            if (todayMeals.length > 0) {
+                const latest = todayMeals[todayMeals.length - 1];
+                mealName = latest.meal_name || "Recent Meal";
+                mealCals = Number(latest.calories) || 0;
+                mealProt = Number(latest.protein_g) || 0;
+            } else if (history.length > 0) {
                 const latest = history[history.length - 1];
-                mealName = latest.meal_name;
-                cals = latest.calories;
-                prot = latest.protein_g;
+                mealName = latest.meal_name || "Logged Meal";
+                mealCals = Number(latest.calories) || 0;
+                mealProt = Number(latest.protein_g) || 0;
             } else {
                 mealName = "Daily Metabolic Nutrition";
-                cals = profile.daily_calories || 2100;
-                prot = profile.target_protein || 150;
+                mealCals = totalCalsToday > 0 ? totalCalsToday : (profile.daily_calories || 2100);
+                mealProt = totalProtToday > 0 ? totalProtToday : (profile.target_protein || 150);
             }
         }
 
         const weightLbs = Number(profile.weight_lbs) || 165;
         const weightKg = +(weightLbs * 0.45359237).toFixed(1);
+        let targetWeightKg = weightKg;
+        if (profile.goal === "lose") {
+            targetWeightKg = +(weightKg - 3.5).toFixed(1);
+        } else if (profile.goal === "gain") {
+            targetWeightKg = +(weightKg + 2.5).toFixed(1);
+        }
+
+        const targetCals = Number(profile.daily_calories) || 2100;
+        const targetProt = Number(profile.target_protein) || 140;
+        const dynamicTdee = Number(currentPlateData.predicted_tdee) || Math.round(targetCals * 1.18);
+        const daysToGoal = currentPlateData.days_to_goal || 22;
+
+        const payload = {
+            friend_name: profile.name || "Friend",
+            meal_name: mealName,
+            calories: mealCals,
+            protein_g: mealProt,
+            days_to_goal: daysToGoal,
+            target_weight: targetWeightKg,
+            target_calories: targetCals,
+            target_protein: targetProt,
+            total_calories_today: totalCalsToday,
+            total_protein_today: totalProtToday,
+            total_carbs_today: totalCarbsToday,
+            total_fat_today: totalFatToday,
+            tdee: dynamicTdee,
+            goal: profile.goal || "maintain",
+            question_type: questionType,
+            custom_question: customQuestion || null
+        };
 
         const response = await fetch("/api/coach-debrief", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                friend_name: "Dave",
-                meal_name: mealName,
-                calories: Number(cals) || 600,
-                protein_g: Number(prot) || 45,
-                days_to_goal: currentPlateData.days_to_goal || 22,
-                target_weight: weightKg
-            })
+            body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
@@ -1714,36 +1800,66 @@ async function playStudioCoachDebrief() {
         const data = await response.json();
         if (transcriptBox) {
             transcriptBox.innerText = `"${data.text}"`;
-            transcriptBox.style.display = "block";
+        }
+        if (sourceEl) {
+            sourceEl.innerText = data.audio_base64 ? "ElevenLabs Neural Voice" : "Speech Synthesis Engine";
         }
 
         if (data.audio_base64) {
             const audio = new Audio("data:audio/mp3;base64," + data.audio_base64);
+            if (btnText) btnText.innerText = "Playing Audio Debrief...";
             audio.play();
-            btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" class="inline-block mr-1.5"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg><span>Playing Audio Coach...</span>`;
             audio.onended = () => {
-                btn.innerHTML = originalBtnContent;
-                btn.disabled = false;
+                if (btn) btn.disabled = false;
+                if (btnText) btnText.innerText = originalBtnText;
+            };
+            audio.onerror = () => {
+                if (btn) btn.disabled = false;
+                if (btnText) btnText.innerText = originalBtnText;
             };
         } else if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(data.text);
             utterance.rate = 1.05;
-            window.speechSynthesis.speak(utterance);
-            btn.innerHTML = `<span>Speaking (Browser Speech)...</span>`;
+            if (btnText) btnText.innerText = "Speaking (Browser Audio)...";
             utterance.onend = () => {
-                btn.innerHTML = originalBtnContent;
-                btn.disabled = false;
+                if (btn) btn.disabled = false;
+                if (btnText) btnText.innerText = originalBtnText;
             };
+            utterance.onerror = () => {
+                if (btn) btn.disabled = false;
+                if (btnText) btnText.innerText = originalBtnText;
+            };
+            window.speechSynthesis.speak(utterance);
+        } else {
+            if (btn) btn.disabled = false;
+            if (btnText) btnText.innerText = originalBtnText;
         }
     } catch (err) {
         console.error("Coach error:", err);
-        btn.innerHTML = originalBtnContent;
-        btn.disabled = false;
+        if (transcriptBox) {
+            transcriptBox.innerText = "Unable to reach voice coach service. Please ensure server is running.";
+        }
+        if (btn) btn.disabled = false;
+        if (btnText) btnText.innerText = originalBtnText;
     }
+}
+
+function submitCustomCoachQuestion() {
+    const input = document.getElementById("custom-coach-input");
+    const q = input ? input.value.trim() : "";
+    if (!q) return;
+    askCoachQuestion("custom", q);
+}
+
+function playStudioCoachDebrief() {
+    return askCoachQuestion("daily_debrief");
 }
 
 // Global Window Exports
 window.snapPhoto = snapPhoto;
+window.askCoachQuestion = askCoachQuestion;
+window.submitCustomCoachQuestion = submitCustomCoachQuestion;
 window.playStudioCoachDebrief = playStudioCoachDebrief;
 window.loadPreset = loadPreset;
 window.openScannerModal = openScannerModal;
