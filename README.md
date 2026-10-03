@@ -1,4 +1,4 @@
-# OpenCal AI 🥗
+# NutriScan AI 🥗
 ### The Open-Source, Private "Cal AI" with In-Context Metabolic Forecasting
 *A submission for the [Hacktoberfest Weekend Challenge: Build for a Friend](https://dev.to/challenges/hacktoberfest-weekend-2026-10-01)*
 
@@ -16,7 +16,7 @@
 
 ```markdown
 ---
-title: OpenCal AI: Visual Macro Tracking Meets In-Context Metabolic Forecasting
+title: NutriScan AI: Visual Macro Tracking Meets In-Context Metabolic Forecasting
 published: true
 tags: devchallenge, weekendchallenge, hf26challenge
 ---
@@ -28,9 +28,9 @@ Commercial food-tracking apps like **Cal AI** have gone viral for their sleek ca
 1. **Aggressive $35/month paywalls** and privacy traps (uploading intimate meal photos and biological health records to closed corporate clouds).
 2. **The "Static Math" Fallacy**: Every commercial app uses 1990s static BMR formulas (like Mifflin-St Jeor) that completely fail to account for real-world metabolic adaptation, non-exercise activity thermogenesis (NEAT), and water retention.
 
-I built **OpenCal AI** for my gym partner and close friend **Dave**. Dave has been balancing a demanding tech job with marathon training and fat loss. He was tired of paying subscription fees and frustrated that generic calorie calculators didn't reflect his real-world scale progress.
+I built **NutriScan AI** for my gym partner and close friend **Dave**. Dave has been balancing a demanding tech job with marathon training and fat loss. He was tired of paying subscription fees and frustrated that generic calorie calculators didn't reflect his real-world scale progress.
 
-**OpenCal AI** pairs open-weight **Google Gemma Vision** with verified **USDA nutritional grounding** and **Prior Labs' TabPFN**—the world’s leading tabular foundation model. Instead of relying on a generic formula, TabPFN ingests Dave's personal 30-day check-in log and uses in-context transformer learning to discover his **true dynamic daily burn rate (TDEE)** and project his exact 28-day weight trajectory.
+**NutriScan AI** pairs open-weight **Google Gemma Vision** with verified **USDA nutritional grounding** and **Prior Labs' TabPFN**—the world’s leading tabular foundation model. Instead of relying on a generic formula, TabPFN ingests Dave's personal 30-day check-in log and uses in-context transformer learning to discover his **true dynamic daily burn rate (TDEE)** and project his exact 28-day weight trajectory.
 
 ## Demo
 - **Live Deployed App:** [https://opencal-ai.onrender.com](https://opencal-ai.onrender.com)
@@ -47,7 +47,7 @@ The full source code is hosted on GitHub:
 👉 **[github.com/your-username/opencal-ai](https://github.com/your-username/opencal-ai)**
 
 ## How I Built It
-OpenCal AI is built on a clean 5-stage architecture:
+NutriScan AI is built on a clean 5-stage architecture:
 1. **Vision Perception Layer (Google Gemma 2):** Takes meal photos, identifies food items, and estimates portion weights in grams based on plate geometry.
 2. **Grounding Layer (USDA FoodData Central):** Eliminates LLM hallucination by deterministically computing macros from USDA reference tables.
 3. **Metabolic Engine Layer (Prior Labs TabPFN):** The tabular foundation model ingests the friend's daily log (`[calories, protein, carbs, fat, steps, sleep, weight]`). Using in-context learning in a single forward pass, it solves for dynamic TDEE and forecasts future weight points with confidence bounds.

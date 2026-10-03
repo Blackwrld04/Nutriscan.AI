@@ -28,17 +28,17 @@ init_tracing()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    logger.info("Initializing OpenCal AI Services...")
+    logger.info("Initializing NutriScan AI Services...")
     # Preload database and models
     _ = tabpfn_service.load_historical_data()
-    logger.info("OpenCal AI Ready.")
+    logger.info("NutriScan AI Ready.")
     yield
     # Shutdown
-    logger.info("Shutting down OpenCal AI...")
+    logger.info("Shutting down NutriScan AI...")
 
 
 app = FastAPI(
-    title="OpenCal AI",
+    title="NutriScan AI",
     description="The Open-Source, Private Cal AI with In-Context Metabolic Forecasting (Gemma + TabPFN + ElevenLabs)",
     version="1.0.0",
     lifespan=lifespan
@@ -63,7 +63,7 @@ async def root():
     index_file = static_dir / "index.html"
     if index_file.exists():
         return FileResponse(index_file)
-    return {"message": "OpenCal AI API is running. Access /docs for API documentation."}
+    return {"message": "NutriScan AI API is running. Access /docs for API documentation."}
 
 
 @app.get("/scan")
@@ -79,7 +79,7 @@ async def scan_page():
 async def health_check():
     return {
         "status": "healthy",
-        "service": "OpenCal AI",
+        "service": "NutriScan AI",
         "gemma_model": settings.GEMMA_MODEL,
         "tabpfn_engine": "active",
         "environment": settings.ENVIRONMENT

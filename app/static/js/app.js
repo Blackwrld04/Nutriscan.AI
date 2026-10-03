@@ -1,5 +1,5 @@
 /**
- * OpenCal AI - Frontend Application Logic
+ * NutriScan AI - Frontend Application Logic
  */
 
 let weightChart = null;

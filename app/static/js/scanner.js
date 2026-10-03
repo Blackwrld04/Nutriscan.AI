@@ -1,5 +1,5 @@
 /**
- * OpenCal AI - Dedicated Plate Scanner Studio Logic
+ * NutriScan AI - Dedicated Plate Scanner Studio Logic
  * Synchronized with Gemma Vision, USDA Grounding & TabPFN In-Context Engine
  */
 
