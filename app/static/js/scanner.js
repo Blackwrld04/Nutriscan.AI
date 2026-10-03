@@ -181,13 +181,10 @@ function resetScannerState() {
     // 7. Reset visual progress stepper to neutral
     resetScanningProgressIndicators();
 
-    // 8. Reset AR viewfinder tags to neutral
+    // 8. Clear AR viewfinder tags
     const arTags = document.getElementById("camera-ar-tags");
     if (arTags) {
-        arTags.innerHTML = `
-            <div class="ar-food-tag top-8 left-8 text-[10px]"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block mr-1"></span>Ready to Detect</div>
-            <div class="ar-food-tag top-8 right-8 text-[10px]"><span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse inline-block mr-1"></span>AI Vision Active</div>
-        `;
+        arTags.innerHTML = "";
     }
 
     // 9. Reset file input
@@ -1095,18 +1092,6 @@ function renderScanResult(data) {
             pill.className = "p-3 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-xs text-emerald-900 flex items-start gap-2";
             pill.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 flex-shrink-0 text-emerald-600"><polyline points="20 6 9 17 4 12"/></svg><span>${insight}</span>`;
             insightsBox.appendChild(pill);
-        });
-    }
-
-    // Update AR food tags to reflect the newly detected food items
-    const arTags = document.getElementById("camera-ar-tags");
-    if (arTags && data.items && data.items.length > 0) {
-        const item1 = data.items[0]?.name || "Verified Food";
-        const item2 = data.items[1]?.name || "";
-        arTags.innerHTML = `
-            <div class="ar-food-tag top-8 left-8 text-[10px]"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1"></span>${item1}</div>
-            ${item2 ? `<div class="ar-food-tag top-8 right-8 text-[10px]"><span class="w-1.5 h-1.5 rounded-full bg-sky-500 inline-block mr-1"></span>${item2}</div>` : ''}
-        `;
     }
 }
 
