@@ -425,6 +425,39 @@ header {
   position: relative;
 }
 
+.phone-screen.phone-screen-img-mode {
+  height: auto;
+  padding: 0;
+  display: block;
+  background: #ffffff;
+  border-radius: 36px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.phone-screen.phone-screen-img-mode .screen-notch {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72px;
+  height: 14px;
+  background: #0F172A;
+  border-radius: 8px;
+  margin: 0;
+  z-index: 10;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.mockup-screen-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 36px;
+  object-fit: cover;
+}
+
 .screen-notch {
   width: 90px;
   height: 18px;
@@ -2031,12 +2064,22 @@ footer {
 
   /* Phone Mockup */
   .phone-mockup {
-    max-width: 220px;
-    border-radius: 32px;
-    padding: 7px;
+    max-width: 250px;
+    border-radius: 36px;
+    padding: 8px;
+    margin: 0 auto;
   }
   .phone-screen {
-    border-radius: 26px;
+    border-radius: 28px;
+  }
+  .phone-screen.phone-screen-img-mode .screen-notch {
+    width: 56px;
+    height: 11px;
+    top: 5px;
+    border-radius: 6px;
+  }
+  .mockup-screen-img {
+    border-radius: 28px;
   }
 
   /* Technology badges - allow wrap */
