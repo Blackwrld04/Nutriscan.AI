@@ -912,10 +912,11 @@
             <span class="viewfinder-corner-bl"></span>
             <span class="viewfinder-corner-br"></span>
 
-            <!-- Cal AI AR Food Detection Tags -->
-            <div class="ar-food-tag top-8 left-8">Salmon</div>
-            <div class="ar-food-tag top-8 right-8">Asparagus</div>
-            <div class="ar-food-tag bottom-10 left-12">Sweet Potato</div>
+            <!-- Cal AI AR Food Detection Tags (Dynamic) -->
+            <div id="camera-ar-tags" class="pointer-events-none">
+              <div class="ar-food-tag top-8 left-8 text-[10px]"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block mr-1"></span>Ready to Detect</div>
+              <div class="ar-food-tag top-8 right-8 text-[10px]"><span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse inline-block mr-1"></span>AI Vision Active</div>
+            </div>
 
             <div class="absolute bottom-2 left-0 right-0 flex justify-center pointer-events-none">
               <span class="text-[10px] font-semibold text-white/90 bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm">Align Food Plate in Reticle</span>
@@ -1000,6 +1001,10 @@
             <div class="relative rounded-xl overflow-hidden max-h-36 bg-black/5 flex items-center justify-center">
               <div class="scan-laser" id="scan-laser-line"></div>
               <img id="plate-preview-img" src="" alt="Plate Preview" class="max-h-36 w-full object-contain rounded-lg">
+              <button type="button" onclick="retakePhoto()" class="absolute top-2 right-2 bg-slate-950/80 hover:bg-slate-950 text-white text-[10px] font-bold px-3 py-1.5 rounded-full backdrop-blur-md shadow-md flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer z-10" title="Retake or snap another food photo">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                <span>Retake Photo</span>
+              </button>
             </div>
             
             <div class="flex items-center justify-between mt-3 px-2">
@@ -1035,7 +1040,7 @@
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
                   <span>Verified Plate</span>
                 </div>
-                <h3 class="text-base font-black text-slate-900 tracking-tight leading-snug" id="studio-plate-title">Pan-Seared Salmon & Sweet Potato</h3>
+                <h3 class="text-base font-black text-slate-900 tracking-tight leading-snug" id="studio-plate-title">Ready to scan food plate</h3>
               </div>
 
               <!-- Portion Stepper [ - 1 + ] -->
@@ -1054,7 +1059,7 @@
                 </div>
                 <div>
                   <div class="text-[10px] font-bold text-slate-400 uppercase">Total Calories</div>
-                  <div class="text-2xl font-black text-slate-900 tracking-tight"><span id="macro-calories">645</span> <span class="text-xs font-medium text-slate-400">kcal</span></div>
+                  <div class="text-2xl font-black text-slate-900 tracking-tight"><span id="macro-calories">--</span> <span class="text-xs font-medium text-slate-400">kcal</span></div>
                 </div>
               </div>
               <span class="text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full border border-emerald-200">USDA Grounded</span>
@@ -1067,21 +1072,21 @@
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
                   <span>Protein</span>
                 </div>
-                <div class="text-base font-black text-slate-900" id="macro-protein">48g</div>
+                <div class="text-base font-black text-slate-900" id="macro-protein">--g</div>
               </div>
               <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-2.5 text-center">
                 <div class="flex items-center justify-center gap-1 text-[10px] font-bold text-amber-600 mb-0.5">
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
                   <span>Carbs</span>
                 </div>
-                <div class="text-base font-black text-slate-900" id="macro-carbs">58g</div>
+                <div class="text-base font-black text-slate-900" id="macro-carbs">--g</div>
               </div>
               <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-2.5 text-center">
                 <div class="flex items-center justify-center gap-1 text-[10px] font-bold text-sky-600 mb-0.5">
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
                   <span>Fats</span>
                 </div>
-                <div class="text-base font-black text-slate-900" id="macro-fat">22g</div>
+                <div class="text-base font-black text-slate-900" id="macro-fat">--g</div>
               </div>
             </div>
 
@@ -1097,15 +1102,15 @@
             <!-- Clinical & Health Insights -->
             <div class="space-y-2" id="studio-insights-container"></div>
 
-            <!-- Two Action Buttons (Cal AI Screenshot 3: Fix Results & Done) -->
+            <!-- Action Buttons: Retake Photo & Done / Log -->
             <div class="grid grid-cols-2 gap-2 pt-2">
-              <button type="button" class="w-full bg-white hover:bg-slate-50 text-slate-800 font-bold py-3.5 px-4 rounded-full border border-slate-300 text-xs flex items-center justify-center gap-1.5 transition-all" onclick="showScanRetry()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                <span>Fix Results</span>
+              <button type="button" class="w-full bg-white hover:bg-slate-50 text-slate-800 font-bold py-3.5 px-4 rounded-full border border-slate-300 text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-[0.98]" onclick="retakePhoto()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <span>Retake Photo</span>
               </button>
               <button type="button" class="w-full bg-slate-950 hover:bg-slate-800 text-white font-bold py-3.5 px-4 rounded-full text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-slate-950/20 transition-all active:scale-[0.98]" onclick="confirmPlateAndLog()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>Done</span>
+                <span>Done · Log Meal</span>
               </button>
             </div>
 
@@ -1279,6 +1284,6 @@
   </script>
 
   <!-- Core Scanner & Home Logic -->
-  <script src="/static/js/scanner.js"></script>
+  <script src="/static/js/scanner.js?v=2.2.0"></script>
 </body>
 </html>

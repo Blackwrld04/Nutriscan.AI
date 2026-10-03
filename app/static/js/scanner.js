@@ -120,11 +120,176 @@ function showScanResultsContainer() {
     }
 }
 
-function showScanRetry() {
+function resetScannerState() {
+    // 1. Hide scan results container
     const container = document.getElementById("scan-results-container");
     if (container) {
         container.classList.add("hidden");
     }
+
+    // 2. Clear image preview
+    const previewImg = document.getElementById("plate-preview-img");
+    if (previewImg) {
+        previewImg.src = "";
+    }
+
+    // 3. Reset title and macros to neutral placeholders
+    const titleEl = document.getElementById("studio-plate-title");
+    if (titleEl) {
+        titleEl.innerText = "Ready to scan food plate";
+    }
+
+    const calEl = document.getElementById("macro-calories");
+    const protEl = document.getElementById("macro-protein");
+    const carbEl = document.getElementById("macro-carbs");
+    const fatEl = document.getElementById("macro-fat");
+    if (calEl) calEl.innerText = "--";
+    if (protEl) protEl.innerText = "--g";
+    if (carbEl) carbEl.innerText = "--g";
+    if (fatEl) fatEl.innerText = "--g";
+
+    // 4. Clear food items table
+    const tableContainer = document.getElementById("studio-items-table");
+    if (tableContainer) {
+        tableContainer.innerHTML = '<div class="py-3 text-center text-slate-400 text-xs">Waiting for food plate scan...</div>';
+    }
+
+    // 5. Clear insights
+    const insightsBox = document.getElementById("studio-insights-container");
+    if (insightsBox) {
+        insightsBox.innerHTML = "";
+    }
+
+    // 6. Reset portion multiplier and stored plate data
+    currentPortionMultiplier = 1.0;
+    const stepperVal = document.getElementById("portion-multiplier-val");
+    if (stepperVal) stepperVal.innerText = "1";
+
+    currentPlateData = {
+        meal_name: "",
+        calories: 0,
+        protein_g: 0,
+        carbs_g: 0,
+        fat_g: 0,
+        fiber_g: 0,
+        days_to_goal: 22,
+        target_weight: 75.0,
+        daily_budget: 2100
+    };
+    basePlateNutrition = { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0, fiber_g: 0 };
+
+    // 7. Reset visual progress stepper to neutral
+    resetScanningProgressIndicators();
+
+    // 8. Reset AR viewfinder tags to neutral
+    const arTags = document.getElementById("camera-ar-tags");
+    if (arTags) {
+        arTags.innerHTML = `
+            <div class="ar-food-tag top-8 left-8 text-[10px]"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block mr-1"></span>Ready to Detect</div>
+            <div class="ar-food-tag top-8 right-8 text-[10px]"><span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse inline-block mr-1"></span>AI Vision Active</div>
+        `;
+    }
+
+    // 9. Reset file input
+    const fileInput = document.getElementById("studio-file-input");
+    if (fileInput) fileInput.value = "";
+}
+
+function resetScanningProgressIndicators() {
+    const s1 = document.getElementById("step-1");
+    const s2 = document.getElementById("step-2");
+    const s3 = document.getElementById("step-3");
+    const statusText = document.getElementById("scanner-status-text");
+
+    if (s1) s1.className = "flex items-center gap-1.5 opacity-60";
+    if (s2) s2.className = "flex items-center gap-1.5 opacity-60";
+    if (s3) s3.className = "flex items-center gap-1.5 opacity-60";
+    if (statusText) statusText.innerHTML = '<span>Ready to analyze food plate</span>';
+}
+
+function prepareScanLoadingState(previewSrc) {
+    showScanResultsContainer();
+
+    // Set freshly captured or uploaded photo preview
+    const previewImg = document.getElementById("plate-preview-img");
+    if (previewImg && previewSrc) {
+        previewImg.src = previewSrc;
+    }
+
+    // Reset currentPlateData and basePlateNutrition so stale data is never carried over
+    currentPlateData = {
+        meal_name: "Analyzing plate...",
+        calories: 0,
+        protein_g: 0,
+        carbs_g: 0,
+        fat_g: 0,
+        fiber_g: 0,
+        days_to_goal: 22,
+        target_weight: 75.0,
+        daily_budget: 2100
+    };
+    basePlateNutrition = { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0, fiber_g: 0 };
+    currentPortionMultiplier = 1.0;
+    const stepperVal = document.getElementById("portion-multiplier-val");
+    if (stepperVal) stepperVal.innerText = "1";
+
+    // Show analyzing state on title with animated spinner
+    const titleEl = document.getElementById("studio-plate-title");
+    if (titleEl) {
+        titleEl.innerHTML = '<span class="inline-flex items-center gap-2 text-slate-800 animate-pulse"><svg class="animate-spin w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"/><path fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" class="opacity-75"/></svg>Analyzing new food plate...</span>';
+    }
+
+    // Clear old numbers to "--"
+    const calEl = document.getElementById("macro-calories");
+    const protEl = document.getElementById("macro-protein");
+    const carbEl = document.getElementById("macro-carbs");
+    const fatEl = document.getElementById("macro-fat");
+    if (calEl) calEl.innerText = "--";
+    if (protEl) protEl.innerText = "--g";
+    if (carbEl) carbEl.innerText = "--g";
+    if (fatEl) fatEl.innerText = "--g";
+
+    // Show loading skeleton in ingredients table
+    const tableContainer = document.getElementById("studio-items-table");
+    if (tableContainer) {
+        tableContainer.innerHTML = `
+            <div class="py-4 text-center text-xs font-semibold text-slate-400 space-y-2">
+                <div class="h-3 bg-slate-100 rounded-full w-3/4 mx-auto animate-pulse"></div>
+                <div class="h-3 bg-slate-100 rounded-full w-1/2 mx-auto animate-pulse"></div>
+                <div class="text-[11px] text-slate-400 mt-2">Identifying food ingredients & calculating grams...</div>
+            </div>
+        `;
+    }
+
+    // Clear old insights
+    const insightsBox = document.getElementById("studio-insights-container");
+    if (insightsBox) {
+        insightsBox.innerHTML = "";
+    }
+
+    // Set progress to step 1
+    setScanningProgress(1);
+}
+
+function retakePhoto() {
+    resetScannerState();
+    const modal = document.getElementById("scanner-modal");
+    if (modal) {
+        const modalBody = modal.querySelector(".overflow-y-auto");
+        if (modalBody) {
+            modalBody.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    }
+    const cameraTabBtn = document.querySelector('.studio-tab-btn[data-tab="camera"]');
+    if (cameraTabBtn) {
+        cameraTabBtn.click();
+    } else {
+        startCamera();
+    }
+}
+
+function showScanRetry() {
+    retakePhoto();
 }
 
 // ========================================================
@@ -446,10 +611,15 @@ function updateHomeScreen() {
 // MODAL CONTROLLERS (SCANNER & SETTINGS)
 // ========================================================
 function openScannerModal() {
+    resetScannerState();
     const modal = document.getElementById("scanner-modal");
     if (modal) {
         modal.classList.remove("hidden");
         modal.classList.add("flex");
+        const modalBody = modal.querySelector(".overflow-y-auto");
+        if (modalBody) {
+            modalBody.scrollTop = 0;
+        }
     }
     const cameraTabBtn = document.querySelector('.studio-tab-btn[data-tab="camera"]');
     if (cameraTabBtn && cameraTabBtn.classList.contains("active")) {
@@ -458,6 +628,7 @@ function openScannerModal() {
 }
 
 function closeScannerModal() {
+    resetScannerState();
     const modal = document.getElementById("scanner-modal");
     if (modal) {
         modal.classList.add("hidden");
@@ -543,8 +714,9 @@ function confirmPlateAndLog() {
         // Update home screen metrics, rings, and recently uploaded list
         updateHomeScreen();
 
-        // Close scanner modal
+        // Close scanner modal and completely reset scanner state
         closeScannerModal();
+        resetScannerState();
 
         // If on history tab, refresh history
         if (typeof renderHistoryView === "function") {
@@ -559,6 +731,7 @@ function confirmPlateAndLog() {
 // CORE APP LIFECYCLE
 // ========================================================
 document.addEventListener("DOMContentLoaded", () => {
+    resetScannerState();
     seedInitialDataIfEmpty();
     initTabs();
     initDropzone();
@@ -588,6 +761,9 @@ function initTabs() {
             btn.classList.add("active");
             const activePanel = document.getElementById(`panel-${targetTab}`);
             if (activePanel) activePanel.classList.add("active");
+
+            // Reset any previous scan results when switching tabs
+            resetScannerState();
 
             // Handle Camera Lifecycle
             if (targetTab === "camera") {
@@ -631,10 +807,16 @@ function stopCamera() {
     }
 }
 
+let simulatedPresetIndex = 0;
+const SIMULATED_PRESETS = ["chicken", "steak", "salmon"];
+
 function snapPhoto() {
     const video = document.getElementById("camera-video");
     if (!video || !cameraStream) {
-        loadPreset("salmon");
+        // If camera stream is unavailable, cycle through presets so it never stays stuck on the previous meal
+        const nextPreset = SIMULATED_PRESETS[simulatedPresetIndex % SIMULATED_PRESETS.length];
+        simulatedPresetIndex++;
+        loadPreset(nextPreset);
         return;
     }
 
@@ -646,11 +828,12 @@ function snapPhoto() {
 
     canvas.toBlob((blob) => {
         if (!blob) return;
-        const file = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
+        const timestamp = Date.now();
+        const file = new File([blob], `camera_capture_${timestamp}.jpg`, { type: "image/jpeg" });
+        const blobUrl = URL.createObjectURL(blob);
         
-        showScanResultsContainer();
-        const previewImg = document.getElementById("plate-preview-img");
-        if (previewImg) previewImg.src = URL.createObjectURL(blob);
+        // Immediately wipe previous data and set up clean analyzing state with the new capture!
+        prepareScanLoadingState(blobUrl);
 
         handlePlateUpload(file);
     }, "image/jpeg", 0.92);
@@ -690,16 +873,13 @@ function initDropzone() {
 }
 
 function processSelectedFile(file) {
-    showScanResultsContainer();
-    const previewImg = document.getElementById("plate-preview-img");
-    if (previewImg) {
-        previewImg.src = URL.createObjectURL(file);
-    }
+    const blobUrl = URL.createObjectURL(file);
+    // Immediately wipe previous data and set up clean analyzing state with the uploaded image!
+    prepareScanLoadingState(blobUrl);
     handlePlateUpload(file);
 }
 
 async function handlePlateUpload(file) {
-    showScanResultsContainer();
     setScanningProgress(1); // Gemma vision
     const formData = new FormData();
     formData.append("file", file);
@@ -724,7 +904,9 @@ async function handlePlateUpload(file) {
         }, 300);
     } catch (err) {
         console.warn("API request fallback to preset:", err);
-        loadPreset("salmon");
+        const fallbackPreset = SIMULATED_PRESETS[simulatedPresetIndex % SIMULATED_PRESETS.length];
+        simulatedPresetIndex++;
+        loadPreset(fallbackPreset);
     }
 }
 
@@ -740,19 +922,18 @@ function initPresets() {
 }
 
 function loadPreset(type) {
-    showScanResultsContainer();
-
-    const previewImg = document.getElementById("plate-preview-img");
-
+    let previewSrc = "";
     if (type === "chicken") {
-        if (previewImg) previewImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%23d97706' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3C/svg%3E";
+        previewSrc = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%23d97706' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3C/svg%3E";
     } else if (type === "steak") {
-        if (previewImg) previewImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%23e11d48' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Cpath d='M8 12h8'/%3E%3C/svg%3E";
+        previewSrc = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%23e11d48' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Cpath d='M8 12h8'/%3E%3C/svg%3E";
     } else {
-        if (previewImg) previewImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Cpath d='M19 12a7 7 0 0 0-14 0'/%3E%3Ccircle cx='12' cy='5' r='1'/%3E%3C/svg%3E";
+        previewSrc = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z'/%3E%3Cpath d='M19 12a7 7 0 0 0-14 0'/%3E%3Ccircle cx='12' cy='5' r='1'/%3E%3C/svg%3E";
     }
 
-    setScanningProgress(1);
+    // Immediately clear old meal data and show clean loading state
+    prepareScanLoadingState(previewSrc);
+
     setTimeout(() => setScanningProgress(2), 300);
 
     setTimeout(() => {
@@ -915,6 +1096,17 @@ function renderScanResult(data) {
             pill.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 flex-shrink-0 text-emerald-600"><polyline points="20 6 9 17 4 12"/></svg><span>${insight}</span>`;
             insightsBox.appendChild(pill);
         });
+    }
+
+    // Update AR food tags to reflect the newly detected food items
+    const arTags = document.getElementById("camera-ar-tags");
+    if (arTags && data.items && data.items.length > 0) {
+        const item1 = data.items[0]?.name || "Verified Food";
+        const item2 = data.items[1]?.name || "";
+        arTags.innerHTML = `
+            <div class="ar-food-tag top-8 left-8 text-[10px]"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1"></span>${item1}</div>
+            ${item2 ? `<div class="ar-food-tag top-8 right-8 text-[10px]"><span class="w-1.5 h-1.5 rounded-full bg-sky-500 inline-block mr-1"></span>${item2}</div>` : ''}
+        `;
     }
 }
 
@@ -1150,6 +1342,7 @@ window.closeSettingsModal = closeSettingsModal;
 window.adjustPortion = adjustPortion;
 window.confirmPlateAndLog = confirmPlateAndLog;
 window.showScanRetry = showScanRetry;
+window.retakePhoto = retakePhoto;
 window.selectSex = selectSex;
 window.selectGoal = selectGoal;
 window.selectActivity = selectActivity;
