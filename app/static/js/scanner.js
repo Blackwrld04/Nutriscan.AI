@@ -290,12 +290,24 @@ function finishOnboardingAndEnterApp() {
 
 // Navigation Tabs
 function switchAppTab(tabName) {
+    if (tabName === "progress") tabName = "trajectory";
+    if (tabName === "ai" || tabName === "al") tabName = "coach";
+
     document.querySelectorAll(".bottom-nav-item").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.nav === tabName);
+        const isActive = btn.dataset.nav === tabName;
+        btn.classList.toggle("active", isActive);
+        if (isActive) {
+            btn.classList.remove("text-slate-400");
+            btn.classList.add("text-slate-950", "font-bold");
+        } else {
+            btn.classList.remove("text-slate-950", "font-bold");
+            btn.classList.add("text-slate-400");
+        }
     });
 
     document.querySelectorAll(".app-view-tab").forEach(tab => {
-        if (tab.id === `view-${tabName}`) {
+        const isMatch = tab.id === `view-${tabName}` || (tabName === "trajectory" && tab.id === "view-progress");
+        if (isMatch) {
             tab.classList.remove("hidden");
             tab.classList.add("block");
         } else {
@@ -304,8 +316,12 @@ function switchAppTab(tabName) {
         }
     });
 
-    if (tabName === "progress" && weightChart) {
+    if (tabName === "trajectory" && weightChart) {
         setTimeout(() => weightChart.resize(), 60);
+    }
+
+    if (tabName === "history") {
+        renderFullHistoryTab();
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -413,6 +429,7 @@ function refreshHomeScreen() {
 
     // Render Recently Uploaded List (Cal AI Screenshot 2)
     renderRecentlyUploadedList(history);
+    renderFullHistoryTab(history);
 }
 
 function renderRecentlyUploadedList(history) {
@@ -486,13 +503,100 @@ function renderRecentlyUploadedList(history) {
     });
 }
 
+// Dedicated Full History Tab Renderer
+function renderFullHistoryTab(historyData) {
+    const history = historyData || JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
+    const container = document.getElementById("history-items-list");
+    const emptyState = document.getElementById("history-empty-state");
+    const totalMealsEl = document.getElementById("history-total-meals");
+    const totalCalsEl = document.getElementById("history-total-calories");
+    const totalProteinEl = document.getElementById("history-total-protein");
+
+    if (!container) return;
+
+    let totalCals = 0;
+    let totalProt = 0;
+
+    history.forEach(item => {
+        totalCals += (item.calories || 0);
+        totalProt += (item.protein_g || 0);
+    });
+
+    if (totalMealsEl) totalMealsEl.innerText = `${history.length}`;
+    if (totalCalsEl) totalCalsEl.innerText = `${Math.round(totalCals)} kcal`;
+    if (totalProteinEl) totalProteinEl.innerText = `${Math.round(totalProt)}g`;
+
+    if (history.length === 0) {
+        container.innerHTML = "";
+        if (emptyState) emptyState.classList.remove("hidden");
+        return;
+    }
+
+    if (emptyState) emptyState.classList.add("hidden");
+    container.innerHTML = "";
+
+    [...history].reverse().forEach((item, index) => {
+        const timeStr = item.date ? new Date(item.date).toLocaleDateString([], { month: "short", day: "numeric" }) + " · " + new Date(item.date).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "Today";
+        const realIndex = history.length - 1 - index;
+
+        const card = document.createElement("div");
+        card.className = "p-4 bg-white rounded-3xl border border-slate-200/90 shadow-xs space-y-3";
+        card.innerHTML = `
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-14 h-14 rounded-2xl bg-slate-100 overflow-hidden flex items-center justify-center flex-shrink-0 border border-slate-100">
+                        ${item.image ? `<img src="${item.image}" class="w-full h-full object-cover">` : `
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.8">
+                                <path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/>
+                                <path d="M19 12a7 7 0 0 0-14 0"/>
+                                <circle cx="12" cy="5" r="1"/>
+                            </svg>
+                        `}
+                    </div>
+                    <div>
+                        <div class="font-black text-slate-900 text-sm tracking-tight">${item.meal_name}</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">${timeStr}</div>
+                        <div class="inline-flex items-center gap-1 text-[9px] font-extrabold px-2 py-0.5 mt-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            USDA FoodData Grounded (±15 kcal)
+                        </div>
+                    </div>
+                </div>
+                <button onclick="deleteMealItem(${realIndex})" class="p-2 text-slate-300 hover:text-rose-600 transition-colors" title="Delete meal from history">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+            </div>
+
+            <!-- Macros Breakdown Bar -->
+            <div class="grid grid-cols-4 gap-2 pt-2 border-t border-slate-100 text-center">
+                <div class="p-2 bg-slate-50 rounded-xl">
+                    <div class="text-[9px] font-bold text-slate-400 uppercase">Calories</div>
+                    <div class="text-xs font-black text-slate-900 mt-0.5">${Math.round(item.calories)}</div>
+                </div>
+                <div class="p-2 bg-rose-50/60 rounded-xl">
+                    <div class="text-[9px] font-bold text-rose-600 uppercase">Protein</div>
+                    <div class="text-xs font-black text-rose-700 mt-0.5">${Math.round(item.protein_g)}g</div>
+                </div>
+                <div class="p-2 bg-amber-50/60 rounded-xl">
+                    <div class="text-[9px] font-bold text-amber-600 uppercase">Carbs</div>
+                    <div class="text-xs font-black text-amber-700 mt-0.5">${Math.round(item.carbs_g)}g</div>
+                </div>
+                <div class="p-2 bg-sky-50/60 rounded-xl">
+                    <div class="text-[9px] font-bold text-sky-600 uppercase">Fat</div>
+                    <div class="text-xs font-black text-sky-700 mt-0.5">${Math.round(item.fat_g)}g</div>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
 function deleteMealItem(index) {
     try {
         const history = JSON.parse(localStorage.getItem("opencal_meal_history") || "[]");
         history.splice(index, 1);
         localStorage.setItem("opencal_meal_history", JSON.stringify(history));
         refreshHomeScreen();
-        showToast("Meal removed from today's ledger.");
+        showToast("Meal removed from ledger.");
     } catch (e) {
         console.error("Delete error:", e);
     }
@@ -926,6 +1030,7 @@ function capitalize(s) {
 
 // Global Exported Handlers
 window.switchAppTab = switchAppTab;
+window.switchMainTab = switchAppTab;
 window.openOnboardingModal = openOnboardingModal;
 window.closeOnboardingModal = closeOnboardingModal;
 window.setWeightUnit = setWeightUnit;
@@ -941,4 +1046,5 @@ window.fixResultsAction = fixResultsAction;
 window.commitPlateToLog = commitPlateToLog;
 window.deleteMealItem = deleteMealItem;
 window.clearAllHistory = clearAllHistory;
+window.renderFullHistoryTab = renderFullHistoryTab;
 window.playStudioCoachDebrief = playStudioCoachDebrief;
