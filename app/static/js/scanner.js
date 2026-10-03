@@ -1180,12 +1180,16 @@ async function loadMetabolicForecast(caloriesTarget) {
         if (!response.ok) throw new Error("Forecast request failed");
         const data = await response.json();
 
-        // Update TDEE cards
+        // Update TDEE cards (both mobile and widescreen desktop IDs)
         const dynamicEl = document.getElementById("dynamic-tdee-val");
         const staticEl = document.getElementById("static-tdee-val");
+        const dynamicDesktopEl = document.getElementById("dynamic-tdee-val-desktop");
+        const staticDesktopEl = document.getElementById("static-tdee-val-desktop");
 
         if (dynamicEl) dynamicEl.innerText = data.insights.dynamic_tdee_kcal + " kcal";
         if (staticEl) staticEl.innerText = data.insights.static_formula_tdee_kcal + " kcal";
+        if (dynamicDesktopEl) dynamicDesktopEl.innerText = data.insights.dynamic_tdee_kcal + " kcal";
+        if (staticDesktopEl) staticDesktopEl.innerText = data.insights.static_formula_tdee_kcal + " kcal";
 
         currentPlateData.days_to_goal = data.insights.projected_days_to_goal;
         currentPlateData.daily_budget = parseInt(caloriesTarget);

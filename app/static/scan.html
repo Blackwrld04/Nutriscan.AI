@@ -179,12 +179,119 @@
     .dashboard-fasting-card {
       padding: 1.125rem 1.25rem !important; /* 18px top/bottom, 20px left/right */
     }
+
+    /* Mobile-only & Desktop-only layout controls (DO NOT distort mobile) */
+    @media (max-width: 1023px) {
+      .mobile-hide-header {
+        display: none !important;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      #app-top-header {
+        display: flex !important;
+      }
+      #app-bottom-nav {
+        display: none !important;
+      }
+      #home-fab-container {
+        display: none !important;
+      }
+
+      /* Desktop Dashboard 2-Column Grid Layout */
+      .desktop-dashboard-container {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.95fr) !important;
+        gap: 1.5rem !important;
+        align-items: start !important;
+      }
+      .desktop-area-title {
+        grid-column: 1 / -1 !important;
+      }
+      .desktop-area-calendar {
+        grid-column: 1 / -1 !important;
+        margin-bottom: 0.25rem !important;
+      }
+      .desktop-area-hero {
+        grid-column: 1 !important;
+      }
+      .desktop-area-macros {
+        grid-column: 1 !important;
+      }
+      .desktop-area-meals {
+        grid-column: 1 !important;
+      }
+      .desktop-area-water {
+        grid-column: 2 !important;
+        grid-row: 3 !important;
+      }
+      .desktop-area-fasting {
+        grid-column: 2 !important;
+        grid-row: 4 !important;
+      }
+      .desktop-area-sidebar-extra {
+        grid-column: 2 !important;
+        grid-row: 5 !important;
+        display: block !important;
+      }
+
+      /* Desktop Trajectory Studio Layout */
+      .desktop-trajectory-container {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.9fr) !important;
+        gap: 1.5rem !important;
+        align-items: start !important;
+      }
+    }
   </style>
 </head>
-<body class="min-h-screen text-slate-800 antialiased pb-28 md:pb-12 bg-slate-50/50">
+<body class="min-h-screen text-slate-800 antialiased pb-28 lg:pb-8 bg-slate-50/60">
 
-  <!-- Mobile-First App Wrapper -->
-  <div class="max-w-2xl mx-auto min-h-screen bg-white md:my-6 md:rounded-[36px] md:shadow-2xl md:border md:border-slate-200/80 overflow-hidden flex flex-col relative">
+  <!-- Responsive App Wrapper: Native Mobile Screen (<1024px), Expansive Dashboard on Desktop (>=1024px) -->
+  <div class="w-full max-w-2xl lg:max-w-7xl mx-auto min-h-screen bg-white lg:my-6 lg:rounded-[32px] lg:shadow-xl lg:border lg:border-slate-200/80 overflow-hidden flex flex-col relative transition-all">
+
+    <!-- Universal Responsive Top Header -->
+    <header id="app-top-header" class="pt-4 lg:pt-5 px-5 lg:px-8 pb-3.5 flex items-center justify-between bg-white border-b border-slate-100 sticky top-0 z-30 transition-all">
+      <a href="/" class="flex items-center gap-2.5 no-underline shrink-0" title="Back to NutriScan.AI Home">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-xs">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+          </svg>
+        </div>
+        <span class="text-lg font-black text-slate-900 tracking-tight">NutriScan<span class="text-emerald-600 font-bold">.AI</span></span>
+      </a>
+
+      <!-- Desktop Navigation Tabs (Visible only on lg:flex, hidden on mobile) -->
+      <nav class="hidden lg:flex items-center gap-1.5 bg-slate-100/90 p-1.5 rounded-full border border-slate-200/80" id="desktop-top-nav">
+        <button type="button" onclick="switchMainTab('home')" class="desktop-nav-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all text-emerald-800 bg-white shadow-xs" data-dnav="home">Home</button>
+        <button type="button" onclick="switchMainTab('trajectory')" class="desktop-nav-btn px-4 py-1.5 rounded-full text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all" data-dnav="trajectory">Trajectory</button>
+        <button type="button" onclick="switchMainTab('coach')" class="desktop-nav-btn px-4 py-1.5 rounded-full text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all" data-dnav="coach">Voice Coach</button>
+        <button type="button" onclick="switchMainTab('history')" class="desktop-nav-btn px-4 py-1.5 rounded-full text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all" data-dnav="history">History</button>
+      </nav>
+
+      <div class="flex items-center gap-2.5 shrink-0">
+        <!-- Desktop "Scan Plate" Action Button (Visible only on lg:inline-flex, hidden on mobile) -->
+        <button type="button" onclick="openScannerModal()" class="hidden lg:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs shadow-md shadow-emerald-700/20 transition-all active:scale-95" title="Scan or Upload Meal Plate">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+          <span>Scan Plate</span>
+        </button>
+
+        <!-- Streak Flame Badge -->
+        <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-black shadow-2xs">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" class="text-emerald-600"><path d="M12 2c.5 3 2 4.5 4 6 2.5 1.9 4 4.5 4 8a8 8 0 1 1-16 0c0-3.5 1.5-6.1 4-8 2-1.5 3.5-3 4-6Z"/></svg>
+          <span>21 Days</span>
+        </div>
+
+        <!-- Settings Gear Button in Header -->
+        <button type="button" class="w-8 h-8 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 text-emerald-800 flex items-center justify-center transition-colors" onclick="openSettingsModal()" title="Settings & Profile">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
 
     <!-- Dynamic Multi-Tab Content Container -->
     <main class="flex-1 flex flex-col">
@@ -373,40 +480,10 @@
       <!-- ========================================== -->
       <section id="view-home" class="app-view-section block animate-fadeIn relative pb-8">
         
-        <!-- Home Header with Logo, Streak, and Settings Button (NOT in nav bar) -->
-        <!-- Home Header with Logo, Streak, and Settings Button (NOT in nav bar) -->
-        <header class="pt-6 px-5 pb-3 flex items-center justify-between bg-white border-b border-slate-100 sticky top-0 z-30">
-          <a href="/" class="flex items-center gap-2.5 no-underline" title="Back to NutriScan.AI Home">
-            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-xs">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
-                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
-                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
-              </svg>
-            </div>
-            <span class="text-lg font-black text-slate-900 tracking-tight">NutriScan<span class="text-emerald-600 font-bold">.AI</span></span>
-          </a>
-
-          <div class="flex items-center gap-2">
-            <!-- Streak Flame Badge (Matching Trajectory / Coach emerald pill style) -->
-            <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-black shadow-2xs">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" class="text-emerald-600"><path d="M12 2c.5 3 2 4.5 4 6 2.5 1.9 4 4.5 4 8a8 8 0 1 1-16 0c0-3.5 1.5-6.1 4-8 2-1.5 3.5-3 4-6Z"/></svg>
-              <span>21 Days</span>
-            </div>
-
-            <!-- Settings Gear Button in Header (User specified: on home page, not nav bar) -->
-            <button type="button" class="w-8 h-8 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 text-emerald-800 flex items-center justify-center transition-colors" onclick="openSettingsModal()" title="Settings & Profile">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
-              </svg>
-            </button>
-          </div>
-        </header>
-
-        <div class="px-5 pt-4 space-y-4">
+        <div class="px-5 lg:px-8 pt-4 lg:pt-6 pb-8 space-y-4 lg:space-y-0 desktop-dashboard-container">
           
           <!-- Home Section Title matching Trajectory and Coach header style -->
-          <div class="flex items-center justify-between mb-1">
+          <div class="desktop-area-title flex items-center justify-between mb-1">
             <div>
               <div class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">Daily Nutrition</div>
               <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Today's Overview</h1>
@@ -414,7 +491,7 @@
           </div>
 
           <!-- Week Calendar Strip (dynamically populated with current week) -->
-          <div class="flex items-center justify-between bg-white p-2.5 rounded-2xl border border-slate-200/80 shadow-xs text-center" id="week-calendar-strip">
+          <div class="desktop-area-calendar flex items-center justify-between bg-white p-2.5 rounded-2xl border border-slate-200/80 shadow-xs text-center" id="week-calendar-strip">
           </div>
           <script>
             // Immediately build calendar strip inline so it's always visible
@@ -448,7 +525,7 @@
           </script>
 
           <!-- Hero Calories Eaten Card with Circular Progress Ring (Cal AI Screenshot 2) -->
-          <div class="dashboard-hero-card bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs relative overflow-hidden flex items-center justify-between">
+          <div class="desktop-area-hero dashboard-hero-card bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs relative overflow-hidden flex items-center justify-between">
             <div class="space-y-1">
               <div class="flex items-baseline gap-1.5">
                 <span class="text-4xl font-black text-slate-900 tracking-tight leading-none" id="home-cal-consumed">955</span>
@@ -478,7 +555,7 @@
           </div>
 
           <!-- 3 Macro Cards (Protein, Carbs, Fat - Cal AI Screenshot 2 Layout) -->
-          <div class="grid grid-cols-3 gap-3">
+          <div class="desktop-area-macros grid grid-cols-3 gap-3">
             <!-- Protein Card -->
             <div class="dashboard-macro-card bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs flex flex-col items-center justify-between text-center relative overflow-hidden group hover:border-slate-300 transition-all">
               <div class="w-full text-left mb-2 pl-0.5">
@@ -559,7 +636,7 @@
           <!-- ============================================== -->
           <!-- HEALTH SECTION 1: WATER & HYDRATION TRACKER    -->
           <!-- ============================================== -->
-          <div class="dashboard-water-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+          <div class="desktop-area-water dashboard-water-card bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
@@ -599,7 +676,7 @@
           <!-- ============================================== -->
           <!-- HEALTH SECTION 4: INTERMITTENT FASTING WINDOW  -->
           <!-- ============================================== -->
-          <div class="dashboard-fasting-card p-4 sm:p-5 bg-white border border-slate-200/80 rounded-2xl flex items-center justify-between shadow-xs">
+          <div class="desktop-area-fasting dashboard-fasting-card p-4 sm:p-5 bg-white border border-slate-200/80 rounded-2xl flex items-center justify-between shadow-xs">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
@@ -620,7 +697,7 @@
           <!-- ============================================== -->
           <!-- RECENTLY UPLOADED MEALS (Cal AI Screenshot 2)  -->
           <!-- ============================================== -->
-          <div class="mt-6">
+          <div class="desktop-area-meals mt-6 lg:mt-0">
             <div class="flex items-center justify-between mb-3">
               <h3 class="text-sm font-black text-slate-900 tracking-tight">Recently uploaded</h3>
               <button type="button" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors" onclick="switchMainTab('history')">View all</button>
@@ -635,7 +712,36 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
               </div>
               <p class="text-xs font-bold text-slate-700">No meals logged yet today</p>
-              <p class="text-[11px] text-slate-400 mt-0.5 max-w-xs mx-auto">Tap the floating scan button below to take a photo or log your food plate.</p>
+              <p class="text-[11px] text-slate-400 mt-0.5 max-w-xs mx-auto">Tap the scan button or launch camera to log your meal plate.</p>
+            </div>
+          </div>
+
+          <!-- Desktop Sidebar Companion Card: Quick Scan Plate & In-Context Projections (Desktop Only) -->
+          <div class="desktop-area-sidebar-extra hidden lg:block bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-5 border border-slate-700/60 shadow-lg relative overflow-hidden">
+            <div class="relative z-10">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">Fast Logging</span>
+                <span class="text-[11px] font-medium text-slate-400">Gemma 3 27B · TabPFN</span>
+              </div>
+              <h3 class="text-base font-extrabold tracking-tight text-white mb-1.5">Instant Plate Scanning</h3>
+              <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                Capture your plate or drag &amp; drop food images for deterministic USDA macro grounding and real-time metabolic updates.
+              </p>
+              <button type="button" onclick="openScannerModal()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-900/30 transition-all active:scale-[0.98]">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                <span>Launch Camera Scanner</span>
+              </button>
+              <div class="mt-4 pt-3.5 border-t border-slate-700/80">
+                <div class="text-[11px] font-bold text-slate-400 mb-2">One-Click Test Plates:</div>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <button type="button" onclick="openScannerModal(); loadPreset('salmon');" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 text-left font-medium transition-colors flex items-center gap-1.5">
+                    <span>🐟</span> <span>Salmon &amp; Quinoa</span>
+                  </button>
+                  <button type="button" onclick="openScannerModal(); loadPreset('toast');" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 text-left font-medium transition-colors flex items-center gap-1.5">
+                    <span>🥑</span> <span>Avocado Toast</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -645,7 +751,7 @@
       <!-- ========================================== -->
       <!-- VIEW 2: 28-DAY TRAJECTORY & TABPFN         -->
       <!-- ========================================== -->
-      <section id="view-trajectory" class="app-view-section hidden animate-fadeIn px-5 pt-8 pb-6">
+      <section id="view-trajectory" class="app-view-section hidden animate-fadeIn px-5 lg:px-8 pt-6 lg:pt-8 pb-8">
         
         <!-- Clean Minimal Header (Task-Specific, No Logo/Overview) -->
         <div class="flex items-center justify-between mb-4">
@@ -658,39 +764,78 @@
           </span>
         </div>
 
-        <div class="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
-          <!-- Dynamic vs Static TDEE Cards -->
-          <div class="grid grid-cols-2 gap-2.5">
-            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-center">
-              <div class="text-xl font-black text-emerald-800" id="dynamic-tdee-val">3,152 kcal</div>
-              <div class="text-[10px] font-bold text-emerald-900/70 uppercase mt-0.5">TabPFN Dynamic TDEE</div>
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4 desktop-trajectory-container">
+          <!-- Left Column: Chart & Simulation Slider -->
+          <div class="space-y-4">
+            <!-- Dynamic vs Static TDEE Cards (Mobile only: on desktop they live in the companion right column) -->
+            <div class="grid grid-cols-2 gap-2.5 lg:hidden">
+              <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-center">
+                <div class="text-xl font-black text-emerald-800" id="dynamic-tdee-val">3,152 kcal</div>
+                <div class="text-[10px] font-bold text-emerald-900/70 uppercase mt-0.5">TabPFN Dynamic TDEE</div>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                <div class="text-xl font-black text-slate-400" id="static-tdee-val">2,587 kcal</div>
+                <div class="text-[10px] font-bold text-slate-500 uppercase mt-0.5">Static Formula TDEE</div>
+              </div>
             </div>
-            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
-              <div class="text-xl font-black text-slate-400" id="static-tdee-val">2,587 kcal</div>
-              <div class="text-[10px] font-bold text-slate-500 uppercase mt-0.5">Static Formula TDEE</div>
+
+            <!-- Interactive Chart Box (Bar Chart) -->
+            <div class="relative w-full h-64 sm:h-72 lg:h-96 bg-slate-50 rounded-xl p-3 border border-slate-100 flex items-center justify-center overflow-hidden">
+              <div id="trajectory-chart-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/95 backdrop-blur-[2px] rounded-xl z-10 transition-opacity">
+                <div class="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin mb-2"></div>
+                <span class="text-xs font-semibold text-slate-500">Forecasting TabPFN Trajectory...</span>
+              </div>
+              <canvas id="trajectoryChart" class="w-full h-full"></canvas>
+            </div>
+
+            <!-- Calorie Target Slider Panel -->
+            <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+              <div class="flex items-center justify-between text-xs mb-2">
+                <span class="font-semibold text-slate-700">Simulate Daily Caloric Target:</span>
+                <span class="font-extrabold text-emerald-700 bg-white px-2.5 py-0.5 rounded-full border border-slate-200" id="slider-calories-display">2100 kcal/day</span>
+              </div>
+              <input type="range" id="calories-slider" min="1600" max="3000" step="50" value="2100" class="w-full accent-emerald-600 cursor-pointer">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-mono">
+                <span>1,600 (Aggressive)</span>
+                <span>2,100 (Optimal)</span>
+                <span>3,000 (Surplus)</span>
+              </div>
             </div>
           </div>
 
-          <!-- Interactive Chart Box (Bar Chart) -->
-          <div class="relative w-full h-64 sm:h-72 bg-slate-50 rounded-xl p-3 border border-slate-100 flex items-center justify-center overflow-hidden">
-            <div id="trajectory-chart-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/95 backdrop-blur-[2px] rounded-xl z-10 transition-opacity">
-              <div class="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin mb-2"></div>
-              <span class="text-xs font-semibold text-slate-500">Forecasting TabPFN Trajectory...</span>
+          <!-- Right Column (Desktop Companion Panel): Dynamic TDEE, Static Baseline & Prior Info -->
+          <div class="hidden lg:flex flex-col gap-4">
+            <div class="p-4 rounded-xl bg-emerald-50/80 border border-emerald-200">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[10px] font-extrabold text-emerald-800 uppercase tracking-wider">TabPFN Dynamic TDEE</span>
+                <span class="text-[10px] font-bold bg-emerald-200/60 text-emerald-900 px-2 py-0.5 rounded-full">In-Context</span>
+              </div>
+              <div class="text-2xl font-black text-emerald-900" id="dynamic-tdee-val-desktop">3,152 kcal</div>
+              <p class="text-[11px] text-emerald-800/80 mt-1 leading-relaxed">
+                Metabolic expenditure dynamically inferred from your weight history and energy balance.
+              </p>
             </div>
-            <canvas id="trajectoryChart" class="w-full h-full"></canvas>
-          </div>
 
-          <!-- Calorie Target Slider Panel -->
-          <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
-            <div class="flex items-center justify-between text-xs mb-2">
-              <span class="font-semibold text-slate-700">Simulate Daily Caloric Target:</span>
-              <span class="font-extrabold text-emerald-700 bg-white px-2.5 py-0.5 rounded-full border border-slate-200" id="slider-calories-display">2100 kcal/day</span>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Static Formula TDEE</span>
+                <span class="text-[10px] font-bold bg-slate-200/80 text-slate-700 px-2 py-0.5 rounded-full">Mifflin-St Jeor</span>
+              </div>
+              <div class="text-2xl font-black text-slate-400" id="static-tdee-val-desktop">2,587 kcal</div>
+              <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                Standard baseline calculation without in-context metabolic adaptation factors.
+              </p>
             </div>
-            <input type="range" id="calories-slider" min="1600" max="3000" step="50" value="2100" class="w-full accent-emerald-600 cursor-pointer">
-            <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-mono">
-              <span>1,600 (Aggressive)</span>
-              <span>2,100 (Optimal)</span>
-              <span>3,000 (Surplus)</span>
+
+            <div class="p-4 rounded-xl bg-slate-900 text-white border border-slate-800 shadow-xs">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400">Prior-Data Fitted Network</span>
+              </div>
+              <h4 class="text-xs font-bold text-white mb-1">Bayesian Foundation Model</h4>
+              <p class="text-[11px] text-slate-300 leading-relaxed">
+                TabPFN evaluates synthetic Bayesian posterior approximations directly on tabular sequences in milliseconds, projecting your 28-day weight curve.
+              </p>
             </div>
           </div>
         </div>
@@ -699,10 +844,10 @@
       <!-- ========================================== -->
       <!-- VIEW 3: ELEVENLABS VOICE COACH             -->
       <!-- ========================================== -->
-      <section id="view-coach" class="app-view-section hidden animate-fadeIn px-5 pt-8 pb-6">
+      <section id="view-coach" class="app-view-section hidden animate-fadeIn px-5 lg:px-8 pt-6 lg:pt-8 pb-8">
         
         <!-- Clean Minimal Header (Task-Specific, No Logo/Overview) -->
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center justify-between mb-4 max-w-2xl mx-auto">
           <div>
             <div class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">Auditory Debrief</div>
             <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Voice Coach</h1>
@@ -712,7 +857,7 @@
           </span>
         </div>
 
-        <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs text-center">
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-8 shadow-xs text-center max-w-2xl mx-auto">
           <!-- Coach Avatar Icon -->
           <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-3 shadow-inner">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -724,7 +869,7 @@
 
           <h3 class="text-base font-extrabold text-slate-900 tracking-tight">Daily Metabolic Debrief</h3>
           <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-            Personalized auditory feedback powered by ElevenLabs Neural Voice & TabPFN in-context metabolic projections.
+            Personalized auditory feedback powered by ElevenLabs Neural Voice &amp; TabPFN in-context metabolic projections.
           </p>
 
           <!-- Voice Trigger Button -->
@@ -740,7 +885,7 @@
           <!-- Suggested Coaching Topics -->
           <div class="mt-6 text-left">
             <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-2.5">
-              Suggested Questions & Discussion
+              Suggested Questions &amp; Discussion
             </div>
             <div class="space-y-2">
               <button class="w-full p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-left text-xs text-slate-700 flex items-center justify-between transition-all" onclick="playStudioCoachDebrief()">
@@ -775,10 +920,10 @@
       <!-- ========================================== -->
       <!-- VIEW 4: MEAL & METABOLIC HISTORY           -->
       <!-- ========================================== -->
-      <section id="view-history" class="app-view-section hidden animate-fadeIn px-5 pt-8 pb-6">
+      <section id="view-history" class="app-view-section hidden animate-fadeIn px-5 lg:px-8 pt-6 lg:pt-8 pb-8">
         
         <!-- Clean Minimal Header (Task-Specific, No Logo/Overview) -->
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center justify-between mb-4 max-w-3xl mx-auto">
           <div>
             <div class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">Nutrition Log</div>
             <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Scan History</h1>
@@ -789,7 +934,7 @@
           </button>
         </div>
 
-        <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs">
+        <div class="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-8 shadow-xs max-w-3xl mx-auto">
           <!-- Dynamic Items List -->
           <div id="history-items-list" class="space-y-2.5"></div>
 
@@ -1189,8 +1334,30 @@
       if (tabName === 'onboarding') {
         if (bottomNav) bottomNav.style.display = 'none';
       } else {
-        if (bottomNav) bottomNav.style.display = 'flex';
+        if (bottomNav) bottomNav.style.display = '';
       }
+
+      // Responsive top header visibility control
+      const topHeader = document.getElementById('app-top-header');
+      if (topHeader) {
+        if (tabName === 'onboarding') {
+          topHeader.classList.add('hidden');
+        } else {
+          topHeader.classList.remove('hidden');
+          // On mobile, hide top header on non-home tabs to preserve task-specific clean headers
+          topHeader.classList.toggle('mobile-hide-header', tabName !== 'home');
+        }
+      }
+
+      // Update Desktop Top Nav Active States
+      document.querySelectorAll('.desktop-nav-btn').forEach(btn => {
+        const isActive = btn.dataset.dnav === tabName;
+        if (isActive) {
+          btn.className = 'desktop-nav-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all text-emerald-800 bg-white shadow-xs';
+        } else {
+          btn.className = 'desktop-nav-btn px-4 py-1.5 rounded-full text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all';
+        }
+      });
 
       // Update Bottom Navigation Active States
       document.querySelectorAll('.bottom-nav-item').forEach(el => {
@@ -1240,7 +1407,7 @@
       // FAB visibility control: show floating scan button only on home tab
       const fabContainer = document.getElementById('home-fab-container');
       if (fabContainer) {
-        fabContainer.style.display = (tabName === 'home') ? 'block' : 'none';
+        fabContainer.style.display = (tabName === 'home') ? '' : 'none';
       }
 
       // Special Tab Actions
